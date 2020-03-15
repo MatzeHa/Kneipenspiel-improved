@@ -29,7 +29,7 @@ class PauseMenu:
         self.select_pos = [self.win_width * (3 / 10), self.win_height * (2 / 8),
                            self.win_width*(4/10), self.win_height * (1 / 32)]
 
-        self.screen = "pause_menue"
+        self.screen = "pause_menu"
 
         self.options = {"bgcol": (0, 0, 0)}
 
@@ -90,7 +90,7 @@ class PauseMenu:
         but41 = self.Button(self.bar_pos, "Beenden", self.font, (2, 3), self.menu_size)
         but41.fun = MethodType(self.really_quit_fun, but41)
 
-        self.clickables = {"pause_menue": [but1, but2, but3, but4, but5],
+        self.clickables = {"pause_menu": [but1, but2, but3, but4, but5],
                            "options": [but10, but11, but12, but13, but14],
                            "options1": [but100, but101, but102, but103, but104, but105, but106],
                            "help": [0, 0, 0, 0, but20],
@@ -98,13 +98,13 @@ class PauseMenu:
                            "quit": [0, but40, but41, 0]}
 
     def pause_fun(self, x):
-        self.screen = "pause_menue"
+        self.screen = "pause_menu"
         self.nr_selectables = [1, 1, 1, 1, 1]
         self.selected = [1, 0, 0, 0, 0]
         return True
 
     def blit_pause(self):
-        for i in self.clickables["pause_menue"]:
+        for i in self.clickables["pause_menu"]:
             i.blit_button(self.win, self.selected[i.nr])
 
 
@@ -122,8 +122,8 @@ class PauseMenu:
     def really_quit_fun(self, x):
         self.quit = True
 
-    def reset_pause_menue(self):
-        self.screen = "pause_menue"
+    def reset_pause_menu(self):
+        self.screen = "pause_menu"
         self.dirtyrect = pygame.Rect(self.win_width * (1 / 5), self.win_height * (1 / 8), self.win_width * (3 / 5),
                                      self.win_height * (6 / 8))
         self.end_pause = False
@@ -224,7 +224,7 @@ class PauseMenu:
     def blitten(self):
         pygame.mouse.set_visible(True)
         self.win.fill((0, 0, 255), self.dirtyrect)
-        if self.screen == "pause_menue":
+        if self.screen == "pause_menu":
             self.blit_pause()
         elif self.screen == "options":
             self.blit_options()

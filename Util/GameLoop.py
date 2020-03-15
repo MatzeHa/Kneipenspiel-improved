@@ -1,15 +1,15 @@
 import pygame
-
+from GameModes.CreateChar import CreateChar
 from Level.LVLMain import LVLMain
 from Util.Controls import controls_pause
-from GameModes.CreateChar import CreateChar
+from Util.Functions import global_var
 
 pygame.init()
 
 
 def game_loop(win, setup):
     clock = pygame.time.Clock()
-    pause_menue = setup.pause_menu
+    pause_menu = setup.pause_menu
 
     create_char = CreateChar(setup)
     create_char.start_creation(win)
@@ -17,6 +17,7 @@ def game_loop(win, setup):
     lvl_main = LVLMain(win, setup)
 
     dirtyrects = []
+    g = global_var
     start_game = True
     run = True
     while run:
@@ -25,14 +26,14 @@ def game_loop(win, setup):
             win, g = lvl_main.init_draw(win, create_char)
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
-        elif pause_menue.active:
-            run = controls_pause(pause_menue)
-            if pause_menue.end_pause:
-                dirtyrects.append(pause_menue.dirtyrect)
+        elif pause_menu.active:
+            run = controls_pause(pause_menu)
+            if pause_menu.end_pause:
+                dirtyrects.append(pause_menu.dirtyrect)
                 setup.update_bg(win)
-                pause_menue.reset_pause_menue()
+                pause_menu.reset_pause_menu()
             else:
-                dirtyrects = [pause_menue.blitten()]
+                dirtyrects = [pause_menu.blitten()]
 
         else:
             run, dirtyrects, location = lvl_main.run_lvl(win, setup, g)
@@ -53,7 +54,7 @@ def game_loop(win, setup):
         pygame.quit()
         '''
 
-        if not pause_menue.quit:
+        if not pause_menu.quit:
             clock.tick(30)
             pygame.display.update(dirtyrects)
         else:
