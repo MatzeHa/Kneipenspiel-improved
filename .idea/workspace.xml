@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="14478089-8ca1-4760-ab3d-7f65495e8241" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Util/DirCheck.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Util/QuitGame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entity/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Entity/Player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entity/Chars.py" beforeDir="false" afterPath="$PROJECT_DIR$/Entity/Chars.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GameMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameMain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameModes/PauseMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameModes/PauseMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameModes/CreateChar.py" beforeDir="false" afterPath="$PROJECT_DIR$/GameModes/CreateChar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Level/LVLMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/Level/LVLMain.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Util/Controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Util/Controls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Util/GameLoop.py" beforeDir="false" afterPath="$PROJECT_DIR$/Util/GameLoop.py" afterDir="false" />
     </list>
@@ -14,6 +17,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -79,6 +89,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="LVLMain" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Scripts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Matze\AppData\Local\Programs\Python\Python37-32\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Level/LVLMain.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="Scripts" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -103,9 +134,11 @@
     <list>
       <item itemvalue="Python.GameMain" />
       <item itemvalue="Python.CreateChar" />
+      <item itemvalue="Python.LVLMain" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.LVLMain" />
         <item itemvalue="Python.CreateChar" />
       </list>
     </recent_temporary>
@@ -142,58 +175,81 @@
       <option name="project" value="LOCAL" />
       <updated>1584272119928</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- gogo">
+      <created>1584274338152</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1584274338152</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="- init commit" />
     <MESSAGE value="- go" />
-    <option name="LAST_COMMIT_MESSAGE" value="- go" />
+    <MESSAGE value="- gogo" />
+    <option name="LAST_COMMIT_MESSAGE" value="- gogo" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
-          <line>668</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Entity/Player.py</url>
-          <line>95</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Entity/Player.py</url>
-          <line>152</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Entity/Player.py</url>
-          <line>157</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Entity/Player.py</url>
-          <line>155</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Entity/Player.py</url>
-          <line>173</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/GameMain.py</url>
-          <line>47</line>
-          <option name="timeStamp" value="17" />
+          <url>file://$PROJECT_DIR$/Util/QuitGame.py</url>
+          <line>6</line>
+          <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Util/GameLoop.py</url>
-          <line>10</line>
-          <option name="timeStamp" value="18" />
+          <line>37</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Util/GameLoop.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>669</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>677</line>
+          <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>680</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>571</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>578</line>
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Level/LVLMain.py</url>
+          <line>597</line>
+          <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Util/GameLoop.py</url>
+          <line>22</line>
+          <option name="timeStamp" value="58" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="dirtyrects" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

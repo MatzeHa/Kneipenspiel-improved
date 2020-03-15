@@ -6,6 +6,7 @@ from Util.LoadImages import ObstacleImages, LVLMainImages
 
 from Util.Functions import get_coords, get_max_coord, Raster, global_var
 from Util.Clock import Clock
+from Util.Controls import controls_game
 
 from Entity.Player import Player
 from Entity.Waiter import Waiter
@@ -21,9 +22,7 @@ pygame.init()
 class LVLMain:
     def __init__(self, win, setup):
         self.win_w, self.win_h = win.get_size()
-
-        self.setup = setup
-
+        self.start = True
         self.sv = {"images": LVLMainImages(),
                    "obst_images": ObstacleImages(),
                    "win_w": self.win_w,
@@ -36,6 +35,7 @@ class LVLMain:
                    "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size),
                    "win_copy": win.copy()
                    }
+
         self.game_maxle = False
         self.g = None
 
@@ -487,7 +487,6 @@ class LVLMain:
                        surf_text, music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
                        door_pos, chairs, halo_count, timer_clock, guy, guests, filter_halo)
 
-        pygame.display.update()
         return win, g
 
     def redraw_game_window(self, win, g):
@@ -509,10 +508,7 @@ class LVLMain:
                 g.guy.end_game = False
 
         dirtyrects = dirtyrects + self.del_last_blit(win, g)
-        # Text
 
-        # controls
-        #_run, _kitchen = self.controls(g)
 
         # movement_calculation
         if g.guy.orderAction != 5 and g.guy.orderAction != 6 and g.guy.talk_action != 2 and not g.guy.ingame:
@@ -535,7 +531,7 @@ class LVLMain:
             else:
                 dirtyrects = self.game_maxle.do_turn(win)
 
-        return dirtyrects, _run, _kitchen
+        return dirtyrects
 
     def draw_blits(self, win, g):
 
@@ -554,7 +550,7 @@ class LVLMain:
         g.waiter[0].draw_display(win, g.waiter[0].angryness)  # Display g.guy
         for i in g.guests:
             if i.inside:
-                _dirtyrects.append(i.draw_display(win, i.drunkenness))  # Display Waiter
+                _dirtyrects.append(i.draw_display(win, i.drunkenness))  # Display Gäste
 
         # Zeige Text an
         if g.guy.text_count < 50:
@@ -602,7 +598,7 @@ class LVLMain:
         _dirtyrects.append(g.waiter[0].calc_display())  # Display Waiter
         for i in g.guests:
             if i.inside:
-                _dirtyrects.append(i.calc_display())  # Display Waiter
+                _dirtyrects.append(i.calc_display())  # Display Gäste
         return _dirtyrects
 
     def del_last_blit(self, win, setup, g):
@@ -624,7 +620,7 @@ class LVLMain:
         # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
         elif g.guy.orderAction == 7:
             win.blit(g.win_copy_2, (0, 0))
-            dirtyrects.append(pygame.Rect(0, 0, win_w, win_h))
+            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
             g.guy.orderAction = 8
 
         # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
@@ -635,7 +631,7 @@ class LVLMain:
         # überblitten mit alter Kopie
         elif g.guy.talk_action == 2:
             win.blit(self.sv["win_copy"], (0, 0))
-            dirtyrects.append(pygame.Rect(0, 0, win_w, win_h))
+            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
         # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
         # wieder mit Kopie ohne bewegliche sachen überblittet werden.
@@ -664,23 +660,26 @@ class LVLMain:
 
         return dirtyrects
 
-    def run_lvl(self, win, g):
-        run = True
-        while run:
-            _dirtyrects, run, kitchen = self.redraw_game_window(win, g)
-            g.timer_clock.tick(30)
-            pygame.display.update(_dirtyrects)
+    def run_lvl(self, win, setup, g):
+        # _dirtyrects, run, kitchen = self.redraw_game_window(win, g)
 
-        if kitchen:
-            #            if lvl_kitchen not in locals():
-            from Level.CreateKitchen import LVLKitchen
-            lvl_kitchen = LVLKitchen(win)
-            g.guy.x = lvl_kitchen.sv["coord"]["w"][7]
-            g.guy.y = lvl_kitchen.sv["coord"]["h"][0]
-            g.guy.facing = 2
-            self.g = g
-            lvl_kitchen.run_lvl(win, g, self)
+        dirtyrects = []
 
-        win.blit(self.sv["images"].game_over, (win_w / 2 - 400, win_h / 2 - 232))
-        pygame.display.update()
-        pygame.quit()
+        run, kitchen = controls_game(setup, g)
+
+        # Guests Move-Calculations:
+
+        # Überblitten
+        dirtyrects.append(g.guy.del_blit(win, setup.win_copy))
+
+        # Berechnungen
+        dirtyrects = dirtyrects + self.movement_calcuation(win, g)
+
+        # Blitten
+        g.guy.draw_char(win)
+
+        if self.start:
+            self.start = False
+            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+
+        return run, dirtyrects, kitchen

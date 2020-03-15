@@ -98,8 +98,7 @@ class Chrctrs:
             self.Tilemap = tilemap.convert_alpha()
 
     def del_blit(self, win, win_copy):
-        dirtyrect = pygame.Rect(self.x_old, self.y_old, self.width,
-                                self.height)  # rechteck für guy      #### x_old und y_old einsetzen?
+        dirtyrect = pygame.Rect(self.x_old, self.y_old, self.width, self.height)
         win.blit(win_copy, (self.x_old, self.y_old), dirtyrect)
         return dirtyrect
 

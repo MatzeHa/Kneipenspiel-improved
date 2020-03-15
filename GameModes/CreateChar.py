@@ -1,17 +1,9 @@
 import pygame
-import sys
 
+from Util.QuitGame import quit_game
 from Util.ScaleImage import scale_image
 
 pygame.init()
-'''
-os.environ['SDL_VIDEO_WINDOW_POS'] = "0, 33"
-
-win_sizex = 1000
-win_sizey = 600
-
-win = pygame.display.set_mode((win_sizex, win_sizey))  # change to the real resolution
-'''
 
 pygame.display.set_caption("Matzes Kneipenspiel - Charaktererstellung", "MK")
 
@@ -51,7 +43,6 @@ bw_list = [img_head_bw, img_shirt_bw, img_pants_bw, img_shoes_bw, img_hands_bw]
 
 class CreateChar:
     def __init__(self, setup):
-        # self.win = setup.win
         self.setup = setup
         self.creation_active = True
         self.timer_clock = pygame.time.Clock()
@@ -60,29 +51,28 @@ class CreateChar:
                      2: [img_pants, 0, get_boundary(img_pants)],
                      3: [img_shoes, 0, get_boundary(img_shoes)],
                      4: [img_hands, 0, get_boundary(img_hands)]}
-        # self.win_copy = self.setup.win.copy()
-
         self.cursor = 0
         self.new_tilemap = None
 
     def start_creation(self, win):
+        self.init_blit(win)
         self.run(win)
         self.new_tilemap = self.create_tilemap(win)
 
+    def init_blit(self, win):
+        self.draw_spectre(win)
+        self.draw_all(win)
+        self.setup.win_copy = win.copy()
+
     def run(self, win):
         run = True
-        key_timer = 3
         while run:
-            self.del_cursor(win)
-            key_timer -= 1
-            keys = pygame.key.get_pressed()
             change_color_ok = False
-            if key_timer == 0:
-                key_timer = 3
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
-                        pygame.quit()
-                        sys.exit()
+            self.del_cursor(win)
+            keys = pygame.key.get_pressed()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+                    quit_game()
                 if keys[pygame.K_UP]:
                     self.cursor_up()
                 if keys[pygame.K_DOWN]:
@@ -95,7 +85,6 @@ class CreateChar:
                 change_color_ok = True
             if keys[pygame.K_RETURN]:
                 run = False
-
             self.draw_spectre(win)
             if change_color_ok:
                 self.change_color(self.cursor)
@@ -208,16 +197,11 @@ class CreateChar:
         return self.imgs[cursor][0]
 
     def draw_all(self, win):
-        win.blit(self.imgs[4][0], (self.setup.win_w/2 - img_w/2,
-                                              self.setup.win_h/2 - img_h/2))
-        win.blit(self.imgs[3][0], (self.setup.win_w/2 - img_w/2,
-                                              self.setup.win_h/2 - img_h/2))
-        win.blit(self.imgs[2][0], (self.setup.win_w/2 - img_w/2,
-                                              self.setup.win_h/2 - img_h/2))
-        win.blit(self.imgs[1][0], (self.setup.win_w/2 - img_w/2,
-                                              self.setup.win_h/2 - img_h/2))
-        win.blit(self.imgs[0][0], (self.setup.win_w/2 - img_w/2,
-                                              self.setup.win_h/2 - img_h/2))
+        win.blit(self.imgs[4][0], (self.setup.win_w/2 - img_w/2, self.setup.win_h/2 - img_h/2))
+        win.blit(self.imgs[3][0], (self.setup.win_w/2 - img_w/2, self.setup.win_h/2 - img_h/2))
+        win.blit(self.imgs[2][0], (self.setup.win_w/2 - img_w/2, self.setup.win_h/2 - img_h/2))
+        win.blit(self.imgs[1][0], (self.setup.win_w/2 - img_w/2, self.setup.win_h/2 - img_h/2))
+        win.blit(self.imgs[0][0], (self.setup.win_w/2 - img_w/2, self.setup.win_h/2 - img_h/2))
 
     def draw_cursor(self, win):
         bound = self.imgs[self.cursor][2]
@@ -227,10 +211,10 @@ class CreateChar:
         pygame.draw.rect(win, (200, 230, 10), rect, 3)
 
     def del_cursor(self, win):
-        rect = pygame.Rect(self.setup.win_w / 2 - img_w / 2 - 2,
-                           self.setup.win_h / 2 - img_h / 2 - 2,
+        rect = pygame.Rect(self.setup.win_w/2 - img_w/2 - 2,
+                           self.setup.win_h/2 - img_h/2 - 2,
                            img_w + 2, img_h + 2)
-        win.blit(win, (rect.x, rect.y), rect)
+        win.blit(self.setup.win_copy, (rect.x, rect.y), rect)
 
     def cursor_up(self):
         if self.cursor > 0:
