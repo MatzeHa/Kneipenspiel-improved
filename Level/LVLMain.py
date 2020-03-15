@@ -670,7 +670,7 @@ class LVLMain:
         # Guests Move-Calculations:
 
         # Überblitten
-        dirtyrects.append(g.guy.del_blit(win, setup.win_copy))
+        dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))
 
         # Berechnungen
         dirtyrects = dirtyrects + self.movement_calcuation(win, g)
