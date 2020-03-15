@@ -76,7 +76,7 @@ class PauseMenu:
         but20.fun = MethodType(self.pause_fun, but20)
 
         sli30 = self.Slider(self.bar_pos, (1, 0, 0), (0, 4), self.menu_size)
-        sli30.fun =  MethodType(self.pause_fun, sli30)
+        sli30.fun = MethodType(self.pause_fun, sli30)
         sli31 = self.Slider(self.bar_pos, (0, 1, 0), (1, 4), self.menu_size)
         sli31.fun = MethodType(self.pause_fun, sli31)
         sli32 = self.Slider(self.bar_pos, (0, 0, 1), (2, 4), self.menu_size)

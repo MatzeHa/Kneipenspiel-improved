@@ -101,7 +101,7 @@ class Player(Chars.Chrctrs):
         # Kollisionsabfrage
         self.collide = False
         if self.dir == 0:
-            if self.y - self.vel < setup.wall_sizey:
+            if self.y - self.vel < setup.wall_h:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.x + self.width > i.x and self.x < i.x + i.width and
@@ -123,7 +123,7 @@ class Player(Chars.Chrctrs):
                                         next_screen = True
 
         elif self.dir == 1:  # rechts
-            if self.x + self.width + self.vel > setup.win_sizex - setup.wall_sizex:
+            if self.x + self.width + self.vel > setup.win_w - setup.wall_w:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and
@@ -139,7 +139,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 2:  # unten
-            if self.y + self.height + self.vel > setup.win_sizey - setup.wall_sizey:
+            if self.y + self.height + self.vel > setup.win_h - setup.wall_h:
                 self.collide = True
                 self.walking = False
 
@@ -156,7 +156,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 3:
-            if self.x + self.vel <= setup.wall_sizex:
+            if self.x + self.vel <= setup.wall_w:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and

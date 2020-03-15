@@ -19,76 +19,75 @@ def controls_game(setup, g):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
                 g.guy.end_game = True
-        # game_maxle_control(self.game_maxle, keys, g.guy, g.drinks) # TODO: umbaun
-
-        '''
-        # Inventar
-        elif inventory_active:
-            keys = pygame.key.get_pressed()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
-                    pygame.quit()
-                    run = False
-                    sys.exit()
-            if keys[pygame.K_i]:
-                inventory_active = not inventory_active
-            redraw_game_window(clock, dirtyrects)
-            dirtyrects = []
-        '''
+                # game_maxle_control(self.game_maxle, keys, g.guy, g.drinks) # TODO: umbaun
 
 
-    # Bestellen
-    elif g.guy.orderAction == 5 or g.guy.orderAction == 6:
-        keys = pygame.key.get_pressed()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
-                pygame.quit()
-                run = False
-                sys.exit()
-        if keys[pygame.K_DOWN]:
-            if g.order_menue.choice < len(g.order_menue.drinks) - 1:
-                g.order_menue.choice += 1
-        if keys[pygame.K_UP]:
-            if g.order_menue.choice > 0:
-                g.order_menue.choice -= 1
-        if keys[pygame.K_e]:
-            g.waiter[0].orders_open[g.guy][1] = g.order_menue.choice + 1
-            g.guy.orderAction = 7
+            # Bestellen
+            elif g.guy.orderAction == 5 or g.guy.orderAction == 6:
+                keys = pygame.key.get_pressed()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+                        pygame.quit()
+                        run = False
+                        sys.exit()
+                if keys[pygame.K_DOWN]:
+                    if g.order_menue.choice < len(g.order_menue.drinks) - 1:
+                        g.order_menue.choice += 1
+                if keys[pygame.K_UP]:
+                    if g.order_menue.choice > 0:
+                        g.order_menue.choice -= 1
+                if keys[pygame.K_e]:
+                    g.waiter[0].orders_open[g.guy][1] = g.order_menue.choice + 1
+                    g.guy.orderAction = 7
 
-    # Talken
-    elif g.guy.talk_action == 2:
-        keys = pygame.key.get_pressed()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-                sys.exit()
+            # Talken
+            elif g.guy.talk_action == 2:
+                keys = pygame.key.get_pressed()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.quit()
+                        sys.exit()
 
-        if keys[pygame.K_UP]:
-            if g.dialog_menue.choice > 0:
-                g.dialog_menue.choice -= 1
-        if keys[pygame.K_DOWN]:
-            if g.dialog_menue.choice < len(g.dialog_menue.dlst[g.dialog_menue.Line][1]) - 1:
-                g.dialog_menue.choice += 1
-        if keys[pygame.K_q]:
-            g.dialog_menue.Line = 0
-        if keys[pygame.K_e]:
-            if isinstance(g.dialog_menue.dlst[g.dialog_menue.Line][1], tuple):
-                g.dialog_menue.Line = g.dialog_menue.dlst[g.dialog_menue.Line][2][g.dialog_menue.choice]
-                g.dialog_menue.choice = 0
+                if keys[pygame.K_UP]:
+                    if g.dialog_menue.choice > 0:
+                        g.dialog_menue.choice -= 1
+                if keys[pygame.K_DOWN]:
+                    if g.dialog_menue.choice < len(g.dialog_menue.dlst[g.dialog_menue.Line][1]) - 1:
+                        g.dialog_menue.choice += 1
+                if keys[pygame.K_q]:
+                    g.dialog_menue.Line = 0
+                if keys[pygame.K_e]:
+                    if isinstance(g.dialog_menue.dlst[g.dialog_menue.Line][1], tuple):
+                        g.dialog_menue.Line = g.dialog_menue.dlst[g.dialog_menue.Line][2][g.dialog_menue.choice]
+                        g.dialog_menue.choice = 0
 
-        dirtyrects = []
+                dirtyrects = []
 
-    # Laufen
-    else:
+            # Laufen
+            else:
+                keys = pygame.key.get_pressed()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.quit()
+                        sys.exit()
+                if keys[pygame.K_UP]:
+                    g.guy.dir = 0
+                elif keys[pygame.K_RIGHT]:
+                    g.guy.dir = 1
+                elif keys[pygame.K_DOWN]:
+                    g.guy.dir = 2
+                elif keys[pygame.K_LEFT]:
+                    g.guy.dir = 3
 
-        g.guy.walk(g.waiter + g.guests, g.obstacles, g.interactables, setup)
+                g.guy.walk(g.waiter + g.guests, g.obstacles, g.interactables, setup)
 
 
-#        run, game_maxle, inventory_active, kitchen = laufen(g, self.sv["win_w"], self.sv["win_h"],
-#                                                            self.sv["wall_w"], self.sv["wall_h"])
-#        if game_maxle:
-#            self.game_maxle = game_maxle
+        #        run, game_maxle, inventory_active, kitchen = laufen(g, self.sv["win_w"], self.sv["win_h"],
+        #                                                            self.sv["wall_w"], self.sv["wall_h"])
+        #        if game_maxle:
+        #            self.game_maxle = game_maxle
     return run, kitchen
 
 
@@ -207,3 +206,18 @@ def controls_pause(pause_menue):
 
 
 '''
+'''
+# Inventar
+elif inventory_active:
+    keys = pygame.key.get_pressed()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+            pygame.quit()
+            run = False
+            sys.exit()
+    if keys[pygame.K_i]:
+        inventory_active = not inventory_active
+    redraw_game_window(clock, dirtyrects)
+    dirtyrects = []
+'''
+

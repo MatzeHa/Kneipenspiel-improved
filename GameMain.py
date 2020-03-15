@@ -25,8 +25,8 @@ if __name__ == "__main__":
             self.coord = {"w": get_coords(self.win_w, self.wall_w, self.cell_size),
                           "h": get_coords(self.win_h, self.wall_h, self.cell_size)}
 
-        def update_bg(self, _win):
-            self.bgcol = setup.pause_menue.options["bgcol"]
+        def update_bg(self, _win): # unnötige Funktion???
+            self.bgcol = setup.pause_menu.options["bgcol"]
             _win.fill(self.bgcol)
             self.win = _win.copy()
 
@@ -35,13 +35,6 @@ if __name__ == "__main__":
     win = pygame.display.set_mode((setup.win_w, setup.win_h))
     pygame.display.set_caption("Matzes Kneipenspiel", "MK")
     setup.win = win.copy()
-
-    '''
-    entity = Entity()
-    opponents = []
-    for i in range(0, 5):
-        opponents.append(Entity())
-    '''
 
     setup.pause_menu = PauseMenu(win, setup)
     pygame.mouse.set_visible(False)
@@ -52,4 +45,4 @@ if __name__ == "__main__":
     lvl_main = LVLMain(win, setup)
     win, g = lvl_main.init_draw(win, create_char)
 
-    game_loop(setup, g)
+    game_loop(win, setup, g)

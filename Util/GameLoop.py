@@ -3,12 +3,11 @@ from Util.Controls import controls_game, controls_pause
 
 pygame.init()
 
-
-
-def game_loop(setup, g, run=True):
+def game_loop(win, setup, g, run=True):
     clock = pygame.time.Clock()
     pause_menue = setup.pause_menu
-    win = setup.win
+
+
     while run:
         # EINGABE
         if pause_menue.active:
@@ -23,7 +22,9 @@ def game_loop(setup, g, run=True):
 
 
         else:
-            run = controls_game(setup, g)
+            run, kitchen = controls_game(setup, g)
+
+
 
         if not pause_menue.quit:
             clock.tick(30)
