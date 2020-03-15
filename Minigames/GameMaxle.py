@@ -1,6 +1,6 @@
 import pygame
 import random
-from Scripts.Util.ScaleImage import scale_image
+from Util.ScaleImage import scale_image
 
 
 def order_tuple(to_order):

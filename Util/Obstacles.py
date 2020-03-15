@@ -1,5 +1,5 @@
 import pygame
-from Scripts.Util.LoadImages import ObstacleImages
+from Util.LoadImages import ObstacleImages
 
 pygame.init()
 

@@ -1,12 +1,11 @@
 import pygame
 import os
 
-
-from Scripts.GameModes.PauseMenu import PauseMenu
-from Scripts.Level.LVLMain import LVLMain
-from Scripts.Util.GameLoop import game_loop
-from Scripts.GameModes.CreateChar import CreateChar
-from Scripts.Util.Functions import get_coords
+from GameModes.PauseMenu import PauseMenu
+from Level.LVLMain import LVLMain
+from Util.GameLoop import game_loop
+from GameModes.CreateChar import CreateChar
+from Util.Functions import get_coords
 
 pygame.init()
 
@@ -49,8 +48,6 @@ if __name__ == "__main__":
 
     create_char = CreateChar(setup)
     create_char.start_creation(win)
-
-
 
     lvl_main = LVLMain(win, setup)
     win, g = lvl_main.init_draw(win, create_char)

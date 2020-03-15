@@ -1,8 +1,8 @@
 import pygame
 import random
-import Scripts.Util.Pathfinding as Pathfinding
-import Scripts.Entity.Chars as Chars
-import Scripts.Util.DialogScript as DialogSkript
+import Util.Pathfinding as Pathfinding
+import Entity.Chars as Chars
+import Util.DialogScript as DialogSkript
 # Guest_sit = pygame.image.load('graph/chars/guy/Guy_sit.png')
 rotDict = {0: 0, 90: 3, 180: 2, 270: 1}
 

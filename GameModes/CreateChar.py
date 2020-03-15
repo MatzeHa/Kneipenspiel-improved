@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from Scripts.Util.ScaleImage import scale_image
+from Util.ScaleImage import scale_image
 
 pygame.init()
 '''

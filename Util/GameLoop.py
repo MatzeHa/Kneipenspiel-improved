@@ -1,5 +1,5 @@
 import pygame
-from Scripts.Util.Controls import controls_game, controls_pause
+from Util.Controls import controls_game, controls_pause
 
 pygame.init()
 

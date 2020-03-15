@@ -1,12 +1,13 @@
 import pygame
 import sys
 
-from Scripts.Minigames.GameMaxle import GameMaxle
+from Minigames.GameMaxle import GameMaxle
 
 pygame.init()
 
 
 def controls_pause(pause_menu):
+    print("controls Pause")
     pass
 
 
@@ -34,6 +35,7 @@ def controls_game(setup, g):
             redraw_game_window(clock, dirtyrects)
             dirtyrects = []
         '''
+
 
     # Bestellen
     elif g.guy.orderAction == 5 or g.guy.orderAction == 6:
@@ -76,10 +78,15 @@ def controls_game(setup, g):
                 g.dialog_menue.choice = 0
 
         dirtyrects = []
+
     # Laufen
     else:
-        run, game_maxle, inventory_active, kitchen = laufen(g, self.sv["win_w"], self.sv["win_h"],
-                                                            self.sv["wall_w"], self.sv["wall_h"])
+
+        g.guy.walk(g.waiter + g.guests, g.obstacles, g.interactables, setup)
+
+
+#        run, game_maxle, inventory_active, kitchen = laufen(g, self.sv["win_w"], self.sv["win_h"],
+#                                                            self.sv["wall_w"], self.sv["wall_h"])
 #        if game_maxle:
 #            self.game_maxle = game_maxle
     return run, kitchen

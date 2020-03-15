@@ -2,18 +2,18 @@ import pygame
 import random
 import math
 
-from Scripts.Util.LoadImages import ObstacleImages, LVLMainImages
+from Util.LoadImages import ObstacleImages, LVLMainImages
 
-from Scripts.Util.Functions import get_coords, get_max_coord, Raster, global_var
-from Scripts.Util.Clock import Clock
+from Util.Functions import get_coords, get_max_coord, Raster, global_var
+from Util.Clock import Clock
 
-from Scripts.Entity.Player import Player
-from Scripts.Entity.Waiter import Waiter
-from Scripts.Entity.Guest import Guest
-from Scripts.GameModes.Order import OrderMenue
-from Scripts.GameModes.Dialog import DialogMenue
+from Entity.Player import Player
+from Entity.Waiter import Waiter
+from Entity.Guest import Guest
+from GameModes.Order import OrderMenue
+from GameModes.Dialog import DialogMenue
 
-from Scripts.Util.Obstacles import *
+from Util.Obstacles import *
 
 pygame.init()
 
@@ -52,7 +52,7 @@ class LVLMain:
         surf_dialog = pygame.Surface((self.sv["win_w"], self.sv["win_h"]))
 
         #    create_char.start_creation()
-        from Scripts.Util.Functions import IncreaseI
+        from Util.Functions import IncreaseI
         i = IncreaseI()
 
         # Fonts
@@ -351,7 +351,6 @@ class LVLMain:
             Kerze(i.increase(), self.sv["coord"]["w"][5], self.sv["coord"]["h"][4], images.img_kerze[0].get_width(),
                   images.img_kerze[0].get_height(), filter_halo, 1))
 
-        print(self.sv["coord"]["w"][7])
         # WandKerzen
         _interactables.append(
             KerzeWand(i.increase(),
@@ -408,7 +407,7 @@ class LVLMain:
         _interactables.append(_radio)
 
         # drinks: Nr. : ('Name', Preis, Alkoholgehalt. # ?Anzahl der Schlücke? #
-        # hier scheint noch ein bug zu sein,
+        # TODO: hier scheint noch ein bug zu sein,
         # wenn man das zweite getränk bestellt(?) hat man mehr (doppelt so viele?) schlücke
         _drinks = {0: ("", 0, 0, 0), 1: ("Bier", 3, 10, 10), 2: ("Wein", 4, 5, 5), 3: ("Schnaps", 2, 30, 1),
                    4: ("Kaffee", 3, -3, 6)}
@@ -450,6 +449,14 @@ class LVLMain:
 
     def init_draw(self, win, create_char):
 
+        music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
+        sound1 = pygame.mixer.Sound('../Sound/Background_1.wav')
+        sound1.set_volume(0)
+        channel_bg = pygame.mixer.Channel(0)
+        channel_bg.play(sound1, -1)  # ist das richtig so???
+
+        sound_count = 0
+
         win.blit(self.sv["images"].bg, (0, 0))
         win.blit(self.sv["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
 
@@ -458,14 +465,6 @@ class LVLMain:
 
         for obst in obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
-
-        music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
-        sound1 = pygame.mixer.Sound('../Sound/Background_1.wav')
-        sound1.set_volume(0)
-        channel_bg = pygame.mixer.Channel(0)
-        channel_bg.play(sound1, -1)  # ist das richtig so???
-
-        sound_count = 0
 
         inventory_active = False
         text_count = 50
@@ -480,7 +479,7 @@ class LVLMain:
         clock.calc()
         clock.draw(win)
         raster = Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["cell_size"])
-        raster.draw(win)
+        # raster.draw(win)
         self.sv["win_copy"] = win.copy()
         timer_clock = pygame.time.Clock()
 
@@ -489,7 +488,6 @@ class LVLMain:
                        door_pos, chairs, halo_count, timer_clock, guy, guests, filter_halo)
 
         pygame.display.update()
-        pygame.key.set_repeat()  # nochmal testen, funktioniert glaub ich noch nicht
         return win, g
 
     def redraw_game_window(self, win, g):
@@ -665,7 +663,6 @@ class LVLMain:
         #            invent.draw(win, inventory_pic, g.guy.inventory)
 
         return dirtyrects
-
 
     def run_lvl(self, win, g):
         run = True

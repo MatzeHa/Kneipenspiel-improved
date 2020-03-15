@@ -1,6 +1,6 @@
 import pygame
 import random
-import Scripts.Util.DialogScript as DialogSkript
+import Util.DialogScript as DialogSkript
 
 pygame.init()
 
