@@ -234,7 +234,6 @@ class Chrctrs:
                 waiter.orders_open.update({self: [0, 0, 0]})
                 self.text = random.choice(('Hey, Ober!', 'Wirtschaaaft!', 'Komma her, Digga!'))
                 self.text_count = 0
-                print("Gast : hat Kellner gerufen" + str((self.x, self.y)))
         elif self.art == 'player' and self.orderActive:
             if self.orderAction == 0:
                 if self.text_count == 51:

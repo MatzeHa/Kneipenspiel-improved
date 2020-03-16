@@ -43,7 +43,7 @@ def controls_pause(pause_menue):
 def controls_game(player, pause_menue, setup):
     _run = True
 
-    player.m ove_h = 0
+    player.move_h = 0
     player.move_v = 0
 
     for event in pygame.event.get():

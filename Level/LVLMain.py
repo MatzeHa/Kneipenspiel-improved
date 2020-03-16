@@ -424,7 +424,7 @@ class LVLMain:
         _clock = Clock(i.increase(), 50, 500)
 
         _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], self.sv["cell_size"],
-                      self.sv["cell_size"], True, create_char.new_tilemap, 64 / 4)
+                      self.sv["cell_size"], True, create_char.new_tilemap, 64 / 6)
         _waiter = [
             Waiter(self.sv["coord"]["w"][2], self.sv["coord"]["h"][2], self.sv["cell_size"], self.sv["cell_size"],
                    _obstacles, True,

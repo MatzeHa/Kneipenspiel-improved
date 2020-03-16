@@ -30,6 +30,7 @@ class Player(Chars.Chrctrs):
         self.textcolor = (225, 225, 0)
         self.text_for = Chars.font.render(self.text, 1, self.textcolor)
         self.portrait = Chars.Portraits[0]
+        self.walking = False
 
         self.orderActive = False
         self.orderAction = 0
@@ -180,3 +181,4 @@ class Player(Chars.Chrctrs):
                 self.y += self.vel
             if self.dir == 3:
                 self.x -= self.vel
+            print("laufen")
