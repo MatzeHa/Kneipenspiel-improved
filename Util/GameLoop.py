@@ -1,7 +1,7 @@
 import pygame
 from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVLMain import LVLMain
-from Scripts.Util.Controls import controls_pause, controls_maxle
+from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog
 from Scripts.Util.Functions import global_var
 
 pygame.init()
@@ -30,8 +30,8 @@ def game_loop(win, setup):
             dirtyrects = pause_menu.check_action(win, lvl_main)
 
         elif g.dialog_menue.active:
-            # TODO: controls
-            dirtyrects = g.dialog_menue.check_action(win, lvl_main)
+            g.dialog_menue = controls_dialog(g.dialog_menue)
+            dirtyrects = g.dialog_menue.check_action(win, setup, g, lvl_main)
 
         elif g.guy.game == "maxle":
             setup.game = controls_maxle(setup.game_maxle, g.guy, g.drinks)

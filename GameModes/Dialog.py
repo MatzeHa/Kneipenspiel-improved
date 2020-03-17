@@ -45,6 +45,8 @@ class DialogMenue:
         self.char_talking = 1
         self.Line = 1  # startZeile
 
+        self.quit = False
+
         border = 7
         pygame.draw.rect(self.surf, (5, 5, 5), (self.x_window, self.y_window, self.w_window - 1, self.h_window - 1),
                          border)
@@ -112,11 +114,11 @@ class DialogMenue:
     def check_action(self, win, setup, g, lvl):
         dirtyrects = []
         if g.guy.talk_action == 2:  # besser: if dialog_menu.active:
-            dirtyrects = g.dialog_menue.draw(win, lvl.sv["win_copy_change_mode"])
+            dirtyrects = self.draw(win, lvl.sv["win_copy_change_mode"])
 
         elif g.guy.talk_action == 3:  # besser: if dialog_menu.active:
-            g.dialog_menue.active = False
+            self.active = False
             g.guy.talk_action = 0
             dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
-            win.blit(lvl.sv["win_copy"], (0, 0))
+            win.blit(lvl.sv["win_copy_change_mode"], (0, 0))
         return dirtyrects

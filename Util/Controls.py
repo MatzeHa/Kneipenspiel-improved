@@ -82,22 +82,6 @@ def controls_game(setup, g):
                         g.waiter[0].orders_open[g.guy][1] = g.order_menue.choice + 1
                         g.guy.orderAction = 7
 
-                # Talken
-                elif g.guy.talk_action == 2:
-                    walk = False
-                    if event.key == pygame.K_UP:
-                        if g.dialog_menue.choice > 0:
-                            g.dialog_menue.choice -= 1
-                    elif event.key == pygame.K_DOWN:
-                        if g.dialog_menue.choice < len(g.dialog_menue.dlst[g.dialog_menue.Line][1]) - 1:
-                            g.dialog_menue.choice += 1
-                    elif event.key == pygame.K_q:
-                        g.dialog_menue.Line = 0
-                    elif event.key == pygame.K_e:
-                        if isinstance(g.dialog_menue.dlst[g.dialog_menue.Line][1], tuple):
-                            g.dialog_menue.Line = g.dialog_menue.dlst[g.dialog_menue.Line][2][g.dialog_menue.choice]
-                            g.dialog_menue.choice = 0
-
                 elif event.key == pygame.K_e:
                     walk = False
                     active_inter = dir_check(g.interactables, g.guy)
@@ -208,6 +192,28 @@ def controls_game(setup, g):
             #            self.game_maxle = game_maxle
     return run, kitchen
 
+def controls_dialog(dialog_menu):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quit_game()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                dialog_menu.quit = True
+            # Talken
+            if event.key == pygame.K_UP:
+                if dialog_menu.choice > 0:
+                    dialog_menu.choice -= 1
+            elif event.key == pygame.K_DOWN:
+                if dialog_menu.choice < len(dialog_menu.dlst[dialog_menu.Line][1]) - 1:
+                    dialog_menu.choice += 1
+            elif event.key == pygame.K_q:
+                dialog_menu.Line = 0
+            elif event.key == pygame.K_e:
+                if isinstance(dialog_menu.dlst[dialog_menu.Line][1], tuple):
+                    dialog_menu.Line = dialog_menu.dlst[dialog_menu.Line][2][dialog_menu.choice]
+                    dialog_menu.choice = 0
+                    print("ENTER!!!!")
+    return dialog_menu
 
 def controls_walking(setup, g):
     kitchen = False
