@@ -13,7 +13,6 @@ def game_loop(win, setup):
     create_char = CreateChar(setup)
     create_char.start_creation(win)
 
-
     lvl = LVLMain(win, setup)
 
 #    lvl = {"lvl_main": LVLMain(win, setup)}
@@ -45,7 +44,7 @@ def game_loop(win, setup):
             dirtyrects = setup.game.check_action(win, setup, g, lvl)
 
         else:
-            run, dirtyrects, location = lvl.run_lvl(win, setup, g)
+            run, dirtyrects = lvl.run_lvl(win, g, lvl)
 
         '''
         if kitchen:

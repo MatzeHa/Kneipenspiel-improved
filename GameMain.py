@@ -22,6 +22,7 @@ if __name__ == "__main__":
             self.coord = {"w": get_coords(self.win_w, self.wall_w, self.cell_size),
                           "h": get_coords(self.win_h, self.wall_h, self.cell_size)}
             self.win_copy = _win.copy()
+            self.active_room = "Main"
 
         def update_bg(self, _win):  # unnötige Funktion???
             self.bgcol = setup.pause_menu.options["bgcol"]

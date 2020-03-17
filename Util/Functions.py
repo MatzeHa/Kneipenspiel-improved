@@ -13,10 +13,11 @@ def get_coords(win_w, wall_w, _cell_size):
     coord = []
 #    if wall_h > wall_w:
 #    win_w = win_h
- #   wall_w = wall_h
+#    wall_w = wall_h
     for crd in range(0, 1 + int((win_w - (wall_w*2)) / cell_size)):  # +1 weil tür an wand
         coord.append(wall_w + crd * cell_size)
     return coord
+
 
 def get_max_coord(coord):
     if len(coord["w"]) < len(coord["h"]):
@@ -24,6 +25,7 @@ def get_max_coord(coord):
     else:
         max_coord = "w"
     return max_coord
+
 
 class Raster:
     def __init__(self, win, wall_w, wall_h, cell_size):
@@ -65,8 +67,6 @@ class global_var:
         self.order_choose_font = pygame.font.SysFont('Courier', 33, True)
         self.order_choose_font.set_underline(True)
 
-
-
         # static in lvl_main
         self.raster = raster
         self.music1 = music1
@@ -81,7 +81,6 @@ class global_var:
         self.guy = guy
 
         # vars in lvl_main, always the same vars, but their values change
-        # self.win_copy_2 = None
         self.guests = guests
         self.waiter = waiter
         self.clock = clock
@@ -90,8 +89,7 @@ class global_var:
         self.interactables = interactables
         self.radio = radio
         self.chairs = chairs
-        self.sound_count = sound_count # ???
+        self.sound_count = sound_count  # ???
         self.halo_count = halo_count
         self.filter_halo = filter_halo
         self.timer_clock = timer_clock
-

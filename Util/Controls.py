@@ -53,11 +53,15 @@ def controls_pause(pause_menu):
                         inst.val = inst.val + 1
     return run
 
+def check_location_change():
 
-def controls_game(setup, g):
+    pass
+
+def controls_game(setup, g, lvl):
+    check_location_change()
+
     run = True
     walk = True
-    kitchen = False
     if not g.guy.ingame:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -77,12 +81,11 @@ def controls_game(setup, g):
                     if active_inter != 0:
 
                         if active_inter.art == "door":
-                            if active_inter.goto == "kitchen":
-                                kitchen = True
-                                run = False
+                            lvl.travel = True
+                            lvl.goto = active_inter.goto
+                            lvl.active_inter = active_inter
+                            lvl.active_inter.openClose = True
 
-                            active_inter.active = True
-                            active_inter.openClose = True
                         elif active_inter.art == "chair":
                             if not g.guy.sit and not active_inter.active:
                                 g.guy.sit_down(active_inter)
@@ -174,11 +177,11 @@ def controls_game(setup, g):
                             setup.game_maxle = GameMaxle(g.guy, players, g.drinks)
         # Laufen
         if walk:
-            run, game_maxle, inventory_active, kitchen = controls_walking(setup, g)
+            run, game_maxle, inventory_active = controls_walking(setup, g)
 
             #        if game_maxle:
             #            self.game_maxle = game_maxle
-    return run, kitchen
+    return run
 
 def controls_order(g):
     for event in pygame.event.get():
@@ -223,7 +226,6 @@ def controls_dialog(dialog_menu):
     return dialog_menu
 
 def controls_walking(setup, g):
-    kitchen = False
     game_maxle = False
     inventory_active = False
     run = True
@@ -256,7 +258,7 @@ def controls_walking(setup, g):
     if g.guy.dead:
         run = False
 
-    return run, game_maxle, inventory_active, kitchen
+    return run, game_maxle, inventory_active
 
 
 def controls_maxle(game, guy, drinks):

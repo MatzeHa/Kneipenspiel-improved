@@ -37,6 +37,9 @@ class LVLMain:
         self.win_copy_change_mode = win.copy()
         self.setup = setup
         self.g = global_var
+        self.sublevel = "Main"
+        self.active_inter = None
+        self.travel = False
 
     def init_main(self, win, create_char):
         # Obstacles und Interactables werden erstellt
@@ -434,7 +437,7 @@ class LVLMain:
             Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 0, self.sv["coord"], self.sv["cell_size"], "kitchen"))
+                 0, self.sv["coord"], self.sv["cell_size"], "Kitchen"))
         _interactables.append(
             Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3],
                  self.sv["obst_images"].img_door[0].get_width(),
@@ -574,14 +577,12 @@ class LVLMain:
         g.filter_halo.set_alpha(round(math.sin((g.halo_count / 100) * math.pi) * 100))
         win.blit(g.filter_halo, (0, 0))
 
-    def movement_calcuation(self, win, g):
+    def movement_calcuation(self, win, g, active_inter):
         _dirtyrects = []
         # all interactables with own animation
-        for _inter in g.interactables:
-            if _inter.active:
-                if isinstance(_inter, Door) or isinstance(_inter, Radio):
-                    _dirtyrects.append(_inter.calc())
-                    _inter.draw_int(win, self.sv["win_copy"])
+        if isinstance(active_inter, Door) or isinstance(active_inter, Radio):
+            _dirtyrects.append(active_inter.calc())
+            active_inter.draw_int(win, self.sv["win_copy"])
         _dirtyrects.append(g.clock.calc())
         # g.guy
         _dirtyrects.append(g.guy.calc_movement(win, g))
@@ -668,24 +669,30 @@ class LVLMain:
 
         return dirtyrects
 
-    def run_lvl(self, win, setup, g):
-        # _dirtyrects, run, kitchen = self.redraw_game_window(win, g)
+    def run_lvl(self, win, g, lvl):
 
         # TODO: HIER weitermachen! Küche ienbauen, setup.wall_size anpassen!!!
-
-
         dirtyrects = []
 
         # Move-Calculations:
-        run, kitchen = controls_game(self.setup, g)
+        if not self.travel:
+            run = controls_game(self.setup, g, lvl)
+        else:
+            run = True
+            if lvl.active_inter.opened and not lvl.active_inter.openClose:
+                lvl.sublevel = lvl.goto
+                self.travel = False
+        if lvl.sublevel == "Main":
+            # Überblitten
+            dirtyrects = dirtyrects + self.del_last_blit(win, g)
 
-        # Überblitten
-        dirtyrects = dirtyrects + self.del_last_blit(win, g)
+            # Berechnungen
+            dirtyrects = dirtyrects + self.movement_calcuation(win, g, lvl.active_inter)
 
-        # Berechnungen
-        dirtyrects = dirtyrects + self.movement_calcuation(win, g)
+            # Blitten
+            self.draw_blits(win, g)
 
-        # Blitten
-        self.draw_blits(win, g)
+        if lvl.sublevel == "Kitchen":
+            print("PUPU")
 
-        return run, dirtyrects, kitchen
+        return run, dirtyrects
