@@ -82,7 +82,7 @@ class Guest(Chars.Chrctrs):
                     self.sipCount = 0
                     self.siptime = random.randint(100, 400)
                     self.sips -= 1
-                    self.drunkenness = self.drunkenness + drinks[self.drink][2]
+                    self.drunkenness = self.drunkenness + g.drinks[self.drink][2]
                     if self.drunkenness > 100:
                         self.drunkenness = 100
                     # randomisieren

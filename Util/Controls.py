@@ -70,17 +70,6 @@ def controls_game(setup, g):
                     setup.pause_menu.start_pause = True
                     walk = False
                 # Bestellen
-                elif g.guy.orderAction == 5 or g.guy.orderAction == 6:
-                    walk = False
-                    if event.key == pygame.K_DOWN:
-                        if g.order_menue.choice < len(g.order_menue.drinks) - 1:
-                            g.order_menue.choice += 1
-                    elif event.key == pygame.K_UP:
-                        if g.order_menue.choice > 0:
-                            g.order_menue.choice -= 1
-                    elif event.key == pygame.K_e:
-                        g.waiter[0].orders_open[g.guy][1] = g.order_menue.choice + 1
-                        g.guy.orderAction = 7
 
                 elif event.key == pygame.K_e:
                     walk = False
@@ -191,6 +180,26 @@ def controls_game(setup, g):
             #        if game_maxle:
             #            self.game_maxle = game_maxle
     return run, kitchen
+
+def controls_order(g):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quit_game()
+        if event.type == pygame.KEYDOWN:
+#            if event.key == pygame.K_ESCAPE:
+#                g.dialog_menu.quit = True
+
+            if g.guy.orderAction == 5 or g.guy.orderAction == 6:
+                if event.key == pygame.K_DOWN:
+                    if g.order_menue.choice < len(g.order_menue.drinks) - 1:
+                        g.order_menue.choice += 1
+                elif event.key == pygame.K_UP:
+                    if g.order_menue.choice > 0:
+                        g.order_menue.choice -= 1
+                elif event.key == pygame.K_e:
+                    g.waiter[0].orders_open[g.guy][1] = g.order_menue.choice + 1
+                    g.guy.orderAction = 7
+    return g
 
 def controls_dialog(dialog_menu):
     for event in pygame.event.get():

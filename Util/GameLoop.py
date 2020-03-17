@@ -1,7 +1,7 @@
 import pygame
 from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVLMain import LVLMain
-from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog
+from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog, controls_order
 from Scripts.Util.Functions import global_var
 
 pygame.init()
@@ -13,7 +13,7 @@ def game_loop(win, setup):
     create_char = CreateChar(setup)
     create_char.start_creation(win)
 
-    lvl_main = LVLMain(win, setup)
+    lvl = LVLMain(win, setup)
 
     dirtyrects = []
     g = global_var
@@ -22,23 +22,27 @@ def game_loop(win, setup):
     while run:
         if start_game:
             start_game = False
-            win, g = lvl_main.init_draw(win, create_char)
+            win, g = lvl.init_draw(win, create_char)
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
         elif pause_menu.active:
             run = controls_pause(pause_menu)
-            dirtyrects = pause_menu.check_action(win, lvl_main)
+            dirtyrects = pause_menu.check_action(win, lvl)
 
         elif g.dialog_menue.active:
             g.dialog_menue = controls_dialog(g.dialog_menue)
-            dirtyrects = g.dialog_menue.check_action(win, setup, g, lvl_main)
+            dirtyrects = g.dialog_menue.check_action(win, setup, g, lvl)
+
+        elif g.guy.orderAction == 6:
+            gd = controls_order(g)
+            dirtyrects.append(g.order_menue.draw(win, setup, g, lvl))
 
         elif g.guy.game == "maxle":
             setup.game = controls_maxle(setup.game_maxle, g.guy, g.drinks)
-            dirtyrects = setup.game.check_action(win, setup, g, lvl_main)
+            dirtyrects = setup.game.check_action(win, setup, g, lvl)
 
         else:
-            run, dirtyrects, location = lvl_main.run_lvl(win, g)
+            run, dirtyrects, location = lvl.run_lvl(win, g)
 
         '''
         if kitchen:

@@ -22,14 +22,14 @@ class OrderMenue:
         self.y = 100
         self.AC = 20  # = AnimationCounter
 
-    def draw(self, win, win_copy_order, win_sizey):
+    def draw(self, win, setup, g, lvl):
         # Karten-Animation
         if self.AC > 3:
             self.AC -= 1
-            self.y = win_sizey - win_sizey * 0.9 * (3 / self.AC)
+            self.y = setup.win_h - setup.win_h * 0.9 * (3 / self.AC)
             print(self.y)
         # Darstellung der Karte
-        win.blit(win_copy_order, (0, 0))
+        # win.blit(lvl.win_copy, (0, 0))
         win.blit(Order_pic, (self.x, self.y))
         dirtyrect = pygame.Rect(self.x, self.y, Order_pic.get_width(), Order_pic.get_height())
         j = 0
