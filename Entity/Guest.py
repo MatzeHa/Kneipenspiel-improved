@@ -75,7 +75,6 @@ class Guest(Chars.Chrctrs):
 
             # Take a Sip
             if self.sips > 0:
-                print(self.drink)
                 if self.siptime > 0:
                     self.siptime -= 1
                 if self.siptime == 0:
@@ -234,7 +233,6 @@ class Guest(Chars.Chrctrs):
                             self.coming = False
 
                     elif i.art == 'stairs' and i.serv_pos == (g.door_pos[2][0], g.door_pos[2][1]) and self.bladderTime == 0:
-                        print("im Keller")
                         self.x = -100
                         self.y = -100
                         if self.waitCount > 0:

@@ -12,7 +12,6 @@ def pathfinding(char, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, obsta
         for j in coord[slice(0, int((win_sizey - wall_sizey *2) / cell_size))]:
             # Die Wegkosten aller Felder werden auf -10 gesetzt
             costs.update({(i, j): -10})
-    #    print("costs" + str(costs))
     # Liste mit Startwert
     s = [(char.x,  char.y)]
     # Startpunkt wird auf Kosten 0 gesetzt
@@ -57,7 +56,6 @@ def pathfinding(char, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, obsta
         invest = []
 
     # Zielfeld
-    #    print(char.goal)
     z = (char.goal[0], char.goal[1])
 
     i = ()
@@ -70,7 +68,6 @@ def pathfinding(char, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, obsta
                     # je nach geschwindigkeit muss step mehrmals gegangen werden
                     for j in range(0, int(cell_size / char.vel)):
                         char.steps.append((i[0], i[1]))
-                    #                        print("steps:" + str(i))
                     break
         z = (z[0] + i[0] * cell_size, z[1] + i[1] * cell_size)
     char.goal = ()

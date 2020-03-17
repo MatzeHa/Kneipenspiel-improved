@@ -133,7 +133,6 @@ class GameMaxle:
     def turn_player(self):
         turn_valid = False
         # throw dice
-        # TODO: self.action anstatt self.trown, self.call ... = zusammenfassen
         if self.do_action == "dice":
             self.first_round = False
             if not self.thrown:
@@ -589,12 +588,10 @@ class GameMaxle:
             self.p_on_turn = 0
 
     def check_action(self, win, setup, g, lvl):
-        # TODO: umbaun , maxle
         if g.guy.start_game:
             lvl.win_copy_change_mode = win.copy()
             dirtyrects = self.draw_init(win)
             g.guy.start_game = False
-
 
         elif setup.game_maxle.quit:
             dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)

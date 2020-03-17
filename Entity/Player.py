@@ -182,4 +182,3 @@ class Player(Chars.Chrctrs):
                 self.y += self.vel
             if self.dir == 3:
                 self.x -= self.vel
-            print("laufen")

@@ -539,46 +539,6 @@ class LVLMain:
 
         return win, g
 
-    def redraw_game_window(self, win, g):
-        dirtyrects = []
-        # SOUND
-        # Mit jedem Gast werden die Bargeräusche lauter
-        volume = int(sum(i.inside for i in g.guests) / len(g.guests))
-        if g.sound_count <= volume:
-            g.sound_count += 0.0002
-        g.sound1.set_volume(g.sound_count)
-
-        if g.guy.ingame:
-            if g.guy.game == "maxle":
-                if g.guy.start_game:
-                    g.win_copy_2 = win.copy()
-                elif g.guy.end_game:
-                    win.blit(self.sv["win_copy"], (0, 0))
-                    dirtyrects.append(pygame.Rect(0, 0, self.win_w, self.win_h))
-                    g.guy.ingame = False
-                    g.guy.game = ""
-                    g.guy.end_game = False
-
-        # draw
-        self.draw_blits(win, g)
-
-        if g.guy.orderAction == 6:
-            dirtyrects.append(g.order_menue.draw(win, g.win_copy_2, self.win_h))
-
-        elif g.guy.talk_action == 2:
-            # random choice muss hier rein!
-            dirtyrects = dirtyrects + g.dialog_menue.draw(win, g.win_copy_2)
-        if g.guy.ingame:
-            if g.guy.game == "maxle":
-
-                if g.guy.start_game:
-                    dirtyrects = dirtyrects + [self.game_maxle.draw_init(win)]
-                    g.guy.start_game = False
-                else:
-                    dirtyrects = self.game_maxle.do_turn(win)
-
-        return dirtyrects
-
     def draw_blits(self, win, g):
 
         _dirtyrects = []
@@ -708,8 +668,11 @@ class LVLMain:
 
         return dirtyrects
 
-    def run_lvl(self, win, g):
+    def run_lvl(self, win, setup, g):
         # _dirtyrects, run, kitchen = self.redraw_game_window(win, g)
+
+        # TODO: HIER weitermachen! Küche ienbauen, setup.wall_size anpassen!!!
+
 
         dirtyrects = []
 
@@ -717,12 +680,6 @@ class LVLMain:
         run, kitchen = controls_game(self.setup, g)
 
         # Überblitten
-        #        dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))
-        #        for i in g.guests:
-        #            if i.inside:
-        #                dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))
-        #        dirtyrects.append(g.waiter[0].del_blit(win, self.sv["win_copy"]))
-
         dirtyrects = dirtyrects + self.del_last_blit(win, g)
 
         # Berechnungen

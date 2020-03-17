@@ -27,7 +27,6 @@ class OrderMenue:
         if self.AC > 3:
             self.AC -= 1
             self.y = setup.win_h - setup.win_h * 0.9 * (3 / self.AC)
-            print(self.y)
         # Darstellung der Karte
         # win.blit(lvl.win_copy, (0, 0))
         win.blit(Order_pic, (self.x, self.y))
@@ -35,7 +34,6 @@ class OrderMenue:
         j = 0
         # Darstellung des Texte
         for k in self.drinks.keys():
-            print(k)
             if k != 0:
                 i = self.drinks[k][0]
                 if self.choice == j:

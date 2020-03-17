@@ -74,7 +74,6 @@ def controls_game(setup, g):
                 elif event.key == pygame.K_e:
                     walk = False
                     active_inter = dir_check(g.interactables, g.guy)
-                    print(active_inter)
                     if active_inter != 0:
 
                         if active_inter.art == "door":
@@ -221,7 +220,6 @@ def controls_dialog(dialog_menu):
                 if isinstance(dialog_menu.dlst[dialog_menu.Line][1], tuple):
                     dialog_menu.Line = dialog_menu.dlst[dialog_menu.Line][2][dialog_menu.choice]
                     dialog_menu.choice = 0
-                    print("ENTER!!!!")
     return dialog_menu
 
 def controls_walking(setup, g):

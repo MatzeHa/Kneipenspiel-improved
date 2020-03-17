@@ -116,7 +116,6 @@ class Radio:
 
     def draw_int(self, win, win_copy):
         win.blit(win_copy, (self.x, self.y), (self.x, self.y, self.width, self.height))
-        print("musiccount" + str(self.musicCount//10))
         win.blit(OI.img_radio[self.musicCount//10], (self.x, self.y))
 
 

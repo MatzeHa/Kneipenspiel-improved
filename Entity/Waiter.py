@@ -58,7 +58,6 @@ class Waiter(Chars.Chrctrs):
 
     def calc_movement(self, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size):
         if self.inside:
-            # print("Klasse : waiter.draw")
             self.x_old = self.x
             self.y_old = self.y
             #        self.angryness -=2
@@ -69,7 +68,6 @@ class Waiter(Chars.Chrctrs):
 
             # Ober bleibt stehen
             if self.act == 0:
-                # print("waiter : self.act = 0")
 
                 self.walkCount = 0
                 self.blitCount = 0
@@ -169,7 +167,6 @@ class Waiter(Chars.Chrctrs):
                     self.waitCount -= 1
                 else:
                     if self.orders_open != {}:
-                        print("Orders Open")
                         # Er soll sich neuen Gast suchen, wenn:
                         if sum(i[0] == 9 for i in self.orders_open.values()) > 0:
                             # er Geränke rausbringen soll, es also mindestens einen gibt,
@@ -205,7 +202,6 @@ class Waiter(Chars.Chrctrs):
                         elif sum(i[0] in (6, 7, 8) for i in self.orders_open.values()) >= max_guest or \
                                 sum(i[0] == (6, 7, 8) for i in
                                     self.orders_open.values()) == sum(i[2] != 0 for i in self.orders_open.values()):
-                            # print("Zur Theke um zu mixen")
                             g_list = []
                             for i in self.orders_open.keys():
                                 if self.orders_open[i][0] == 6:
@@ -223,7 +219,6 @@ class Waiter(Chars.Chrctrs):
 
                     # Ziel: Wenn nix zu tun ist soll er an der Theke rumgammeln
                     if self.orders_open == {}:
-                        # print("Theke rumgammeln")
                         pos_goals = [(2, 2), (2, 3), (2, 4), (2, 5), (16, 5)]
                         for inter in g.interactables:
                             if isinstance(inter, Door):
@@ -286,9 +281,6 @@ class Waiter(Chars.Chrctrs):
                             # Kollide initiiert, wenn aktulle Position != alte Position
                             #                if (self.x, self.y) != (self.x_old, self.y_old):
                             #                   if self.waitCount == 0:
-                            print("Kollision!!!")
-                            print("self.x, y" + str((self.x, self.y)))
-                            print("self.x_old, y_old" + str((self.x_old, self.y_old)))
 
                             # https://stackoverflow.com/questions/32590131/pygame-blitting-text-with-an-escape-character-or-newline
                             self.text = random.choice(('Hau ab du Bob!', 'Ich hau dir den Drömel aus den Quallen!',
