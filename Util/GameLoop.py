@@ -1,8 +1,8 @@
 import pygame
-from GameModes.CreateChar import CreateChar
-from Level.LVLMain import LVLMain
-from Util.Controls import controls_pause
-from Util.Functions import global_var
+from Scripts.GameModes.CreateChar import CreateChar
+from Scripts.Level.LVLMain import LVLMain
+from Scripts.Util.Controls import controls_pause
+from Scripts.Util.Functions import global_var
 
 pygame.init()
 
@@ -35,8 +35,15 @@ def game_loop(win, setup):
             else:
                 dirtyrects = [pause_menu.blitten()]
 
+        elif g.guy.talk_action == 2:            # besser: if dialog_menu.active:
+            dirtyrects = dirtyrects + g.dialog_menue.draw(win, lvl_main.sv["win_copy_change_mode"])
+
+        elif g.guy.talk_action == 3:  # besser: if dialog_menu.active:
+            g.guy.talk_action = 0
+            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+            win.blit(lvl_main.sv["win_copy"], (0,0))
         else:
-            run, dirtyrects, location = lvl_main.run_lvl(win, setup, g)
+            run, dirtyrects, location = lvl_main.run_lvl(win, g)
 
         '''
         if kitchen:
@@ -57,6 +64,7 @@ def game_loop(win, setup):
         if not pause_menu.quit:
             clock.tick(30)
             pygame.display.update(dirtyrects)
+
         else:
             run = False
             pygame.quit()

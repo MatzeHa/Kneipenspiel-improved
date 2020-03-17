@@ -81,7 +81,7 @@ class global_var:
         self.guy = guy
 
         # vars in lvl_main, always the same vars, but their values change
-        self.win_copy_2 = None
+        # self.win_copy_2 = None
         self.guests = guests
         self.waiter = waiter
         self.clock = clock

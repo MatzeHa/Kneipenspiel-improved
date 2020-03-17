@@ -100,6 +100,9 @@ class Chrctrs:
     def del_blit(self, win, win_copy):
         dirtyrect = pygame.Rect(self.x_old, self.y_old, self.width, self.height)
         win.blit(win_copy, (self.x_old, self.y_old), dirtyrect)
+#        if self.text_count < 51:
+#            self.del_text()
+#        self.del_display(win, win_copy)
         return dirtyrect
 
     def talk(self, win):

@@ -1,6 +1,6 @@
 import pygame
 import random
-import Util.DialogScript as DialogSkript
+import Scripts.Util.DialogScript as DialogSkript
 
 pygame.init()
 
@@ -9,7 +9,7 @@ talk_font = pygame.font.SysFont('Courier', 20, True)
 order_font = pygame.font.SysFont('Courier', 30, True)
 order_choose_font = pygame.font.SysFont('Courier', 30, True)
 # order_choose_font.set_italic(0)
-text_mod = 1  # text-geschwindigkeits-modifikator
+text_mod = 0.5  # text-geschwindigkeits-modifikator
 
 
 class DialogMenue:

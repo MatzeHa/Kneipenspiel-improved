@@ -1,13 +1,13 @@
 import pygame
-from Util.LoadImages import ObstacleImages
+from Scripts.Util.LoadImages import ObstacleImages
 
 pygame.init()
 
-images = ObstacleImages()
+OI = ObstacleImages()
 
 
 class Obstacle:
-    def __init__(self, _id: object, art: object, pic: object, x: object, y: object, width: object, height: object, nr: object = 0, serv_pos: object = (-1, -1)) -> object:
+    def __init__(self, _id, art, pic, x, y, width, height, nr=0, serv_pos=(-1, -1)):
         self.id = _id
         self.art = art
         self.pic = pic
@@ -34,7 +34,7 @@ class Chalkboard:
         self.active = False
 
     def draw(self, win):
-        win.blit(pygame.transform.rotate(images.img_chalkboard, self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_chalkboard, self.rot), (self.x, self.y))
 
 
 class Kerze:
@@ -54,7 +54,7 @@ class Kerze:
         pygame.draw.circle(filter_halo, (255, 255, 0), (round(x+(width/2)), round(y+(height/2))), 64, 0)
 
     def draw(self, win):
-        win.blit(images.img_kerze[self.farbe], (self.x, self.y))
+        win.blit(OI.img_kerze[self.farbe], (self.x, self.y))
 
     def repaint(self, win, win_copy2):
         win.blit(win_copy2, self.repaint_pos, (self.repaint_pos[0], self.repaint_pos[1], 128, 128))
@@ -78,7 +78,7 @@ class KerzeWand:
         pygame.draw.circle(filter_halo, (255, 255, 0), (round(x+(width/2)), round(y+(height/2))), 64, 0)
 
     def draw(self, win):
-        win.blit(pygame.transform.rotate(images.img_kerze_wand, self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_kerze_wand, self.rot), (self.x, self.y))
 
     def repaint(self, win, win_copy2):
         win.blit(win_copy2, self.repaint_pos, (self.repaint_pos[0], self.repaint_pos[1], 128, 128))
@@ -117,7 +117,7 @@ class Radio:
     def draw_int(self, win, win_copy):
         win.blit(win_copy, (self.x, self.y), (self.x, self.y, self.width, self.height))
         print("musiccount" + str(self.musicCount//10))
-        win.blit(images.img_radio[self.musicCount//10], (self.x, self.y))
+        win.blit(OI.img_radio[self.musicCount//10], (self.x, self.y))
 
 
 class Barstool:
@@ -136,7 +136,7 @@ class Barstool:
         self.active = False
 
     def draw(self, win):
-        win.blit(pygame.transform.rotate(images.img_barstool, self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_barstool, self.rot), (self.x, self.y))
 
 
 class Chair:
@@ -155,7 +155,7 @@ class Chair:
         self.serv_pos = serv_pos
 
     def draw(self, win):
-        win.blit(pygame.transform.rotate(images.img_chair, self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_chair, self.rot), (self.x, self.y))
 
 
 class Door:
@@ -184,7 +184,7 @@ class Door:
         elif self.rot == 270:
             self.serv_pos = (coord["w"].index(self.x + (1*cell_size)), coord["h"].index(self.y - (3*cell_size)))
             self.x = x - width
-        if images.rotDict[self.rot] == 1 or images.rotDict[self.rot] == 3:
+        if OI.rotDict[self.rot] == 1 or OI.rotDict[self.rot] == 3:
             old_height = self.height
             self.height = self.width
             self.width = old_height
@@ -207,7 +207,7 @@ class Door:
 
     def draw_int(self, win, win_copy):
         win.blit(win_copy, (self.x, self.y), (self.x, self.y, self.width, self.height))
-        win.blit(pygame.transform.rotate(images.img_door[self.openCount//10], self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_door[self.openCount//10], self.rot), (self.x, self.y))
 
 
 class Stairs:
@@ -232,5 +232,5 @@ class Stairs:
             self.serv_pos = (coord.index(self.x + (0*cell_size)), coord.index(self.y - (1*cell_size)))
 
     def draw(self, win):
-        win.blit(pygame.transform.rotate(images.img_stairs, self.rot), (self.x, self.y))
+        win.blit(pygame.transform.rotate(OI.img_stairs, self.rot), (self.x, self.y))
         pygame.draw.rect(win, (225, 225, 0), (self.serv_pos[0] * 64 + 150, self.serv_pos[1]*64 + 150, 64, 64), 5)

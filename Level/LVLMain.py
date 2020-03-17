@@ -2,57 +2,58 @@ import pygame
 import random
 import math
 
-from Util.LoadImages import ObstacleImages, LVLMainImages
+from Scripts.Util.LoadImages import ObstacleImages, LVLMainImages
 
-from Util.Functions import get_coords, get_max_coord, Raster, global_var
-from Util.Clock import Clock
-from Util.Controls import controls_game
+from Scripts.Util.Functions import get_max_coord, Raster, global_var
+from Scripts.Util.Clock import Clock
+from Scripts.Util.Controls import controls_game
+from Scripts.Util.Functions import IncreaseI
 
-from Entity.Player import Player
-from Entity.Waiter import Waiter
-from Entity.Guest import Guest
-from GameModes.Order import OrderMenue
-from GameModes.Dialog import DialogMenue
+from Scripts.Entity.Player import Player
+from Scripts.Entity.Waiter import Waiter
+from Scripts.Entity.Guest import Guest
+from Scripts.GameModes.Order import OrderMenue
+from Scripts.GameModes.Dialog import DialogMenue
 
-from Util.Obstacles import *
+from Scripts.Minigames import GameMaxle
+
+from Scripts.Util.Obstacles import Obstacle, Chalkboard, Kerze, KerzeWand, Radio, Barstool, Chair, Door, Stairs
 
 pygame.init()
 
 
 class LVLMain:
     def __init__(self, win, setup):
-        self.win_w, self.win_h = win.get_size()
         self.start = True
         self.sv = {"images": LVLMainImages(),
                    "obst_images": ObstacleImages(),
-                   "win_w": self.win_w,
-                   "win_h": self.win_h,
-                   "wall_w": setup.wall_w,
-                   "wall_h": setup.wall_h,
+                   "wall_w": 150,
+                   "wall_h": 150,
                    "cell_size": setup.cell_size,
                    "coord": setup.coord,
                    "max_coord": get_max_coord(setup.coord),
-                   "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size),
-                   "win_copy": win.copy()
+                   "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size)
                    }
-
-        self.game_maxle = False
-        self.g = None
+        self.win_copy = win.copy()
+        self.win_copy_change_mode = win.copy()
+        self.setup = setup
+        self.game_maxle = GameMaxle.GameMaxle
+        self.g = global_var
 
     def init_main(self, win, create_char):
         # Obstacles und Interactables werden erstellt
 
         # create_char = CreateChar()
 
-        filter_halo = pygame.Surface((self.win_w, self.win_h))  # the size of your rect, ist für drunkenness filter
+        filter_halo = pygame.Surface(
+            (self.setup.win_w, self.setup.win_h))  # the size of your rect, ist für drunkenness filter
         filter_halo.set_colorkey((255, 255, 255))  # wichtig für maskieren
         filter_halo.fill((255, 255, 255))
-        surf_text = pygame.Surface((self.win_w, self.win_h))
+        surf_text = pygame.Surface((self.setup.win_w, self.setup.win_h))
 
-        surf_dialog = pygame.Surface((self.sv["win_w"], self.sv["win_h"]))
+        surf_dialog = pygame.Surface((self.setup.win_w, self.setup.win_h))
 
         #    create_char.start_creation()
-        from Util.Functions import IncreaseI
         i = IncreaseI()
 
         # Fonts
@@ -63,15 +64,20 @@ class LVLMain:
         _obstacles = []
         _interactables = []
 
-        _obstacles.append(Obstacle(i.increase(), "Walls_add", images.walls_add1, self.sv["coord"]["w"][21],
-                                   self.sv["coord"]["h"][0],
-                                   images.walls_add1.get_width(), images.walls_add1.get_height()))
         _obstacles.append(
-            Obstacle(i.increase(), "Theke", images.img_bar, self.sv["coord"]["w"][3], self.sv["coord"]["h"][0],
-                     images.img_bar.get_width(), images.img_bar.get_height(), 0, (2, 2)))
-        _obstacles.append(Obstacle(i.increase(), "Schnapsregal", images.img_schnapsregal, self.sv["coord"]["w"][0],
-                                   self.sv["coord"]["h"][0],
-                                   images.img_schnapsregal.get_width(), images.img_schnapsregal.get_height()))
+            Obstacle(i.increase(), "Walls_add", self.sv["obst_images"].walls_add1, self.sv["coord"]["w"][21],
+                     self.sv["coord"]["h"][0],
+                     self.sv["obst_images"].walls_add1.get_width(), self.sv["obst_images"].walls_add1.get_height()))
+        _obstacles.append(
+            Obstacle(i.increase(), "Theke", self.sv["obst_images"].img_bar, self.sv["coord"]["w"][3],
+                     self.sv["coord"]["h"][0],
+                     self.sv["obst_images"].img_bar.get_width(), self.sv["obst_images"].img_bar.get_height(), 0,
+                     (2, 2)))
+        _obstacles.append(
+            Obstacle(i.increase(), "Schnapsregal", self.sv["obst_images"].img_schnapsregal, self.sv["coord"]["w"][0],
+                     self.sv["coord"]["h"][0],
+                     self.sv["obst_images"].img_schnapsregal.get_width(),
+                     self.sv["obst_images"].img_schnapsregal.get_height()))
 
         # Tische und Stühle
         tisch_pos = {"tisch1": (9, 2), "tisch2": (10, 2), "tisch3": (17, 3), "tisch5": (18, 1), "tisch6": (22, 5),
@@ -79,277 +85,320 @@ class LVLMain:
 
         # Tisch 1
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_31, self.sv["coord"]["w"][6], self.sv["coord"]["h"][2],
-                     images.img_table_31.get_width(),
-                     images.img_table_31.get_height(), 1, tisch_pos["tisch1"]))
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_31, self.sv["coord"]["w"][6],
+                     self.sv["coord"]["h"][2],
+                     self.sv["obst_images"].img_table_31.get_width(),
+                     self.sv["obst_images"].img_table_31.get_height(), 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][8], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][8], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][8], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][8], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 1, tisch_pos["tisch1"]))
         _interactables.append(
-            Kerze(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][2], images.img_kerze[0].get_width(),
-                  images.img_kerze[0].get_height(), filter_halo, 0))
+            Kerze(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][2],
+                  self.sv["obst_images"].img_kerze[0].get_width(),
+                  self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 0))
 
         # Tisch 2
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_11, self.sv["coord"]["w"][11],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_11, self.sv["coord"]["w"][11],
                      self.sv["coord"]["h"][2],
-                     images.img_table_11.get_width(),
-                     images.img_table_11.get_height(),
+                     self.sv["obst_images"].img_table_11.get_width(),
+                     self.sv["obst_images"].img_table_11.get_height(),
                      2, tisch_pos["tisch2"]))
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_11, self.sv["coord"]["w"][12],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_11, self.sv["coord"]["w"][12],
                      self.sv["coord"]["h"][2],
-                     images.img_table_11.get_width(),
-                     images.img_table_11.get_height(), 2, tisch_pos["tisch2"]))
+                     self.sv["obst_images"].img_table_11.get_width(),
+                     self.sv["obst_images"].img_table_11.get_height(), 2, tisch_pos["tisch2"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 2, tisch_pos["tisch2"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 2, tisch_pos["tisch2"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][12], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][12], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 2, tisch_pos["tisch2"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][12], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][12], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 2, tisch_pos["tisch2"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][2],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 1))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][12], self.sv["coord"]["h"][2],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 1))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
 
         # Tisch 3
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_11, self.sv["coord"]["w"][16],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_11, self.sv["coord"]["w"][16],
                      self.sv["coord"]["h"][2],
-                     images.img_table_11.get_width(),
-                     images.img_table_11.get_height(), 3, tisch_pos["tisch3"]))
+                     self.sv["obst_images"].img_table_11.get_width(),
+                     self.sv["obst_images"].img_table_11.get_height(), 3, tisch_pos["tisch3"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][16], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][16], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 3, tisch_pos["tisch3"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][16], self.sv["coord"]["h"][3], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][16], self.sv["coord"]["h"][3],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 3, tisch_pos["tisch3"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][17], self.sv["coord"]["h"][2], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][17], self.sv["coord"]["h"][2],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 3, tisch_pos["tisch3"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][16], self.sv["coord"]["h"][2],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 0))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 0))
         # Tisch 5
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_11, self.sv["coord"]["w"][19],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_11, self.sv["coord"]["w"][19],
                      self.sv["coord"]["h"][0],
-                     images.img_table_11.get_width(),
-                     images.img_table_11.get_height(), 5, tisch_pos["tisch5"]))
+                     self.sv["obst_images"].img_table_11.get_width(),
+                     self.sv["obst_images"].img_table_11.get_height(), 5, tisch_pos["tisch5"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][18], self.sv["coord"]["h"][0], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][18], self.sv["coord"]["h"][0],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 5, tisch_pos["tisch5"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][1], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][1],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 5, tisch_pos["tisch5"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][20], self.sv["coord"]["h"][0], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][20], self.sv["coord"]["h"][0],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 5, tisch_pos["tisch5"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][0],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 1))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
 
         # Tisch 6
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_12, self.sv["coord"]["w"][22],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_12, self.sv["coord"]["w"][22],
                      self.sv["coord"]["h"][3],
-                     images.img_table_12.get_width(),
-                     images.img_table_12.get_height(), 6, tisch_pos["tisch6"]))
+                     self.sv["obst_images"].img_table_12.get_width(),
+                     self.sv["obst_images"].img_table_12.get_height(), 6, tisch_pos["tisch6"]))
         _interactables.append(Barstool(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][3],
-                                       images.img_barstool.get_width(),
-                                       images.img_barstool.get_height(), 270, 6, tisch_pos["tisch6"]))
+                                       self.sv["obst_images"].img_barstool.get_width(),
+                                       self.sv["obst_images"].img_barstool.get_height(), 270, 6, tisch_pos["tisch6"]))
         _interactables.append(Barstool(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][4],
-                                       images.img_barstool.get_width(),
-                                       images.img_barstool.get_height(), 270, 6, tisch_pos["tisch6"]))
+                                       self.sv["obst_images"].img_barstool.get_width(),
+                                       self.sv["obst_images"].img_barstool.get_height(), 270, 6, tisch_pos["tisch6"]))
         _interactables.append(Barstool(i.increase(), self.sv["coord"]["w"][23], self.sv["coord"]["h"][3],
-                                       images.img_barstool.get_width(),
-                                       images.img_barstool.get_height(), 90, 6, tisch_pos["tisch6"]))
+                                       self.sv["obst_images"].img_barstool.get_width(),
+                                       self.sv["obst_images"].img_barstool.get_height(), 90, 6, tisch_pos["tisch6"]))
         _interactables.append(Barstool(i.increase(), self.sv["coord"]["w"][23], self.sv["coord"]["h"][4],
-                                       images.img_barstool.get_width(),
-                                       images.img_barstool.get_height(), 90, 6, tisch_pos["tisch6"]))
+                                       self.sv["obst_images"].img_barstool.get_width(),
+                                       self.sv["obst_images"].img_barstool.get_height(), 90, 6, tisch_pos["tisch6"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][22], self.sv["coord"]["h"][3],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 0))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 0))
 
         # Tisch 7
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_13, self.sv["coord"]["w"][20],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_13, self.sv["coord"]["w"][20],
                      self.sv["coord"]["h"][8],
-                     images.img_table_13.get_width(),
-                     images.img_table_13.get_height(), 7, tisch_pos["tisch7"]))
+                     self.sv["obst_images"].img_table_13.get_width(),
+                     self.sv["obst_images"].img_table_13.get_height(), 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][8], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][8],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][9], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][9],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][19], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][8], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][8],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][9], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][9],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 7, tisch_pos["tisch7"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][21], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 7, tisch_pos["tisch7"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][20], self.sv["coord"]["h"][9],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 1))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
 
         # Tisch 9
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_31, self.sv["coord"]["w"][13],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_31, self.sv["coord"]["w"][13],
                      self.sv["coord"]["h"][9],
-                     images.img_table_31.get_width(),
-                     images.img_table_31.get_height(), 9, tisch_pos["tisch9"]))
+                     self.sv["obst_images"].img_table_31.get_width(),
+                     self.sv["obst_images"].img_table_31.get_height(), 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][8], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][8],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][14], self.sv["coord"]["h"][8], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][14], self.sv["coord"]["h"][8],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][15], self.sv["coord"]["h"][8], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][15], self.sv["coord"]["h"][8],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][14], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][14], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 9, tisch_pos["tisch9"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][15], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][15], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   0, 9, tisch_pos["tisch9"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][14], self.sv["coord"]["h"][9],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 0))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 0))
 
         # Tisch 10
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_13, self.sv["coord"]["w"][10],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_13, self.sv["coord"]["w"][10],
                      self.sv["coord"]["h"][9],
-                     images.img_table_13.get_width(),
-                     images.img_table_13.get_height(), 10, tisch_pos["tisch10"]))
+                     self.sv["obst_images"].img_table_13.get_width(),
+                     self.sv["obst_images"].img_table_13.get_height(), 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][9], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][9],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][11], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][9], self.sv["coord"]["h"][11],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][9], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][9],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 10, tisch_pos["tisch10"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][11], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][11], self.sv["coord"]["h"][11],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   90, 10, tisch_pos["tisch10"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][10], self.sv["coord"]["h"][10],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 1))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
 
         # Tisch 11
         _obstacles.append(
-            Obstacle(i.increase(), "Tisch", images.img_table_11, self.sv["coord"]["w"][7],
+            Obstacle(i.increase(), "Tisch", self.sv["obst_images"].img_table_11, self.sv["coord"]["w"][7],
                      self.sv["coord"]["h"][11],
-                     images.img_table_11.get_width(),
-                     images.img_table_11.get_height(), 11, tisch_pos["tisch11"]))
+                     self.sv["obst_images"].img_table_11.get_width(),
+                     self.sv["obst_images"].img_table_11.get_height(), 11, tisch_pos["tisch11"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][11], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][11],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   270, 11, tisch_pos["tisch11"]))
         _interactables.append(
-            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][10], images.img_chair.get_width(),
-                  images.img_chair.get_height(),
+            Chair(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][10],
+                  self.sv["obst_images"].img_chair.get_width(),
+                  self.sv["obst_images"].img_chair.get_height(),
                   180, 11, tisch_pos["tisch11"]))
         _interactables.append(Kerze(i.increase(), self.sv["coord"]["w"][7], self.sv["coord"]["h"][11],
-                                    images.img_kerze[0].get_width(),
-                                    images.img_kerze[0].get_height(), filter_halo, 0))
+                                    self.sv["obst_images"].img_kerze[0].get_width(),
+                                    self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 0))
 
         # Thekenbestuhlung
         _interactables.append(
-            Barstool(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][5], images.img_chair.get_width(),
-                     images.img_chair.get_height(),
+            Barstool(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][5],
+                     self.sv["obst_images"].img_chair.get_width(),
+                     self.sv["obst_images"].img_chair.get_height(),
                      90, 100, tisch_pos["theke"]))
         _interactables.append(
-            Barstool(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][6], images.img_chair.get_width(),
-                     images.img_chair.get_height(),
+            Barstool(i.increase(), self.sv["coord"]["w"][6], self.sv["coord"]["h"][6],
+                     self.sv["obst_images"].img_chair.get_width(),
+                     self.sv["obst_images"].img_chair.get_height(),
                      90, 100, tisch_pos["theke"]))
         _interactables.append(
-            Barstool(i.increase(), self.sv["coord"]["w"][5], self.sv["coord"]["h"][7], images.img_chair.get_width(),
-                     images.img_chair.get_height(),
+            Barstool(i.increase(), self.sv["coord"]["w"][5], self.sv["coord"]["h"][7],
+                     self.sv["obst_images"].img_chair.get_width(),
+                     self.sv["obst_images"].img_chair.get_height(),
                      0, 100, tisch_pos["theke"]))
         _interactables.append(
-            Barstool(i.increase(), self.sv["coord"]["w"][4], self.sv["coord"]["h"][7], images.img_chair.get_width(),
-                     images.img_chair.get_height(),
+            Barstool(i.increase(), self.sv["coord"]["w"][4], self.sv["coord"]["h"][7],
+                     self.sv["obst_images"].img_chair.get_width(),
+                     self.sv["obst_images"].img_chair.get_height(),
                      0, 100, tisch_pos["theke"]))
         _interactables.append(
-            Kerze(i.increase(), self.sv["coord"]["w"][5], self.sv["coord"]["h"][4], images.img_kerze[0].get_width(),
-                  images.img_kerze[0].get_height(), filter_halo, 1))
+            Kerze(i.increase(), self.sv["coord"]["w"][5], self.sv["coord"]["h"][4],
+                  self.sv["obst_images"].img_kerze[0].get_width(),
+                  self.sv["obst_images"].img_kerze[0].get_height(), filter_halo, 1))
 
         # WandKerzen
         _interactables.append(
@@ -362,48 +411,51 @@ class LVLMain:
                       filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][7],
-                      self.sv["win_h"] - self.sv["wall_w"] + self.sv["cell_size"],
-                      images.img_kerze_wand.get_width(),
-                      images.img_kerze_wand.get_height(), 180, filter_halo))
+                      self.setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      self.sv["obst_images"].img_kerze_wand.get_width(),
+                      self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][16], self.sv["wall_h"] - 2 * self.sv["cell_size"],
-                      images.img_kerze_wand.get_width(),
-                      images.img_kerze_wand.get_height(), 0, filter_halo))
+                      self.sv["obst_images"].img_kerze_wand.get_width(),
+                      self.sv["obst_images"].img_kerze_wand.get_height(), 0, filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][16],
-                      self.sv["win_h"] - self.sv["wall_w"] + self.sv["cell_size"],
-                      images.img_kerze_wand.get_width(),
-                      images.img_kerze_wand.get_height(), 180, filter_halo))
+                      self.setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      self.sv["obst_images"].img_kerze_wand.get_width(),
+                      self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(KerzeWand(i.increase(), self.sv["coord"]["w"][22], self.sv["coord"]["h"][1],
-                                        images.img_kerze_wand.get_width(),
-                                        images.img_kerze_wand.get_height(), 0, filter_halo))
+                                        self.sv["obst_images"].img_kerze_wand.get_width(),
+                                        self.sv["obst_images"].img_kerze_wand.get_height(), 0, filter_halo))
 
         _interactables.append(
-            Chalkboard(i.increase(), self.sv["coord"]["w"][11], self.sv["win_h"] - self.sv["wall_h"],
-                       images.img_chalkboard.get_width(),
-                       images.img_chalkboard.get_height(), 180))
+            Chalkboard(i.increase(), self.sv["coord"]["w"][11], self.setup.win_h - self.sv["wall_h"],
+                       self.sv["obst_images"].img_chalkboard.get_width(),
+                       self.sv["obst_images"].img_chalkboard.get_height(), 180))
         i = IncreaseI()
         _interactables.append(
-            Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12], images.img_door[0].get_width(),
-                 images.img_door[0].get_height(),
+            Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12],
+                 self.sv["obst_images"].img_door[0].get_width(),
+                 self.sv["obst_images"].img_door[0].get_height(),
                  0, self.sv["coord"], self.sv["cell_size"], "kitchen"))
         _interactables.append(
-            Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3], images.img_door[0].get_width(),
-                 images.img_door[0].get_height(),
+            Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3],
+                 self.sv["obst_images"].img_door[0].get_width(),
+                 self.sv["obst_images"].img_door[0].get_height(),
                  90, self.sv["coord"], self.sv["cell_size"], "outside"))
         _door_pos = []
 
         _interactables.append(
-            Stairs(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][0], images.img_stairs.get_width(),
-                   images.img_stairs.get_height(),
+            Stairs(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][0],
+                   self.sv["obst_images"].img_stairs.get_width(),
+                   self.sv["obst_images"].img_stairs.get_height(),
                    90, self.sv["coord"][self.sv["max_coord"]], self.sv["cell_size"]))
         for _i in _interactables:
             if _i.art == 'door' or _i.art == 'stairs':
                 _door_pos.append(_i.serv_pos)
 
         _radio = Radio(i.increase(), self.sv["coord"]["w"][1], self.sv["coord"]["h"][0],
-                       images.img_radio[0].get_width(),
-                       images.img_radio[0].get_height())
+                       self.sv["obst_images"].img_radio[0].get_width(),
+                       self.sv["obst_images"].img_radio[0].get_height())
         _interactables.append(_radio)
 
         # drinks: Nr. : ('Name', Preis, Alkoholgehalt. # ?Anzahl der Schlücke? #
@@ -424,7 +476,7 @@ class LVLMain:
         _clock = Clock(i.increase(), 50, 500)
 
         _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], self.sv["cell_size"],
-                      self.sv["cell_size"], True, create_char.new_tilemap, 64 / 6)
+                      self.sv["cell_size"], True, create_char.new_tilemap, 64 / 8)
         _waiter = [
             Waiter(self.sv["coord"]["w"][2], self.sv["coord"]["h"][2], self.sv["cell_size"], self.sv["cell_size"],
                    _obstacles, True,
@@ -440,12 +492,12 @@ class LVLMain:
         # invent = Inventory()
 
         _order_menue = OrderMenue(_drinks)
-        _dialog_menue = DialogMenue(self.win_w, self.sv["win_h"], surf_dialog, _guy)
+        _dialog_menue = DialogMenue(self.setup.win_w, self.setup.win_h, surf_dialog, _guy)
 
         _halo_count = 1
 
-        return _obstacles, _interactables, _door_pos, _radio, _drinks, _chairs, _kerzen_list, _clock, _guy, _waiter,\
-            _guests, _order_menue, _dialog_menue, _halo_count, surf_text, filter_halo
+        return _obstacles, _interactables, _door_pos, _radio, _drinks, _chairs, _kerzen_list, _clock, _guy, _waiter, \
+               _guests, _order_menue, _dialog_menue, _halo_count, surf_text, filter_halo
 
     def init_draw(self, win, create_char):
 
@@ -460,19 +512,19 @@ class LVLMain:
         win.blit(self.sv["images"].bg, (0, 0))
         win.blit(self.sv["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
 
-        obstacles, interactables, door_pos, radio, drinks, chairs, kerzen_list, clock, guy, waiter,\
-            guests, order_menue, dialog_menue, halo_count, surf_text, filter_halo = self.init_main(win, create_char)
+        obstacles, interactables, door_pos, radio, drinks, chairs, kerzen_list, clock, guy, waiter, \
+        guests, order_menue, dialog_menue, halo_count, surf_text, filter_halo = self.init_main(win, create_char)
 
         for obst in obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
 
         inventory_active = False
         text_count = 50
-        win_copy = win.copy()
+        self.sv["win_copy"] = win.copy()
 
         for inter in interactables:
             if inter.art == 'door' or inter.art == 'radio':
-                inter.draw_int(win, win_copy)
+                inter.draw_int(win, self.sv["win_copy"])
             else:
                 inter.draw(win)
 
@@ -507,13 +559,6 @@ class LVLMain:
                 g.guy.ingame = False
                 g.guy.end_game = False
 
-        dirtyrects = dirtyrects + self.del_last_blit(win, g)
-
-
-        # movement_calculation
-        if g.guy.orderAction != 5 and g.guy.orderAction != 6 and g.guy.talk_action != 2 and not g.guy.ingame:
-            dirtyrects = dirtyrects + self.movement_calcuation(win, g)
-
         # draw
         self.draw_blits(win, g)
 
@@ -525,7 +570,6 @@ class LVLMain:
             dirtyrects = dirtyrects + g.dialog_menue.draw(win, g.win_copy_2)
         if g.guy.ingame:
             if g.guy.start_game:
-
                 dirtyrects = dirtyrects + [self.game_maxle.draw_init(win)]
                 g.guy.start_game = False
             else:
@@ -581,7 +625,7 @@ class LVLMain:
         _dirtyrects.append(g.guy.calc_movement(win, g))
         # Waiter
         _dirtyrects.append(g.waiter[0].calc_movement(g, self.sv["coord"][self.sv["max_coord"]],
-                                                     self.sv["win_w"], self.sv["win_h"],
+                                                     self.setup.win_w, self.setup.win_h,
                                                      self.sv["wall_w"], self.sv["wall_h"],
                                                      g.door_pos, self.sv["cell_size"]))
 
@@ -589,10 +633,10 @@ class LVLMain:
         for guest in g.guests:
             if guest.walk_in[0] == g.clock.h_m[0] and guest.walk_in[1] <= g.clock.h_m[1] or guest.walk_in[0] < \
                     g.clock.h_m[0]:
-                guest.calc_movement(g, self.sv["coord"][self.sv["max_coord"]],
-                                    self.sv["win_w"], self.sv["win_h"],
-                                    self.sv["wall_w"], self.sv["wall_h"],
-                                    self.sv["cell_size"])
+                _dirtyrects.append(guest.calc_movement(g, self.sv["coord"][self.sv["max_coord"]],
+                                                       self.setup.win_w, self.setup.win_h,
+                                                       self.sv["wall_w"], self.sv["wall_h"],
+                                                       self.sv["cell_size"]))
         # Displays
         _dirtyrects.append(g.guy.calc_display())  # Display g.guy
         _dirtyrects.append(g.waiter[0].calc_display())  # Display Waiter
@@ -601,85 +645,86 @@ class LVLMain:
                 _dirtyrects.append(i.calc_display())  # Display Gäste
         return _dirtyrects
 
-    def del_last_blit(self, win, setup, g):
-        dirtyrects = list()
-
+    def del_last_blit(self, win, g):
+        dirtyrects = []
         if g.guy.ingame:
             if g.guy.start_game:
-                g.win_copy_2 = win.copy()
+                pass
+            #                self.sv["win_copy"] = win.copy()
             elif g.guy.end_game:
                 win.blit(self.sv["win_copy"], (0, 0))
                 dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
                 g.guy.ingame = False
                 g.guy.end_game = False
-        # wenn OrderMenue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
-        elif g.guy.orderAction == 5:
-            win_copy_2 = win.copy()
-            g.guy.orderAction = 6
+            # wenn OrderMenue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
+            elif g.guy.orderAction == 5:
+                # self.sv["win_copy"]
+                g.guy.orderAction = 6
 
-        # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
-        elif g.guy.orderAction == 7:
-            win.blit(g.win_copy_2, (0, 0))
-            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
-            g.guy.orderAction = 8
+            # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
+            elif g.guy.orderAction == 7:
+                win.blit(self.sv["win_copy"], (0, 0))
+                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
+                g.guy.orderAction = 8
 
-        # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
-        elif g.guy.talk_action == 1:
-            g.win_copy_2 = win.copy()
-            g.guy.talk_action = 2
+            # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
+            elif g.guy.talk_action == 1:
+                self.sv["win_copy_change_mode"] = win.copy()
+                g.guy.talk_action = 2
 
-        # überblitten mit alter Kopie
-        elif g.guy.talk_action == 2:
-            win.blit(self.sv["win_copy"], (0, 0))
-            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
+            # überblitten mit alter Kopie
+            elif g.guy.talk_action == 2:
+                win.blit(self.sv["win_copy"], (0, 0))
+                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
 
-        # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
-        # wieder mit Kopie ohne bewegliche sachen überblittet werden.
-        else:
-            dirtyrects.append(g.radio.del_blit(win, self.sv["win_copy"]))
-            for i in g.kerzen_list:  # Kerzen löschen
-                dirtyrects.append(i.repaint(win, self.sv["win_copy"]))
-            dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))  # g.guy
-            dirtyrects.append(g.guy.del_display(win, self.sv["win_copy"]))  # Display g.guy
-            if g.guy.text_count < 51:  # Textzeile wieder überblitten
-                dirtyrects.append(g.guy.del_text(win, self.sv["win_copy"]))
+            # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
+            # wieder mit Kopie ohne bewegliche sachen überblittet werden.
+            else:
+                dirtyrects.append(g.radio.del_blit(win, self.sv["win_copy"]))
+                for i in g.kerzen_list:  # Kerzen löschen
+                    dirtyrects.append(i.repaint(win, self.sv["win_copy"]))
+                dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))  # g.guy
+                dirtyrects.append(g.guy.del_display(win, self.sv["win_copy"]))  # Display g.guy
+                if g.guy.text_count < 51:  # Textzeile wieder überblitten
+                    dirtyrects.append(g.guy.del_text(win, self.sv["win_copy"]))
 
-            dirtyrects.append(g.waiter[0].del_blit(win, self.sv["win_copy"]))  # Waiter
-            dirtyrects.append(g.waiter[0].del_display(win, self.sv["win_copy"]))  # Display Waiter
-            if g.waiter[0].text_count < 51:  # Textzeile wieder überblitten
-                dirtyrects.append(g.waiter[0].del_text(win, self.sv["win_copy"]))
+                dirtyrects.append(g.waiter[0].del_blit(win, self.sv["win_copy"]))  # Waiter
+                dirtyrects.append(g.waiter[0].del_display(win, self.sv["win_copy"]))  # Display Waiter
+                if g.waiter[0].text_count < 51:  # Textzeile wieder überblitten
+                    dirtyrects.append(g.waiter[0].del_text(win, self.sv["win_copy"]))
 
-            for i in g.guests:
-                dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))  # Guests
-                dirtyrects.append(i.del_display(win, self.sv["win_copy"]))  # Display Waiter
-                if i.text_count < 51:  # Textzeile wieder überblitten
-                    dirtyrects.append(i.del_text(win, self.sv["win_copy"]))
-        #        # Inventar offen:
-        #        if inventory_active:
-        #            invent.draw(win, inventory_pic, g.guy.inventory)
+                for i in g.guests:
+                    dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))  # Guests
+                    dirtyrects.append(i.del_display(win, self.sv["win_copy"]))  # Display Waiter
+                    if i.text_count < 51:  # Textzeile wieder überblitten
+                        dirtyrects.append(i.del_text(win, self.sv["win_copy"]))
+            #        # Inventar offen:
+            #        if inventory_active:
+            #            invent.draw(win, inventory_pic, g.guy.inventory)
 
         return dirtyrects
 
-    def run_lvl(self, win, setup, g):
+    def run_lvl(self, win, g):
         # _dirtyrects, run, kitchen = self.redraw_game_window(win, g)
 
         dirtyrects = []
 
-        run, kitchen = controls_game(setup, g)
-
-        # Guests Move-Calculations:
+        # Move-Calculations:
+        run, kitchen = controls_game(self.setup, g)
 
         # Überblitten
-        dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))
+        #        dirtyrects.append(g.guy.del_blit(win, self.sv["win_copy"]))
+        #        for i in g.guests:
+        #            if i.inside:
+        #                dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))
+        #        dirtyrects.append(g.waiter[0].del_blit(win, self.sv["win_copy"]))
+
+        dirtyrects = dirtyrects + self.del_last_blit(win, g)
 
         # Berechnungen
         dirtyrects = dirtyrects + self.movement_calcuation(win, g)
 
         # Blitten
-        g.guy.draw_char(win)
-
-        if self.start:
-            self.start = False
-            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+        self.draw_blits(win, g)
 
         return run, dirtyrects, kitchen

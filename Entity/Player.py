@@ -1,6 +1,6 @@
 import pygame
 import random
-import Entity.Chars as Chars
+import Scripts.Entity.Chars as Chars
 
 pygame.init()
 

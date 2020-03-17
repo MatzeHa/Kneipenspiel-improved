@@ -1,7 +1,6 @@
 import pygame
 import random
-from Util.ScaleImage import scale_image
-
+from Scripts.Util.ScaleImage import scale_image
 
 def order_tuple(to_order):
     if to_order[0] < to_order[1]:

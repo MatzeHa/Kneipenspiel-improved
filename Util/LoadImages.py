@@ -48,9 +48,41 @@ class ObstacleImages:
 
 class LVLMainImages:
     def __init__(self):
-        import os
-        print(os.getcwd())
         self.bg = pygame.image.load('../Graph/GUI/walls_big.png').convert()
         self.img_ground = pygame.image.load('../Graph/GUI/floor_big.png').convert()
         self.inventory_pic = pygame.image.load('../Graph/GUI/inventory.png').convert()
         self.game_over = pygame.image.load('../Graph/GUI/gameOver.png').convert()
+
+
+class CharCreationImages:
+    def __init__(self):
+        from Scripts.Util.ScaleImage import scale_image
+        img_tilemap_guy = pygame.image.load("../Graph/chars/guy/guy_BW.png")
+
+        self.img_guy_BW = {"head": img_tilemap_guy.subsurface((0, 0, 64, 64)),
+                           "shirt": img_tilemap_guy.subsurface((64, 0, 64, 64)),
+                           "pants_sit": img_tilemap_guy.subsurface((128, 0, 64, 64)),
+                           "shoes_sit": img_tilemap_guy.subsurface((192, 0, 64, 64)),
+                           "shoes_walk0": img_tilemap_guy.subsurface((0, 64, 64, 64)),
+                           "shoes_walk1": img_tilemap_guy.subsurface((64, 64, 64, 64)),
+                           "shoes_walk2": img_tilemap_guy.subsurface((128, 64, 64, 64)),
+                           "shoes_walk3": img_tilemap_guy.subsurface((192, 64, 64, 64)),
+                           "hands_sit": img_tilemap_guy.subsurface((0, 128, 64, 64)),
+                           "hands_walk1": img_tilemap_guy.subsurface((64, 128, 64, 64)),
+                           "hands_walk2": img_tilemap_guy.subsurface((128, 128, 64, 64)),
+                           "hands_walk3": img_tilemap_guy.subsurface((192, 128, 64, 64)),
+                           "pants_walk2": img_tilemap_guy.subsurface((128, 192, 64, 64)),
+                           "pants_walk3": img_tilemap_guy.subsurface((192, 192, 64, 64))
+                           }
+
+        self.img_head_bw, _ = scale_image(self.img_guy_BW["head"], 300)
+        self.img_head = self.img_head_bw.copy()
+        self.img_shirt_bw, _ = scale_image(self.img_guy_BW["shirt"], 300)
+        self.img_shirt = self.img_shirt_bw.copy()
+        self.img_pants_bw, _ = scale_image(self.img_guy_BW["pants_sit"], 300)
+        self.img_pants = self.img_pants_bw.copy()
+        self.img_shoes_bw, _ = scale_image(self.img_guy_BW["shoes_sit"], 300)
+        self.img_shoes = self.img_shoes_bw.copy()
+        self.img_hands_bw, _ = scale_image(self.img_guy_BW["hands_sit"], 300)
+        self.img_hands = self.img_hands_bw.copy()
+        self.img_w, self.img_h = self.img_head.get_size()
