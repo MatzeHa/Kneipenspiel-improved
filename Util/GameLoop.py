@@ -30,11 +30,12 @@ def game_loop(win, setup):
             dirtyrects = pause_menu.check_action(win, lvl_main)
 
         elif g.dialog_menue.active:
+            # TODO: controls
             dirtyrects = g.dialog_menue.check_action(win, lvl_main)
 
         elif g.guy.game == "maxle":
             setup.game = controls_maxle(setup.game_maxle, g.guy, g.drinks)
-            dirtyrects = setup.game.check_action(win, lvl_main)
+            dirtyrects = setup.game.check_action(win, setup, g, lvl_main)
 
         else:
             run, dirtyrects, location = lvl_main.run_lvl(win, g)

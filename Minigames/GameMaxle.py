@@ -1,6 +1,7 @@
 import pygame
 import random
 from Scripts.Util.ScaleImage import scale_image
+
 def order_tuple(to_order):
     if to_order[0] < to_order[1]:
         t = (to_order[1], to_order[0])
@@ -590,13 +591,17 @@ class GameMaxle:
     def check_action(self, win, setup, g, lvl):
         # TODO: umbaun , maxle
         if g.guy.start_game:
-            dirtyrects = setup.game_maxle.draw_init(win)
+            lvl.win_copy_change_mode = win.copy()
+            dirtyrects = self.draw_init(win)
             g.guy.start_game = False
+
+
         elif setup.game_maxle.quit:
             dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
-            win.blit(lvl.sv["win_copy"], (0, 0))
-            setup.game_maxle.quit = False
+            win.blit(lvl.win_copy_change_mode, (0, 0))
+            self.quit = False
             g.guy.game = ""
+            g.guy.ingame = False
         else:
             dirtyrects = setup.game_maxle.do_turn(win)
         return dirtyrects
