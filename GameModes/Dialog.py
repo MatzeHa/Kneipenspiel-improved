@@ -14,6 +14,8 @@ text_mod = 0.5  # text-geschwindigkeits-modifikator
 
 class DialogMenue:
     def __init__(self, win_sizex, win_sizey, surf_dialog, char):
+        self.active = False
+
         self.surf = surf_dialog
         self.x_t1 = win_sizex * 0.05  # x_t1 =x.Koordinate von Talker 1
         self.y_t1 = win_sizey * 0.05
@@ -106,3 +108,15 @@ class DialogMenue:
             self.chars[0].talk_action = 3
 
         return self.dirtyrects
+
+    def check_action(self, win, setup, g, lvl):
+        dirtyrects = []
+        if g.guy.talk_action == 2:  # besser: if dialog_menu.active:
+            dirtyrects = g.dialog_menue.draw(win, lvl.sv["win_copy_change_mode"])
+
+        elif g.guy.talk_action == 3:  # besser: if dialog_menu.active:
+            g.dialog_menue.active = False
+            g.guy.talk_action = 0
+            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+            win.blit(lvl.sv["win_copy"], (0, 0))
+        return dirtyrects

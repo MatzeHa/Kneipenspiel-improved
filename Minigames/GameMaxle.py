@@ -1,7 +1,6 @@
 import pygame
 import random
 from Scripts.Util.ScaleImage import scale_image
-
 def order_tuple(to_order):
     if to_order[0] < to_order[1]:
         t = (to_order[1], to_order[0])
@@ -20,7 +19,8 @@ img_dice = [pygame.image.load('../graph/games/wurf1.png'), pygame.image.load('..
             pygame.image.load('../graph/games/wurf5.png'), pygame.image.load('../graph/games/wurf6.png')]
 img_dice = [scale_image(img, 50)[0] for img in img_dice]
 
-img_Buttons = {"A": pygame.image.load('../graph/GUI/button_A.png'), "W": pygame.image.load('../graph/GUI/button_W.png')}
+img_Buttons = {"A": pygame.image.load('../graph/GUI/button_A.png'),
+               "W": pygame.image.load('../graph/GUI/button_W.png')}
 img_bg = pygame.image.load('../graph/games/holztisch.png')
 
 font = pygame.font.SysFont('Courier', 30, True)
@@ -85,14 +85,12 @@ class GameMaxle:
         self.dice_chose = 0
         self.show_dice = False
         self.do_action = None
+        self.quit = False
 
     def draw_init(self, win):
-        print("### MÄXLE ###")
-        print(dice_order)
         self.cup_status = 0
         dirtyrect = pygame.Rect(win_SHIFTX, win_SHIFTY, win_WIDTH, win_HEIGHT)
         win.blit(img_bg, (dirtyrect.x, dirtyrect.y))
-        # pygame.draw.rect(win, bg_color, dirtyrect)
         self.draw_portraits(win)
         if self.p_on_turn == 0:
             self.draw_help(win)
@@ -589,4 +587,17 @@ class GameMaxle:
         if self.p_on_turn == self.nr_players:
             self.p_on_turn = 0
 
+    def check_action(self, win, setup, g, lvl):
+        # TODO: umbaun , maxle
+        if g.guy.start_game:
+            dirtyrects = setup.game_maxle.draw_init(win)
+            g.guy.start_game = False
+        elif setup.game_maxle.quit:
+            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+            win.blit(lvl.sv["win_copy"], (0, 0))
+            setup.game_maxle.quit = False
+            g.guy.game = ""
+        else:
+            dirtyrects = setup.game_maxle.do_turn(win)
+        return dirtyrects
 

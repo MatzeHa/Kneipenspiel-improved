@@ -1,7 +1,7 @@
 import pygame
 from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVLMain import LVLMain
-from Scripts.Util.Controls import controls_pause
+from Scripts.Util.Controls import controls_pause, controls_maxle
 from Scripts.Util.Functions import global_var
 
 pygame.init()
@@ -10,7 +10,6 @@ pygame.init()
 def game_loop(win, setup):
     clock = pygame.time.Clock()
     pause_menu = setup.pause_menu
-
     create_char = CreateChar(setup)
     create_char.start_creation(win)
 
@@ -28,20 +27,15 @@ def game_loop(win, setup):
 
         elif pause_menu.active:
             run = controls_pause(pause_menu)
-            if pause_menu.end_pause:
-                dirtyrects.append(pause_menu.dirtyrect)
-                setup.update_bg(win)
-                pause_menu.reset_pause_menu()
-            else:
-                dirtyrects = [pause_menu.blitten()]
+            dirtyrects = pause_menu.check_action(win, lvl_main)
 
-        elif g.guy.talk_action == 2:            # besser: if dialog_menu.active:
-            dirtyrects = dirtyrects + g.dialog_menue.draw(win, lvl_main.sv["win_copy_change_mode"])
+        elif g.dialog_menue.active:
+            dirtyrects = g.dialog_menue.check_action(win, lvl_main)
 
-        elif g.guy.talk_action == 3:  # besser: if dialog_menu.active:
-            g.guy.talk_action = 0
-            dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
-            win.blit(lvl_main.sv["win_copy"], (0,0))
+        elif g.guy.game == "maxle":
+            setup.game = controls_maxle(setup.game_maxle, g.guy, g.drinks)
+            dirtyrects = setup.game.check_action(win, lvl_main)
+
         else:
             run, dirtyrects, location = lvl_main.run_lvl(win, g)
 

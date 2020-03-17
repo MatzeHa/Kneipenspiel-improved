@@ -11,6 +11,7 @@ class PauseMenu:
         self.win_width, self.win_height = win_size
 
         self.active = False
+        self.start_pause = False
         self.end_pause = False
         self.quit = False
 
@@ -97,6 +98,22 @@ class PauseMenu:
                            "graphics": [sli30, sli31, sli32, dis33, but34],
                            "quit": [0, but40, but41, 0]}
 
+    def check_action(self, win, lvl):
+        if self.start_pause:
+            dirtyrects = self.dirtyrect
+            self.start_pause_fun(win, lvl)
+            self.start_pause = False
+
+        elif self.end_pause:
+            dirtyrects = self.dirtyrect
+            # setup.update_bg(win)
+            self.reset_pause_menu()
+            win.blit(lvl.win_copy_change_mode, (0, 0))
+
+        else:
+            dirtyrects = self.blitten()
+        return dirtyrects
+
     def pause_fun(self, x):
         self.screen = "pause_menu"
         self.nr_selectables = [1, 1, 1, 1, 1]
@@ -129,6 +146,9 @@ class PauseMenu:
         self.end_pause = False
         pygame.mouse.set_visible(False)
         self.active = False
+
+    def start_pause_fun(self, win, lvl):
+        lvl.win_copy_change_mode = win.copy()
 
     def end_pause_fun(self, x):
         self.set_bgcolor()
@@ -295,3 +315,5 @@ class PauseMenu:
 
         def click(self, mouse_pos):
             self.val = (mouse_pos[0] - self.pos[0])/self.intervall
+
+

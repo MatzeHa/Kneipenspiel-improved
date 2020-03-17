@@ -15,7 +15,6 @@ from Scripts.Entity.Guest import Guest
 from Scripts.GameModes.Order import OrderMenue
 from Scripts.GameModes.Dialog import DialogMenue
 
-from Scripts.Minigames import GameMaxle
 
 from Scripts.Util.Obstacles import Obstacle, Chalkboard, Kerze, KerzeWand, Radio, Barstool, Chair, Door, Stairs
 
@@ -37,7 +36,6 @@ class LVLMain:
         self.win_copy = win.copy()
         self.win_copy_change_mode = win.copy()
         self.setup = setup
-        self.game_maxle = GameMaxle.GameMaxle
         self.g = global_var
 
     def init_main(self, win, create_char):
@@ -551,13 +549,15 @@ class LVLMain:
         g.sound1.set_volume(g.sound_count)
 
         if g.guy.ingame:
-            if g.guy.start_game:
-                g.win_copy_2 = win.copy()
-            elif g.guy.end_game:
-                win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, self.win_w, self.win_h))
-                g.guy.ingame = False
-                g.guy.end_game = False
+            if g.guy.game == "maxle":
+                if g.guy.start_game:
+                    g.win_copy_2 = win.copy()
+                elif g.guy.end_game:
+                    win.blit(self.sv["win_copy"], (0, 0))
+                    dirtyrects.append(pygame.Rect(0, 0, self.win_w, self.win_h))
+                    g.guy.ingame = False
+                    g.guy.game = ""
+                    g.guy.end_game = False
 
         # draw
         self.draw_blits(win, g)
@@ -569,11 +569,13 @@ class LVLMain:
             # random choice muss hier rein!
             dirtyrects = dirtyrects + g.dialog_menue.draw(win, g.win_copy_2)
         if g.guy.ingame:
-            if g.guy.start_game:
-                dirtyrects = dirtyrects + [self.game_maxle.draw_init(win)]
-                g.guy.start_game = False
-            else:
-                dirtyrects = self.game_maxle.do_turn(win)
+            if g.guy.game == "maxle":
+
+                if g.guy.start_game:
+                    dirtyrects = dirtyrects + [self.game_maxle.draw_init(win)]
+                    g.guy.start_game = False
+                else:
+                    dirtyrects = self.game_maxle.do_turn(win)
 
         return dirtyrects
 
@@ -647,15 +649,16 @@ class LVLMain:
 
     def del_last_blit(self, win, g):
         dirtyrects = []
-        if g.guy.ingame:
+        if not g.guy.ingame:
             if g.guy.start_game:
                 pass
             #                self.sv["win_copy"] = win.copy()
-            elif g.guy.end_game:
-                win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
-                g.guy.ingame = False
-                g.guy.end_game = False
+#            elif g.guy.end_game:
+#                win.blit(self.sv["win_copy"], (0, 0))
+#                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
+#                g.guy.ingame = False
+#                g.guy.game = ""
+#                g.guy.end_game = False
             # wenn OrderMenue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
             elif g.guy.orderAction == 5:
                 # self.sv["win_copy"]
@@ -670,6 +673,7 @@ class LVLMain:
             # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
             elif g.guy.talk_action == 1:
                 self.sv["win_copy_change_mode"] = win.copy()
+                g.dialog_menue.active = True
                 g.guy.talk_action = 2
 
             # überblitten mit alter Kopie

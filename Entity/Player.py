@@ -42,9 +42,10 @@ class Player(Chars.Chrctrs):
         self.drink = False
         self.sips = 0
         self.sipCount = 8
-        self.ingame = 1
+        self.ingame = False
         self.start_game = False
         self.end_game = False
+        self.game = ""
 
     def calc_movement(self, win, g):
         self.x_old = self.x

@@ -2,6 +2,7 @@ import os
 
 import pygame
 from Scripts.GameModes.PauseMenu import PauseMenu
+from Scripts.GameModes.Dialog import DialogMenue
 from Scripts.Util.Functions import get_coords
 from Scripts.Util.GameLoop import game_loop
 

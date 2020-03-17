@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 
+
 def controls_pause(pause_menue):
     _run = True
     for event in pygame.event.get():
@@ -9,7 +10,7 @@ def controls_pause(pause_menue):
             _run = False
         if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION:
             pause_menue.do_action_mouse(pygame.mouse.get_pos(), pygame.mouse.get_pressed())
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             # pygame.key.set_repeat(0, 0)
 
             if event.key == pygame.K_UP:

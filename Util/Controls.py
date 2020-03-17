@@ -5,7 +5,6 @@ import sys
 from Scripts.Util.QuitGame import quit_game
 from Scripts.Util.DirCheck import dir_check
 from Scripts.Util.Obstacles import Radio
-from Scripts.Minigames.GameMaxle import GameMaxle
 
 pygame.init()
 pygame.key.set_repeat()
@@ -20,8 +19,7 @@ def controls_pause(pause_menu):
             quit_game()
         elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION:
             pause_menu.do_action_mouse(pygame.mouse.get_pos(), pygame.mouse.get_pressed())
-#        elif event.type == pygame.KEYDOWN:
-        elif event.type == pygame.key:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 quit_game()
 
@@ -57,11 +55,10 @@ def controls_pause(pause_menu):
 
 
 def controls_game(setup, g):
-    # game_maxle_control(self.game_maxle, keys, g.guy, g.drinks) # TODO: umbaun
     run = True
     walk = True
     kitchen = False
-    if g.guy.ingame:
+    if not g.guy.ingame:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit_game()
@@ -70,6 +67,7 @@ def controls_game(setup, g):
                     quit_game()
                 elif event.key == pygame.K_p:
                     setup.pause_menu.active = True
+                    setup.pause_menu.start_pause = True
                     walk = False
                 # Bestellen
                 elif g.guy.orderAction == 5 or g.guy.orderAction == 6:
@@ -196,9 +194,12 @@ def controls_game(setup, g):
                         if g.guy.sit:
                             players = [guest for guest in g.guests if guest.sit and guest.chair.nr == g.guy.table]
                         if players:
-                            game_maxle = GameMaxle(g.guy, players, g.drinks)
+                            from Scripts.Minigames.GameMaxle import GameMaxle
+
                             g.guy.ingame = True
+                            g.guy.game = "maxle"
                             g.guy.start_game = True
+                            setup.game_maxle = GameMaxle(g.guy, players, g.drinks)
         # Laufen
         if walk:
             run, game_maxle, inventory_active, kitchen = controls_walking(setup, g)
@@ -245,27 +246,35 @@ def controls_walking(setup, g):
     return run, game_maxle, inventory_active, kitchen
 
 
-def game_maxle_control(game, keys, guy, drinks):
-    if keys[pygame.K_w]:
-        if game.p_on_turn == 0 and game.do_action != "thrown" and game.do_action != "doubt":
-            game.do_action = "dice"
-    if keys[pygame.K_a]:
-        if game.p_on_turn == 0 and not game.first_round and game.do_action != "thrown" and \
-                game.do_action != "dice" and game.do_action != "doubt":
-            game.do_action = "doubt"
-    if game.do_action == "thrown":
-        if keys[pygame.K_UP]:
-            game.incr_dice()
-        if keys[pygame.K_DOWN]:
-            game.decr_dice()
-        if keys[pygame.K_RIGHT]:
-            game.dice_chose = 1
-        if keys[pygame.K_LEFT]:
-            game.dice_chose = 0
-        if keys[pygame.K_e]:
-            if not game.first_round:
-                game.player_called = True
+def controls_maxle(game, guy, drinks):
+    for event in pygame.event.get():
 
+        if event.type == pygame.QUIT:
+            quit_game()
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                game.quit = True
+            if event.key == pygame.K_w:
+                if game.p_on_turn == 0 and game.do_action != "thrown" and game.do_action != "doubt":
+                    game.do_action = "dice"
+            if event.key == pygame.K_a:
+                if game.p_on_turn == 0 and not game.first_round and game.do_action != "thrown" and \
+                        game.do_action != "dice" and game.do_action != "doubt":
+                    game.do_action = "doubt"
+            if game.do_action == "thrown":
+                if event.key == pygame.K_UP:
+                    game.incr_dice()
+                if event.key == pygame.K_DOWN:
+                    game.decr_dice()
+                if event.key == pygame.K_RIGHT:
+                    game.dice_chose = 1
+                if event.key == pygame.K_LEFT:
+                    game.dice_chose = 0
+                if event.key == pygame.K_e:
+                    if not game.first_round:
+                        game.player_called = True
+    return game
 
 ''''
 
