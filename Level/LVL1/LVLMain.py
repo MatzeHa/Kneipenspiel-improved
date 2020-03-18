@@ -4,7 +4,7 @@ import math
 
 from Scripts.Util.LoadImages import ObstacleImages, LVLMainImages
 
-from Scripts.Util.Functions import get_max_coord, Raster, global_var, move_interactables
+from Scripts.Util.Functions import get_max_coord, Raster, global_var, draw_interactables
 from Scripts.Util.Clock import Clock
 from Scripts.Util.Controls import controls_game
 from Scripts.Util.Functions import IncreaseI
@@ -40,6 +40,7 @@ class LVLMain:
         self.sublevel = "Main"
         self.active_IA = []         # active Interactables
         self.travel = False
+
 
     def init_main(self, win, create_char):
         # Create Surfaces for Filters (Licht)
@@ -547,6 +548,9 @@ class LVLMain:
 
         _dirtyrects = []
         g.clock.draw(win)
+        for i in self.active_IA:
+            draw_interactables(win, self.sv["win_copy"], i)
+
         # characters
         g.guy.draw_char(win)
         g.waiter[0].draw_char(win)
@@ -581,11 +585,9 @@ class LVLMain:
     def movement_calcuation(self, win, g):
         _dirtyrects = []
 
-
         # all interactables with own animation
         for i in self.active_IA:
-            _dirtyrects.append(move_interactables(win, self.sv["win_copy"], i))
-
+            _dirtyrects.append(i.calc())
 
         # CALCULATE MOVEMENTS
         # g.guy
@@ -682,17 +684,13 @@ class LVLMain:
         # Move-Calculations:
         run = controls_game(self.setup, g, lvl)
 
-        if lvl.sublevel == "Main":
-            # Überblitten
-            dirtyrects = dirtyrects + self.del_last_blit(win, g)
+        # Überblitten
+        dirtyrects = dirtyrects + self.del_last_blit(win, g)
 
-            # Berechnungen
-            dirtyrects = dirtyrects + self.movement_calcuation(win, g)
+        # Berechnungen
+        dirtyrects = dirtyrects + self.movement_calcuation(win, g)
 
-            # Blitten
-            self.draw_blits(win, g)
-
-        if lvl.sublevel == "Kitchen":
-            print("PUPU")
+        # Blitten
+        self.draw_blits(win, g)
 
         return run, dirtyrects

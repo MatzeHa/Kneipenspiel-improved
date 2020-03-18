@@ -94,13 +94,11 @@ class global_var:
         self.timer_clock = timer_clock
 
 
-def move_interactables(win, win_copy, inter):
-    dirtyrect = inter.calc()
+def draw_interactables(win, win_copy, inter):
     if inter.art == "door" or inter.art == "radio":
         inter.draw_int(win, win_copy)
     if inter.art == "clock":
         inter.draw(win)
-    return dirtyrect
 
 
 def show_dirtyrects(win, dirtyrects):

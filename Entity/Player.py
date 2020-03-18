@@ -46,7 +46,7 @@ class Player(Chars.Chrctrs):
         self.start_game = False
         self.end_game = False
         self.game = ""
-        self.inter = False
+        self.travel = False
 
     def calc_movement(self, win, g):
 

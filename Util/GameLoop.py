@@ -3,6 +3,7 @@ from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVL1.LVLMain import LVLMain
 from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog, controls_order
 from Scripts.Util.Functions import global_var, show_dirtyrects
+from Scripts.Util.LevelSelector import level_selector
 
 pygame.init()
 
@@ -47,7 +48,8 @@ def game_loop(win, setup):
             dirtyrects = setup.game.check_action(win, setup, g, lvl)
 
         else:
-            run, dirtyrects = lvl.run_lvl(win, g, lvl)
+
+            run, dirtyrects = level_selector(lvl, win, g)
 
         '''
         if kitchen:
