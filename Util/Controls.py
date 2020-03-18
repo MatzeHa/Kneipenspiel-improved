@@ -79,12 +79,10 @@ def controls_game(setup, g, lvl):
                     walk = False
                     active_inter = dir_check(g.interactables, g.guy)
                     if active_inter != 0:
-
                         if active_inter.art == "door":
-                            lvl.travel = True
-                            lvl.goto = active_inter.goto
-                            lvl.active_inter = active_inter
-                            lvl.active_inter.openClose = True
+                            active_inter.activated = True
+                            g.guy.travel = active_inter.goto
+
 
                         elif active_inter.art == "chair":
                             if not g.guy.sit and not active_inter.active:

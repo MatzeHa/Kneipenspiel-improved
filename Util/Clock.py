@@ -5,6 +5,7 @@ import math
 class Clock:
     def __init__(self, _id, x, y):
         self.id = _id
+        self.art = "clock"
 
         self.x = x
         self.y = y
@@ -13,11 +14,12 @@ class Clock:
         self.h_m = (6, 0)
         self.lastCall = False
         self.m_x = self.m_y = self.h_x = self.h_y = 0
+        self.activated = True
 
     def calc(self):
         # WARUM? weil 1Tag = 24 h = 1400 min
         # 1 h = 60 ticks
-        # 1 min =1 tick
+        # 1 min = 1 tick
 
         self.m_x = self.x - math.cos(3 * self.tick * math.pi / 180) * self.r * 0.8
         self.m_y = self.y - math.sin(3 * self.tick * math.pi / 180) * self.r * 0.8

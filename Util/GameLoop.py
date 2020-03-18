@@ -2,7 +2,7 @@ import pygame
 from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVL1.LVLMain import LVLMain
 from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog, controls_order
-from Scripts.Util.Functions import global_var
+from Scripts.Util.Functions import global_var, show_dirtyrects
 
 pygame.init()
 
@@ -21,6 +21,9 @@ def game_loop(win, setup):
     g = global_var
     start_game = True
     run = True
+
+    first_round = True
+
     while run:
         if start_game:
             start_game = False
@@ -63,6 +66,12 @@ def game_loop(win, setup):
         '''
 
         if not pause_menu.quit:
+            if first_round:
+                first_round = False
+            else:
+                pass
+                # show_dirtyrects(win, dirtyrects)
+
             clock.tick(30)
             pygame.display.update(dirtyrects)
 

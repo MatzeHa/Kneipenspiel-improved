@@ -2,6 +2,7 @@ import pygame
 from types import MethodType
 pygame.init()
 
+# TODO: eigene Surface erstellen!!! siehe Dialog.py
 
 class PauseMenu:
     def __init__(self, win, setup):

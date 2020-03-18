@@ -61,7 +61,7 @@ class Guest(Chars.Chrctrs):
 
 #
 
-    def calc_movement(self, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size):
+    def calc_movement(self, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA):
         if self.inside:
             self.mustblit = True
 
@@ -222,14 +222,16 @@ class Guest(Chars.Chrctrs):
                 for i in g.interactables:
                     if i.art == 'door' and i.serv_pos == (g.door_pos[1][0], g.door_pos[1][1]) and self.coming:
                         if not i.opened:
-                            i.active = True
-                            i.openClose = True
+                            i.activated = True
+                            if i not in active_IA:
+                                active_IA.append(i)
                         else:
                             self.inside = True
                             self.x = self.x_old
                             self.y = self. y_old
-                            i.active = True
-                            i.openClose = True
+                            i.activated = True
+                            if i not in active_IA:
+                                active_IA.append(i)
                             self.coming = False
 
                     elif i.art == 'stairs' and i.serv_pos == (g.door_pos[2][0], g.door_pos[2][1]) and self.bladderTime == 0:
@@ -248,7 +250,7 @@ class Guest(Chars.Chrctrs):
                     if i.art == 'door' and i.serv_pos == (g.door_pos[1][0], g.door_pos[1][1]):
                         if not i.opened:
                             i.active = True
-                            i.openClose = True
+                            i.activated = True
                         else:
                             self.inside = False
                             self.mustblit = False

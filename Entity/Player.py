@@ -46,8 +46,10 @@ class Player(Chars.Chrctrs):
         self.start_game = False
         self.end_game = False
         self.game = ""
+        self.inter = False
 
     def calc_movement(self, win, g):
+
         self.x_old = self.x
         self.y_old = self.y
 
@@ -118,7 +120,7 @@ class Player(Chars.Chrctrs):
                             self.collide = True
                             self.walking = False
                             break
-                    elif obst.walkable:
+                    elif obst.walkable:     # TODO das kann weg
                         if obst.art == "door":
                             if obst.x + obst.width > self.x > obst.x - self.width and \
                                     obst.y + obst.height > self.y - self.vel > obst.y:

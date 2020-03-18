@@ -13,30 +13,29 @@ text_mod = 0.5  # text-geschwindigkeits-modifikator
 
 
 class DialogMenue:
-    def __init__(self, win_sizex, win_sizey, surf_dialog, char):
+    def __init__(self, win_w, win_h, char):
         self.active = False
 
-        self.surf = surf_dialog
-        self.x_t1 = win_sizex * 0.05  # x_t1 =x.Koordinate von Talker 1
-        self.y_t1 = win_sizey * 0.05
+        self.surf = pygame.Surface((win_w, win_h))
+        self.x_t1 = win_w * 0.05  # x_t1 =x.Koordinate von Talker 1
+        self.y_t1 = win_h * 0.05
         self.w_t1 = char.portrait.get_width()
         self.h_t1 = char.portrait.get_height()
 
-        self.x_t2 = win_sizex * 0.95 - char.portrait.get_width()  # x_t1 =x.Koordinate von Talker 2
-        self.y_t2 = win_sizey * 0.05
+        self.x_t2 = win_w * 0.95 - char.portrait.get_width()  # x_t1 =x.Koordinate von Talker 2
+        self.y_t2 = win_h * 0.05
         self.w_t2 = char.portrait.get_width()
         self.h_t2 = char.portrait.get_height()
 
-        self.x_window = win_sizex * 0.05  # x_t1 =x.Koordinate von Dialodfenster
-        self.y_window = win_sizey * 0.65  # x_t1 =x.Koordinate von Talker 1
-        self.w_window = win_sizex * 0.9
-        self.h_window = win_sizey * 0.3
+        self.x_window = win_w * 0.05  # x_t1 =x.Koordinate von Dialodfenster
+        self.y_window = win_h * 0.65  # x_t1 =x.Koordinate von Talker 1
+        self.w_window = win_w * 0.9
+        self.h_window = win_h * 0.3
         self.textCount = 0
         self.dirtyrects = []
 
         self.blit_first = True
         self.surf.fill((255, 130, 0))
-        #        self.surf.fill((0,255,0))
         self.surf.set_alpha(200)
 
         self.chars = [char, char, None]

@@ -57,7 +57,7 @@ class Raster:
 
 class global_var:
     def __init__(self, waiter, drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
-                 surf_text, music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
+                 music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
                  door_pos, chairs, halo_count, timer_clock, guy, guests, filter_halo):
         import pygame
         pygame.init()
@@ -74,7 +74,6 @@ class global_var:
         self.door_pos = door_pos
 
         # global vars...
-        self.surf_text = surf_text
         self.dialog_menue = dialog_menue
         self.inventory_active = inventory_active
         self.text_count = text_count
@@ -93,3 +92,25 @@ class global_var:
         self.halo_count = halo_count
         self.filter_halo = filter_halo
         self.timer_clock = timer_clock
+
+
+def move_interactables(win, win_copy, inter):
+    dirtyrect = inter.calc()
+    if inter.art == "door" or inter.art == "radio":
+        inter.draw_int(win, win_copy)
+    if inter.art == "clock":
+        inter.draw(win)
+    return dirtyrect
+
+
+def show_dirtyrects(win, dirtyrects):
+    a = 0
+    for dr in dirtyrects:
+        if dr:
+            win.fill((255, 255, 0), dr)
+            a = a + dr[2] * dr[3]
+    win_size = win.get_size()
+
+    win_a = win_size[0] * win_size[1]
+    rel = a / win_a
+    #print("Dirtyrects: " + str(int(rel * 10000)/100))

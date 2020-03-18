@@ -78,7 +78,7 @@ class Waiter(Chars.Chrctrs):
                             if i.serv_pos == (door_pos[0][0], door_pos[0][1]):
                                 if not i.opened:
                                     i.active = True
-                                    i.openClose = True
+                                    i.activated = True
                                 else:
                                     self.waitCount = 400
                                     self.inside = False
@@ -330,7 +330,7 @@ class Waiter(Chars.Chrctrs):
                     if i.serv_pos == (door_pos[0][0], door_pos[0][1]):
                         if i.opened:
                             i.active = True
-                            i.openClose = True
+                            i.activated = True
                             self.x = -100
                             self.y = -100
                 elif i.art == "stairs":

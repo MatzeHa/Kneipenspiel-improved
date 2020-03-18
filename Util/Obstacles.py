@@ -32,6 +32,7 @@ class Chalkboard:
         self.rot = rot
         self.walkable = False
         self.active = False
+        self.activated = True
 
     def draw(self, win):
         win.blit(pygame.transform.rotate(OI.img_chalkboard, self.rot), (self.x, self.y))
@@ -95,6 +96,7 @@ class Radio:
         self.width = width
         self.walkable = False
         self.active = False
+        self.activated = True
         self.musicCount = 0
         if self.active:
             pygame.mixer.music.play(-1)
@@ -162,7 +164,6 @@ class Door:
         self.id = _id
         self.goto = goto
         self.art = "door"
-        self.active = False
         self.x = x
         self.y = y
         self.height = height
@@ -170,7 +171,7 @@ class Door:
         self.walkable = True
         self.rot = rot
         self.openCount = 0
-        self.openClose = False
+        self.activated = False
         self.opened = False
 
         if self.rot == 0:
@@ -189,25 +190,24 @@ class Door:
             self.width = old_height
 
     def calc(self):
-        if self.openClose:
+        if self.activated:
             if not self.opened:
                 if self.openCount < 40:
                     self.openCount += 1
                 else:
                     self.opened = True
-                    self.openClose = False
+                    self.activated = False
             elif self.opened:
                 if self.openCount > 0:
                     self.openCount -= 1
                 else:
                     self.opened = False
-                    self.openClose = False
+                    self.activated = False
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
     def draw_int(self, win, win_copy):
         win.blit(win_copy, (self.x, self.y), (self.x, self.y, self.width, self.height))
         win.blit(pygame.transform.rotate(OI.img_door[self.openCount//10], self.rot), (self.x, self.y))
-
 
 class Stairs:
     def __init__(self, _id, x, y, width, height, rot, coord, cell_size):
