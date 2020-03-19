@@ -36,7 +36,6 @@ class LVLMain:
         self.win_copy = win.copy()
         self.win_copy_change_mode = win.copy()
         self.setup = setup
-        self.g = global_var
         self.sublevel = "Main"
         self.active_IA = []         # active Interactables
         self.travel = False
@@ -465,7 +464,6 @@ class LVLMain:
                 _kerzen_list.append(_i)
         random.shuffle(_chairs)
 
-
         # drinks: Nr. : ('Name', Preis, Alkoholgehalt. # ?Anzahl der Schlücke? #
         # TODO: hier scheint noch ein bug zu sein,
         # wenn man das zweite getränk bestellt(?) hat man mehr (doppelt so viele?) schlücke
@@ -481,11 +479,11 @@ class LVLMain:
                    _obstacles, True,
                    create_char.create_tilemap(win))]
         _guests = []
-        for _i in range(0, 10):
+        for _i in range(0, 1):
             vel = 8
             guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], self.sv["cell_size"],
                           self.sv["cell_size"], vel, _chairs.pop(),
-                          (random.randint(0, 0), random.randint(0, 30)), False)
+                          (random.randint(0, 0), random.randint(0, 1)), False)
             _guests.append(guest)
 
         _order_menue = OrderMenue(_drinks)
@@ -510,7 +508,7 @@ class LVLMain:
         win.blit(self.sv["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
 
         obstacles, interactables, door_pos, radio, drinks, chairs, kerzen_list, clock, guy, waiter, \
-        guests, order_menue, dialog_menue, halo_count, filter_halo = self.init_main(win, create_char)
+            guests, order_menue, dialog_menue, halo_count, filter_halo = self.init_main(win, create_char)
 
         for obst in obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
@@ -518,7 +516,6 @@ class LVLMain:
         inventory_active = False
         text_count = 50
         self.sv["win_copy"] = win.copy()
-
 
         for inter in interactables:
             if inter.art == 'door' or inter.art == 'radio':
@@ -530,7 +527,6 @@ class LVLMain:
         clock.calc()
         clock.draw(win)
         self.active_IA.append(clock)
-
 
         raster = Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["cell_size"])
         # raster.draw(win)

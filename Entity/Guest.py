@@ -3,11 +3,11 @@ import random
 import Util.Pathfinding as Pathfinding
 import Entity.Chars as Chars
 import Util.DialogScript as DialogSkript
+
 # Guest_sit = pygame.image.load('graph/chars/guy/Guy_sit.png')
 rotDict = {0: 0, 90: 3, 180: 2, 270: 1}
 
 pygame.init()
-
 
 walkDict = {0: 0, 1: 1, 2: 2,
             3: 3, 4: 2, 5: 1,
@@ -23,30 +23,30 @@ order_timer = 200
 class Guest(Chars.Chrctrs):
     def __init__(self, x, y, width, height, vel, chair, walk_in, inside):
         Chars.Chrctrs.__init__(self, -100, 100, width, height, vel, inside)
-        self.art = 'guest'                                                         # zurzeit: spieler, guest, waiter...
-        self.x_old = x                                                             # alte Position x
-        self.y_old = y                                                             # alte Position y
+        self.art = 'guest'  # zurzeit: spieler, guest, waiter...
+        self.x_old = x  # alte Position x
+        self.y_old = y  # alte Position y
         self.dispcol = (0, 0, 255)
         self.portrait = Chars.Portraits[random.randint(1, 6)]
         self.textcolor = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))  # zufällige Farbe
-        self.text_for = Chars.font.render(self.text, 1, self.textcolor)            # Formatieren des Textes zum blitten
+        self.text_for = Chars.font.render(self.text, 1, self.textcolor)  # Formatieren des Textes zum blitten
 
-        self.version = random.randint(0, len(DialogSkript.Dialoge.keys())-1)
+        self.version = random.randint(0, len(DialogSkript.Dialoge.keys()) - 1)
         self.going = False
         self.coming = True
         self.bladderTime = -1
-        self.chair = chair                                                      # Objekt Chair, auf dem Gast sitzen soll
-        self.goal = (chair.x, chair.y)                                             # Zugewiesenes Ziel
-        self.sit = False                                                           # sitzt noch nicht
-        self.drink = False                                              # Drink in der Hand
+        self.chair = chair  # Objekt Chair, auf dem Gast sitzen soll
+        self.goal = (chair.x, chair.y)  # Zugewiesenes Ziel
+        self.sit = False  # sitzt noch nicht
+        self.drink = False  # Drink in der Hand
         self.sips = 0
-        self.sipCount = 8                                                          # Schlücke übrig
+        self.sipCount = 8  # Schlücke übrig
         self.serv_pos = ()
         self.collide = False
-        self.walk_in = walk_in                                                     # Uhrzeit des Eintritts
-        self.steps = []                                                            # Keine steps mehr im Speicher
-        self.guyCollide = False                                                    # Wenn Kellner kollidiert
-        self.actionCount = 0                                                       # Action Zähler
+        self.walk_in = walk_in  # Uhrzeit des Eintritts
+        self.steps = []  # Keine steps mehr im Speicher
+        self.guyCollide = False  # Wenn Kellner kollidiert
+        self.actionCount = 0  # Action Zähler
         self.order_timer = random.randint(50, 70)
         self.orderActive = False
         self.orderAction = 0
@@ -59,17 +59,17 @@ class Guest(Chars.Chrctrs):
         self.mustblit = True
         self.talk_further = True
 
-#
+    #
 
     def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA):
         if self.inside:
             self.mustblit = True
 
-            self.x_old = self.x                     # x von letztem frame wird gepeichert>
-            self.y_old = self.y                     # Y von letztem frame wird gepeichert>
+            self.x_old = self.x  # x von letztem frame wird gepeichert>
+            self.y_old = self.y  # Y von letztem frame wird gepeichert>
 
             # Pro tick: walkCount wird zurückgesetzt ### und weniger betrunken
-            self.walkCount += 1                     # walkCount wird für die Animation benutzt
+            self.walkCount += 1  # walkCount wird für die Animation benutzt
             if self.walkCount >= 96:
                 self.walkCount = 0
 
@@ -183,16 +183,16 @@ class Guest(Chars.Chrctrs):
                         self.text_count = 0
                     self.text = "Weg da!"
                     self.walkCount = 0
-    #                self.angryness += 33
+                    #                self.angryness += 33
                     self.actionCount += 1
                     self.steps.append(xy)
                     self.x = self.x + self.vel * xy[0]
                     self.y = self.y + self.vel * xy[1]
 
                     # Erhöhung pro tick
-    #                    self.actionCount -= 1
+                #                    self.actionCount -= 1
 
-    #        if self.walking == True:
+                #        if self.walking == True:
                 self.blitCount = walkDict[self.walkCount // 8]
                 self.facing = self.dir
                 self.sit = False
@@ -228,13 +228,14 @@ class Guest(Chars.Chrctrs):
                         else:
                             self.inside = True
                             self.x = self.x_old
-                            self.y = self. y_old
+                            self.y = self.y_old
                             i.activated = True
                             if i not in active_IA:
                                 active_IA.append(i)
                             self.coming = False
 
-                    elif i.art == 'stairs' and i.serv_pos == (g.door_pos[2][0], g.door_pos[2][1]) and self.bladderTime == 0:
+                    elif i.art == 'stairs' and i.serv_pos == (
+                    g.door_pos[2][0], g.door_pos[2][1]) and self.bladderTime == 0:
                         self.x = -100
                         self.y = -100
                         if self.waitCount > 0:

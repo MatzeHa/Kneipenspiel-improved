@@ -19,7 +19,6 @@ def game_loop(win, setup):
 #    lvl = {"lvl_main": LVLMain(win, setup)}
 
     dirtyrects = []
-    g = global_var
     start_game = True
     run = True
 
@@ -48,9 +47,8 @@ def game_loop(win, setup):
             dirtyrects = setup.game.check_action(win, setup, lvl.chars, g, lvl)
 
         else:
-             # if guy.travel: pop guy from actual level and put it into room
+            # if guy.travel: pop guy from actual level and put it into room
             run, dirtyrects = level_selector(lvl, win, g)
-
 
         if not pause_menu.quit:
             if first_round:
