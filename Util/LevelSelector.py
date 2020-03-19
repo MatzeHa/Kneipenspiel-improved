@@ -6,7 +6,7 @@ def level_selector(win, setup, lvl, lvl_name, g):
     # TODO: Idee: level in listen, dann list.pop()für aktives level, wird dann auch geblittet, restliche level werden nur berechnet
     run = True
     dirtyrects = []
-    lvl_name = travel_fun(win, setup, lvl, lvl_name)
+    lvl_name = travel_fun(win, setup, g, lvl, lvl_name)
 
     for _lvl in lvl:
         if "guy" in lvl[_lvl].chars:

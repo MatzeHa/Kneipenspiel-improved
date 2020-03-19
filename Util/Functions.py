@@ -110,14 +110,15 @@ def show_dirtyrects(win, dirtyrects):
     print("Dirtyrects: " + str(int(rel * 10000)/100))
 
 
-def travel_fun(win, setup, lvl, old_room):
+def travel_fun(win, setup, g, lvl, old_room):
     new_room = False
     if lvl[old_room].chars["guy"].travel:
         new_room = lvl[old_room].chars["guy"].travel
         lvl[old_room].chars["guy"].travel = False
     if new_room == "lvl_kitchen":
         from Scripts.Level.LVL1.LVLKitchen import LVLKitchen
-        lvl[new_room] = LVLKitchen(win, setup)
+        lvl[new_room] = LVLKitchen(win, setup, lvl[old_room].lvl_vars["clock"])
+        lvl[new_room].init_draw(win, setup, g)
         lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
 
         return new_room

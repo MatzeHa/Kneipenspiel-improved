@@ -19,7 +19,7 @@ rotDict = {0: 0, 90: 3, 180: 2, 270: 1}
 
 class Player(Chars.Chrctrs):
     def __init__(self, x, y, width, height, inside, tilemap, vel=16):
-        Chars.Chrctrs.__init__(self, x, y, width, height, vel, inside, tilemap)
+        super().__init__(x, y, width, height, vel, inside, tilemap)
         # Variablen aus Überklasse Chars
         self.art = 'player'
         self.x_old = x

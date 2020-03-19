@@ -31,7 +31,7 @@ def game_loop(win, setup):
     while run:
         if start_game:
             start_game = False
-            lvl[lvl_name].init_draw(win, setup, create_char, g)
+            lvl[lvl_name].init_draw(win, setup, g, create_char)
             del create_char
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 

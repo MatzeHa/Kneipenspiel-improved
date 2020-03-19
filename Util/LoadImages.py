@@ -3,7 +3,6 @@ import pygame
 
 class ObstacleImages:
     def __init__(self):
-        self.walls_add1 = pygame.image.load('../Graph/GUI/walls_add1.png')
 
         self.img_door = [pygame.image.load('../Graph/Inter/door/door0.png'),
                          pygame.image.load('../Graph/Inter/door/door1.png'),
@@ -50,9 +49,16 @@ class LVLMainImages:
     def __init__(self):
         self.bg = pygame.image.load('../Graph/GUI/walls_big.png').convert()
         self.img_ground = pygame.image.load('../Graph/GUI/floor_big.png').convert()
+        self.walls = pygame.image.load('../Graph/GUI/walls_add1.png')
         self.inventory_pic = pygame.image.load('../Graph/GUI/inventory.png').convert()
         self.game_over = pygame.image.load('../Graph/GUI/gameOver.png').convert()
 
+
+class LVLKitchenImages:
+    def __init__(self):
+        self.bg = pygame.image.load('../Graph/GUI/kitchen_walls.png').convert()
+        self.img_ground = pygame.image.load("../Graph/GUI/kitchen_floor.png").convert()
+        self.walls = pygame.image.load('../Graph/GUI/kitchen_walls.png').convert()
 
 class CharCreationImages:
     def __init__(self):

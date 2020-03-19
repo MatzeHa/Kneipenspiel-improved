@@ -15,7 +15,7 @@ max_guest = 6
 
 class Waiter(Chars.Chrctrs):
     def __init__(self, x, y, width, height, obstacles, inside, Tilemap):
-        Chars.Chrctrs.__init__(self, x, y, width, height, 64 / 4, inside, Tilemap)
+        super().__init__(x, y, width, height, 64 / 4, inside, Tilemap)
         # from pack_Kneipenspiel import cell_size
         self.art = 'waiter'
         self.x_old = x

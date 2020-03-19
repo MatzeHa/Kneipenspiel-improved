@@ -15,8 +15,7 @@ drinks = {0: ("", 0, 0, 0), 1: ("Bier", 3, 10, 10), 2: ("Wein", 4, 5, 5), 3: ("S
 class LVLKitchen:
     def __init__(self, win):
         win_w, win_h = win.get_size()
-        wall_w = 640
-        wall_h = 110
+
         cell_size = 64
         coord = {"w": get_coords(win_w, wall_w, cell_size),
                  "h": get_coords(win_h, wall_h, cell_size)}
@@ -48,7 +47,7 @@ class LVLKitchen:
 
         _door_pos = []
         for _i in _interactables:
-            if _i.art == 'door' or _i.art == 'stairs':
+            if _i.art == 'door':
                 _door_pos.append(_i.serv_pos)
 
         _obstacles.append(
@@ -77,12 +76,22 @@ class LVLKitchen:
                 inter.draw_int(win, win_copy)
             else:
                 inter.draw(win)
-        win_copy = win.copy()
 
-        timer_clock = pygame.time.Clock()
+        # adding everything created to self.lvl_vars        ====> must haves!!! <====
+        self.lvl_vars["obstacles"] = ret_dict["obstacles"]
+        self.lvl_vars["interactables"] = ret_dict["interactables"]
+        self.lvl_vars["door_pos"] = ret_dict["door_pos"]
+        self.lvl_vars["clock"] = ret_dict["clock"]
+        self.lvl_vars["raster"] = raster
+        self.lvl_vars["filter_halo"] = ret_dict["filter_halo"]
 
-        pygame.display.update()
-        return timer_clock, guests, waiter, interactables, obstacles, win_copy
+        #return timer_clock, guests, waiter, interactables, obstacles, win_copy
+
+    def init_draw_specials(self, win, setup, create_char, g, ret_dict):
+        pass
+
+
+
 
     def redraw_game_window(self, win, g):
         dirtyrects = self.del_last_blit(win, g)
@@ -115,22 +124,3 @@ class LVLKitchen:
         dirtyrects.append(g.guy.del_display(win, self.win_copy))  # Display Guy
         return dirtyrects
 
-    def run_lvl(self, win, g, lvl_before):
-        #        self.win_copy, timer_clock, guests, waiter, interactables, obstacles = init_draw(win)
-
-        pygame.mixer.music.set_volume(0.3)
-
-        schachtel_oben = False
-        run = True
-        while run:
-            _dirtyrects, run, schachtel_oben = self.redraw_game_window(win, g)
-
-            self.timer_clock.tick(30)
-            pygame.display.update(_dirtyrects)
-        if schachtel_oben:
-            g.guy.x = lvl_before.sv["coord"]["w"][3]
-            g.guy.y = lvl_before.sv["coord"]["h"][11]
-            g.guy.facing = 0
-            win.blit(lvl_before.sv["win_copy"], (0, 0))
-            pygame.display.update()
-            lvl_before.run_lvl(win, g)

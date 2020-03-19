@@ -1,8 +1,8 @@
 import pygame
 import random
-import Util.Pathfinding as Pathfinding
-import Entity.Chars as Chars
-import Util.DialogScript as DialogSkript
+import Scripts.Util.Pathfinding as Pathfinding
+import Scripts.Entity.Chars as Chars
+import Scripts.Util.DialogScript as DialogSkript
 
 # Guest_sit = pygame.image.load('graph/chars/guy/Guy_sit.png')
 rotDict = {0: 0, 90: 3, 180: 2, 270: 1}
@@ -22,7 +22,7 @@ order_timer = 200
 
 class Guest(Chars.Chrctrs):
     def __init__(self, x, y, width, height, vel, chair, walk_in, inside):
-        Chars.Chrctrs.__init__(self, -100, 100, width, height, vel, inside)
+        super().__init__(-100, 100, width, height, vel, inside)
         self.art = 'guest'  # zurzeit: spieler, guest, waiter...
         self.x_old = x  # alte Position x
         self.y_old = y  # alte Position y
