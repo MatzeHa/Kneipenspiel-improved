@@ -43,12 +43,11 @@ class Player(Chars.Chrctrs):
         self.drink = False
         self.sips = 0
         self.sipCount = 8
-        self.ingame = False
         self.start_game = False
         self.end_game = False
         self.game = ""
         self.travel = False
-        self.room = "Main"
+        self.room = "lvl_main"
 
     def calc_movement(self, win, chars, g):
 

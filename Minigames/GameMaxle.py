@@ -598,7 +598,6 @@ class GameMaxle:
             win.blit(lvl.win_copy_change_mode, (0, 0))
             self.quit = False
             chars["guy"].game = ""
-            chars["guy"].ingame = False
         else:
             dirtyrects = setup.game_maxle.do_turn(win)
         return dirtyrects

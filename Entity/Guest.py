@@ -160,44 +160,45 @@ class Guest(Chars.Chrctrs):
                     self.talk_further = True
                 elif self.text_count == 0:
                     self.talk_further = False
-                self.collide = False
-                if self.dir == 0:
-                    if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
-                            self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
-                        self.collide = True
-                elif self.dir == 1:
-                    if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
-                            self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
-                        self.collide = True
-                elif self.dir == 2:
-                    if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
-                            self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
-                        self.collide = True
-                elif self.dir == 3:
-                    if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
-                            self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
-                        self.collide = True
+                if "guy" in chars:
+                    self.collide = False
+                    if self.dir == 0:
+                        if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
+                            self.collide = True
+                    elif self.dir == 1:
+                        if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
+                            self.collide = True
+                    elif self.dir == 2:
+                        if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
+                            self.collide = True
+                    elif self.dir == 3:
+                        if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
+                            self.collide = True
 
-                    # Kollision
-                if self.collide:
-                    if not self.talk_further:
-                        self.text_count = 0
-                    self.text = "Weg da!"
-                    self.walkCount = 0
-                    #                self.angryness += 33
-                    self.actionCount += 1
-                    self.steps.append(xy)
-                    self.x = self.x + self.vel * xy[0]
-                    self.y = self.y + self.vel * xy[1]
+                        # Kollision
+                    if self.collide:
+                        if not self.talk_further:
+                            self.text_count = 0
+                        self.text = "Weg da!"
+                        self.walkCount = 0
+                        #                self.angryness += 33
+                        self.actionCount += 1
+                        self.steps.append(xy)
+                        self.x = self.x + self.vel * xy[0]
+                        self.y = self.y + self.vel * xy[1]
 
-                    # Erhöhung pro tick
-                #                    self.actionCount -= 1
+                        # Erhöhung pro tick
+                    #                    self.actionCount -= 1
 
-                #        if self.walking == True:
-                self.blitCount = walkDict[self.walkCount // 8]
-                self.facing = self.dir
-                self.sit = False
-                self.walking = True
+                    #        if self.walking == True:
+                    self.blitCount = walkDict[self.walkCount // 8]
+                    self.facing = self.dir
+                    self.sit = False
+                    self.walking = True
 
             # wenn man steht
             else:

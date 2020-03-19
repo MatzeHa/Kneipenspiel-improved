@@ -105,7 +105,21 @@ def show_dirtyrects(win, dirtyrects):
             win.fill((255, 255, 0), dr)
             a = a + dr[2] * dr[3]
     win_size = win.get_size()
-
     win_a = win_size[0] * win_size[1]
     rel = a / win_a
-    #print("Dirtyrects: " + str(int(rel * 10000)/100))
+    print("Dirtyrects: " + str(int(rel * 10000)/100))
+
+
+def travel_fun(win, setup, lvl, old_room):
+    new_room = False
+    if lvl[old_room].chars["guy"].travel:
+        new_room = lvl[old_room].chars["guy"].travel
+        lvl[old_room].chars["guy"].travel = False
+    if new_room == "lvl_kitchen":
+        from Scripts.Level.LVL1.LVLKitchen import LVLKitchen
+        lvl[new_room] = LVLKitchen(win, setup)
+        lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
+
+        return new_room
+    else:
+        return old_room

@@ -427,12 +427,12 @@ class LVLMain(Level):
             Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 0, self.sv["coord"], self.sv["cell_size"], "Kitchen"))
+                 0, self.sv["coord"], self.sv["cell_size"], "lvl_kitchen"))
         _interactables.append(
             Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 90, self.sv["coord"], self.sv["cell_size"], "outside"))
+                 90, self.sv["coord"], self.sv["cell_size"], "lvl_outside"))
         _door_pos = []
 
         _interactables.append(
@@ -467,11 +467,11 @@ class LVLMain(Level):
                    _obstacles, True,
                    create_char.create_tilemap(win))]
         _guests = []
-        for _i in range(0, 1):
+        for _i in range(0, 10):
             vel = 8
             guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], self.sv["cell_size"],
                           self.sv["cell_size"], vel, _chairs.pop(),
-                          (random.randint(0, 0), random.randint(0, 1)), False)
+                          (random.randint(0, 0), random.randint(0, 20)), False)
             _guests.append(guest)
 
 
@@ -481,8 +481,6 @@ class LVLMain(Level):
             _guests, _halo_count, filter_halo
 
     def init_draw(self, win, setup, create_char, g):
-
-        music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
 
 
 
@@ -512,20 +510,25 @@ class LVLMain(Level):
         # raster.draw(win)
         self.sv["win_copy"] = win.copy()
 
-        self.chars["guy"] = guy
         self.chars["waiter"] = waiter
         self.chars["guests"] = guests
-        self.lvl_vars["clock"] = clock
         self.lvl_vars["obstacles"] = obstacles
         self.lvl_vars["interactables"] = interactables
+        self.lvl_vars["door_pos"] = door_pos
+        self.lvl_vars["raster"] = raster
+        self.lvl_vars["clock"] = clock
+
+
+        music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
+
+        self.chars["guy"] = guy
+
         self.lvl_vars["music1"] = music1
         self.lvl_vars["radio"] = radio
         self.lvl_vars["kerzen_list"] = kerzen_list
-        self.lvl_vars["door_pos"] = door_pos
         self.lvl_vars["chairs"] = chairs
         self.lvl_vars["halo_count"] = halo_count
         self.lvl_vars["filter_halo"] = filter_halo
-        self.lvl_vars["raster"] = raster
 
         g.dialog_menue.chars[0] = guy
 
@@ -546,8 +549,8 @@ class LVLMain(Level):
                 guest.draw_char(win)
 
         #           Zeichnen - Balken und Text
-        self.chars["guy"].draw_display(win, self.chars["guy"].drunkenness)  # Display g.guy
-        self.chars["waiter"][0].draw_display(win, self.chars["waiter"][0].angryness)  # Display g.guy
+        self.chars["guy"].draw_display(win, self.chars["guy"].drunkenness)  # Display guy
+        self.chars["waiter"][0].draw_display(win, self.chars["waiter"][0].angryness)  # Display guy
         for i in self.chars["guests"]:
             if i.inside:
                 _dirtyrects.append(i.draw_display(win, i.drunkenness))  # Display Gäste
@@ -568,119 +571,78 @@ class LVLMain(Level):
         self.lvl_vars["filter_halo"].set_alpha(round(math.sin((self.lvl_vars["halo_count"] / 100) * math.pi) * 100))
         win.blit(self.lvl_vars["filter_halo"], (0, 0))
 
-    def movement_calcuation(self, win, setup, g):
-        _dirtyrects = []
-
-        # all interactables with own animation
-        for i in self.active_IA:
-            _dirtyrects.append(i.calc())
-
-        # CALCULATE MOVEMENTS
-        # g.guy
-        _dirtyrects.append(self.chars["guy"].calc_movement(win, self.chars, g))
-        # Waiter
-        _dirtyrects.append(self.chars["waiter"][0].calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
-                                                                 setup.win_w, setup.win_h,
-                                                                 self.sv["wall_w"], self.sv["wall_h"],
-                                                                 self.lvl_vars["door_pos"], self.sv["cell_size"],
-                                                                 self.lvl_vars["clock"], self.lvl_vars["obstacles"],
-                                                                 self.lvl_vars["interactables"]))
-        # Guests
-        for guest in self.chars["guests"]:
-            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or guest.walk_in[0] < \
-                    self.lvl_vars["clock"].h_m[0]:
-                _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
-                                                       setup.win_w, setup.win_h,
-                                                       self.sv["wall_w"], self.sv["wall_h"],
-                                                       self.sv["cell_size"], self.active_IA,
-                                                       self.lvl_vars["clock"], self.lvl_vars["obstacles"],
-                                                       self.lvl_vars["interactables"], self.lvl_vars["door_pos"]))
-
-        # CALCULATE DIRTYRECTS
-        _dirtyrects.append(self.chars["guy"].calc_display())  # Display g.guy
-        _dirtyrects.append(self.chars["waiter"][0].calc_display())  # Display Waiter
-        for i in self.chars["guests"]:
-            if i.inside:
-                _dirtyrects.append(i.calc_display())  # Display Gäste
-        return _dirtyrects
 
     def del_last_blit(self, win, setup, g):
         dirtyrects = []
-        if not self.chars["guy"].ingame:
-            if self.chars["guy"].start_game:
-                pass
-            #                self.sv["win_copy"] = win.copy()
-#            elif g.guy.end_game:
-#                win.blit(self.sv["win_copy"], (0, 0))
-#                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
-#                g.guy.ingame = False
-#                g.guy.game = ""
-#                g.guy.end_game = False
-            # wenn OrderMenue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
-            elif self.chars["guy"].orderAction == 5:
-                # self.sv["win_copy"]
-                self.chars["guy"].orderAction = 6
+        # wenn OrderMenue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
+        if self.chars["guy"].orderAction == 5:
+            # self.sv["win_copy"]
+            self.chars["guy"].orderAction = 6
 
-            # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
-            elif self.chars["guy"].orderAction == 7:
-                win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
-                self.chars["guy"].orderAction = 8
+        # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
+        elif self.chars["guy"].orderAction == 7:
+            win.blit(self.sv["win_copy"], (0, 0))
+            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
+            self.chars["guy"].orderAction = 8
 
-            # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
-            elif self.chars["guy"].talk_action == 1:
-                self.sv["win_copy_change_mode"] = win.copy()
-                g.dialog_menue.active = True
-                self.chars["guy"].talk_action = 2
+        # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
+        elif self.chars["guy"].talk_action == 1:
+            self.sv["win_copy_change_mode"] = win.copy()
+            g.dialog_menue.active = True
+            self.chars["guy"].talk_action = 2
 
-            # überblitten mit alter Kopie
-            elif self.chars["guy"].talk_action == 2:
-                win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
+        # überblitten mit alter Kopie
+        elif self.chars["guy"].talk_action == 2:
+            win.blit(self.sv["win_copy"], (0, 0))
+            dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
-            # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
-            # wieder mit Kopie ohne bewegliche sachen überblittet werden.
-            else:
-                dirtyrects.append(self.lvl_vars["radio"].del_blit(win, self.sv["win_copy"]))
-                for i in self.lvl_vars["kerzen_list"]:  # Kerzen löschen
-                    dirtyrects.append(i.repaint(win, self.sv["win_copy"]))
-                dirtyrects.append(self.chars["guy"].del_blit(win, self.sv["win_copy"]))  # g.guy
-                dirtyrects.append(self.chars["guy"].del_display(win, self.sv["win_copy"]))  # Display g.guy
-                if self.chars["guy"].text_count < 51:  # Textzeile wieder überblitten
-                    dirtyrects.append(self.chars["guy"].del_text(win, self.sv["win_copy"]))
+        # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
+        # wieder mit Kopie ohne bewegliche sachen überblittet werden.
+        else:
+            dirtyrects.append(self.lvl_vars["radio"].del_blit(win, self.sv["win_copy"]))
+            for i in self.lvl_vars["kerzen_list"]:  # Kerzen löschen
+                dirtyrects.append(i.repaint(win, self.sv["win_copy"]))
+            dirtyrects.append(self.chars["guy"].del_blit(win, self.sv["win_copy"]))  # guy
+            dirtyrects.append(self.chars["guy"].del_display(win, self.sv["win_copy"]))  # Display guy
+            if self.chars["guy"].text_count < 51:  # Textzeile wieder überblitten
+                dirtyrects.append(self.chars["guy"].del_text(win, self.sv["win_copy"]))
 
-                dirtyrects.append(self.chars["waiter"][0].del_blit(win, self.sv["win_copy"]))  # Waiter
-                dirtyrects.append(self.chars["waiter"][0].del_display(win, self.sv["win_copy"]))  # Display Waiter
-                if self.chars["waiter"][0].text_count < 51:  # Textzeile wieder überblitten
-                    dirtyrects.append(self.chars["waiter"][0].del_text(win, self.sv["win_copy"]))
+            dirtyrects.append(self.chars["waiter"][0].del_blit(win, self.sv["win_copy"]))  # Waiter
+            dirtyrects.append(self.chars["waiter"][0].del_display(win, self.sv["win_copy"]))  # Display Waiter
+            if self.chars["waiter"][0].text_count < 51:  # Textzeile wieder überblitten
+                dirtyrects.append(self.chars["waiter"][0].del_text(win, self.sv["win_copy"]))
 
-                for i in self.chars["guests"]:
-                    dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))  # Guests
-                    dirtyrects.append(i.del_display(win, self.sv["win_copy"]))  # Display Waiter
-                    if i.text_count < 51:  # Textzeile wieder überblitten
-                        dirtyrects.append(i.del_text(win, self.sv["win_copy"]))
-            #        # Inventar offen:
-            #        if inventory_active:
-            #            invent.draw(win, inventory_pic, g.guy.inventory)
+            for i in self.chars["guests"]:
+                dirtyrects.append(i.del_blit(win, self.sv["win_copy"]))  # Guests
+                dirtyrects.append(i.del_display(win, self.sv["win_copy"]))  # Display Waiter
+                if i.text_count < 51:  # Textzeile wieder überblitten
+                    dirtyrects.append(i.del_text(win, self.sv["win_copy"]))
+        #        # Inventar offen:
+        #        if inventory_active:
+        #            invent.draw(win, inventory_pic, guy.inventory)
 
         return dirtyrects
 
     def run_lvl(self, win, setup, g):
 
+        print("MAIN-LEVEL RUN")
+
+
         # TODO: HIER weitermachen! Küche ienbauen, setup.wall_size anpassen!!!
         # TODO: guy.room abfragen!!!
         dirtyrects = []
 
-        # Move-Calculations:
+        # Controls:
         run = controls_game(setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"])
 
-        # Überblitten
+        # Overblit with former State
         dirtyrects = dirtyrects + self.del_last_blit(win, setup, g)
 
-        # Berechnungen
-        dirtyrects = dirtyrects + self.movement_calcuation(win, setup, g)
+        # Calculations
+        dirtyrects = dirtyrects + self.movement_calculation(win, setup, g)
 
-        # Blitten
+        # Blit actual State
         self.draw_blits(win, g)
 
         return run, dirtyrects
+

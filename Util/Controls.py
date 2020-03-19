@@ -57,124 +57,122 @@ def controls_pause(pause_menu):
 def controls_game(setup, chars, g, obstacles, interactables):
     run = True
     walk = True
-    if not chars["guy"].ingame:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quit_game()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 quit_game()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    quit_game()
-                elif event.key == pygame.K_p:
-                    setup.pause_menu.active = True
-                    setup.pause_menu.start_pause = True
-                    walk = False
-                # Bestellen
+            elif event.key == pygame.K_p:
+                setup.pause_menu.active = True
+                setup.pause_menu.start_pause = True
+                walk = False
+            # Bestellen
 
-                elif event.key == pygame.K_e:
-                    walk = False
-                    active_inter = dir_check(interactables, chars["guy"])
-                    if active_inter != 0:
-                        if active_inter.art == "door":
-                            active_inter.activated = True
-                            chars["guy"].travel = active_inter.goto
+            elif event.key == pygame.K_e:
+                walk = False
+                active_inter = dir_check(interactables, chars["guy"])
+                if active_inter != 0:
+                    if active_inter.art == "door":
+                        active_inter.activated = True
+                        chars["guy"].travel = active_inter.goto
 
 
-                        elif active_inter.art == "chair":
-                            if not chars["guy"].sit and not active_inter.active:
-                                chars["guy"].sit_down(active_inter)
-                        #                            for i in dirtyrect:
-                        #                                dirtyrects.append(i)
+                    elif active_inter.art == "chair":
+                        if not chars["guy"].sit and not active_inter.active:
+                            chars["guy"].sit_down(active_inter)
+                    #                            for i in dirtyrect:
+                    #                                dirtyrects.append(i)
 
-                        # active_inter.active = True
-                        #                        else:
-                        #                            textwin.text_count = 0
-                        #                            textwin.talker = active_inter.sit
-                        #                            textwin.text = 'Hey, schubs nicht so!'
+                    # active_inter.active = True
+                    #                        else:
+                    #                            textwin.text_count = 0
+                    #                            textwin.talker = active_inter.sit
+                    #                            textwin.text = 'Hey, schubs nicht so!'
 
-                        elif isinstance(active_inter, Radio):
-                            active_inter.active = not active_inter.active
-                            if active_inter.active:
-                                pygame.mixer.music.play(-1)
-                            else:
-                                pygame.mixer.music.stop()
-                        elif active_inter.art == "chalkboard":
-                            chars["guy"].text = 'Angebot der Woche: Willi!'
-                            chars["guy"].text_count = 0
-
-                elif event.key == pygame.K_d:
-                    walk = False
-                    # wenn noch was im glas ist  und  die animation des letzten schlucks beendet ist
-                    if chars["guy"].sips > 0 and chars["guy"].sipCount == 8:
-                        chars["guy"].drink_a_sip(g.drinks[chars["guy"].drink][2])
-
-                elif event.key == pygame.K_g:
-                    walk = False
-                    if chars["guy"].drink:
-                        active_guest = dir_check(chars["guests"], chars["guy"])
-                        if not active_guest.drink:
-                            chars["guy"].drink = False  # JESUS-MODUS: diese Zeile weglassen...
-                            active_guest.drink = chars["guy"].drink
-                            active_guest.sips = chars["guy"].sips
-                            active_guest.text = 'Oha! Danke?'
-                            active_guest.text_count = 0
-
-                elif event.key == pygame.K_i:
-                    walk = False
-                    inventory_active = not inventory_active
-
-                elif event.key == pygame.K_l:
-                    walk = False
-                    chars["guy"].drunkenness -= 10
-                    if chars["guy"].drunkenness < 0:
-                        chars["guy"].drunkenness = 0
-
-                elif event.key == pygame.K_t:
-                    walk = False
-                    active_guest = dir_check(chars["guests"], chars["guy"])
-                    if active_guest != 0:
-                        chars["guy"].talk_action = 1
-                        g.dialog_menue.chars[1] = active_guest
-                    if chars["guy"].sit:
-                        talkers = [guest for guest in chars["guests"] if guest.sit and guest.chair.nr == chars["guy"].table]
-                        if len(talkers) == 1:
-                            chars["guy"].talk_action = 1
-                            g.dialog_menue.chars[1] = talkers[0]
-                        if len(talkers) > 1:
-                            chars["guy"].talk_action = 1
-                            g.dialog_menue.chars[1] = talkers[0]
-                            g.dialog_menue.chars[2] = talkers[1]
-
-                elif event.key == pygame.K_o:
-                    walk = False
-                    if chars["guy"] not in chars["waiter"][0].orders_open.keys():
-                        if chars["guy"].sit:
-                            chars["waiter"][0].orders_open.update({chars["guy"]: [0, 0, 0]})
-                            chars["guy"].orderActive = True
-                            chars["guy"].orderAction = 0
+                    elif isinstance(active_inter, Radio):
+                        active_inter.active = not active_inter.active
+                        if active_inter.active:
+                            pygame.mixer.music.play(-1)
                         else:
-                            chars["guy"].text = 'Ich sollte mich besser erstmal setzen.'
-                            chars["guy"].text_count = -1
+                            pygame.mixer.music.stop()
+                    elif active_inter.art == "chalkboard":
+                        chars["guy"].text = 'Angebot der Woche: Willi!'
+                        chars["guy"].text_count = 0
 
-                elif event.key == pygame.K_m:
-                    walk = False
-                    if not chars["guy"].ingame:
-                        players = []
-                        if chars["guy"].sit:
-                            players = [guest for guest in chars["guests"] if guest.sit and guest.chair.nr == chars["guy"].table]
-                        if players:
-                            from Scripts.Minigames.GameMaxle import GameMaxle
+            elif event.key == pygame.K_d:
+                walk = False
+                # wenn noch was im glas ist  und  die animation des letzten schlucks beendet ist
+                if chars["guy"].sips > 0 and chars["guy"].sipCount == 8:
+                    chars["guy"].drink_a_sip(g.drinks[chars["guy"].drink][2])
 
-                            chars["guy"].ingame = True
-                            chars["guy"].game = "maxle"
-                            chars["guy"].start_game = True
-                            setup.game_maxle = GameMaxle(chars["guy"], players, g.drinks)
-        # Laufen
-        if walk:
-            run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables)
+            elif event.key == pygame.K_g:
+                walk = False
+                if chars["guy"].drink:
+                    active_guest = dir_check(chars["guests"], chars["guy"])
+                    if not active_guest.drink:
+                        chars["guy"].drink = False  # JESUS-MODUS: diese Zeile weglassen...
+                        active_guest.drink = chars["guy"].drink
+                        active_guest.sips = chars["guy"].sips
+                        active_guest.text = 'Oha! Danke?'
+                        active_guest.text_count = 0
 
-            #        if game_maxle:
-            #            self.game_maxle = game_maxle
+            elif event.key == pygame.K_i:
+                walk = False
+                inventory_active = not inventory_active
+
+            elif event.key == pygame.K_l:
+                walk = False
+                chars["guy"].drunkenness -= 10
+                if chars["guy"].drunkenness < 0:
+                    chars["guy"].drunkenness = 0
+
+            elif event.key == pygame.K_t:
+                walk = False
+                active_guest = dir_check(chars["guests"], chars["guy"])
+                if active_guest != 0:
+                    chars["guy"].talk_action = 1
+                    g.dialog_menue.chars[1] = active_guest
+                if chars["guy"].sit:
+                    talkers = [guest for guest in chars["guests"] if guest.sit and guest.chair.nr == chars["guy"].table]
+                    if len(talkers) == 1:
+                        chars["guy"].talk_action = 1
+                        g.dialog_menue.chars[1] = talkers[0]
+                    if len(talkers) > 1:
+                        chars["guy"].talk_action = 1
+                        g.dialog_menue.chars[1] = talkers[0]
+                        g.dialog_menue.chars[2] = talkers[1]
+
+            elif event.key == pygame.K_o:
+                walk = False
+                if chars["guy"] not in chars["waiter"][0].orders_open.keys():
+                    if chars["guy"].sit:
+                        chars["waiter"][0].orders_open.update({chars["guy"]: [0, 0, 0]})
+                        chars["guy"].orderActive = True
+                        chars["guy"].orderAction = 0
+                    else:
+                        chars["guy"].text = 'Ich sollte mich besser erstmal setzen.'
+                        chars["guy"].text_count = -1
+
+            elif event.key == pygame.K_m:
+                walk = False
+                players = []
+                if chars["guy"].sit:
+                    players = [guest for guest in chars["guests"] if guest.sit and guest.chair.nr == chars["guy"].table]
+                if players:
+                    from Scripts.Minigames.GameMaxle import GameMaxle
+
+                    chars["guy"].game = "maxle"
+                    chars["guy"].start_game = True
+                    setup.game_maxle = GameMaxle(chars["guy"], players, g.drinks)
+    # Laufen
+    if walk:
+        run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables)
+
+        #        if game_maxle:
+        #            self.game_maxle = game_maxle
     return run
+
 
 def controls_order(chars, g):
     for event in pygame.event.get():

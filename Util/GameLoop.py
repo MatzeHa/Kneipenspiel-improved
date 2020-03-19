@@ -1,6 +1,7 @@
 import pygame
 from Scripts.GameModes.CreateChar import CreateChar
 from Scripts.Level.LVL1.LVLMain import LVLMain
+
 from Scripts.Util.Controls import controls_pause, controls_maxle, controls_dialog, controls_order
 from Scripts.Util.Functions import global_var, show_dirtyrects
 from Scripts.Util.LevelSelector import level_selector
@@ -14,9 +15,10 @@ def game_loop(win, setup):
     create_char = CreateChar()
     create_char.start_creation(win, setup)
 
-    lvl = LVLMain(win, setup)
+    # lvl = [LVLMain(win, setup), ]
 
-#    lvl = {"lvl_main": LVLMain(win, setup)}
+    lvl = {"lvl_main": LVLMain(win, setup)}
+    lvl_name = "lvl_main"
 
     dirtyrects = []
     start_game = True
@@ -29,28 +31,29 @@ def game_loop(win, setup):
     while run:
         if start_game:
             start_game = False
-            lvl.init_draw(win, setup, create_char, g)
+            lvl[lvl_name].init_draw(win, setup, create_char, g)
+            del create_char
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
         elif pause_menu.active:
             run = controls_pause(pause_menu)
-            dirtyrects = pause_menu.check_action(win, lvl)
+            dirtyrects = pause_menu.check_action(win, lvl[lvl_name])
 
         elif g.dialog_menue.active:
             g.dialog_menue = controls_dialog(g.dialog_menue)
-            dirtyrects = g.dialog_menue.check_action(win, setup, lvl.chars, lvl)
+            dirtyrects = g.dialog_menue.check_action(win, setup, lvl[lvl_name].chars, lvl[lvl_name])
 
-        elif lvl.chars["guy"].orderAction == 6:
-            lvl.chars["guy"].order_menue = controls_order(lvl.chars, g)
-            dirtyrects.append(g.order_menue.draw(win, setup, g, lvl))
+        elif lvl[lvl_name].chars["guy"].orderAction == 6:
+            lvl[lvl_name].chars["guy"].order_menue = controls_order(lvl[lvl_name].chars, g)
+            dirtyrects.append(g.order_menue.draw(win, setup, g, lvl[lvl_name]))
 
-        elif lvl.chars["guy"].game == "maxle":
-            setup.game = controls_maxle(setup.game_maxle, lvl.chars["guy"], g.drinks)
-            dirtyrects = setup.game.check_action(win, setup, lvl.chars, g, lvl)
+        elif lvl[lvl_name].chars["guy"].game == "maxle":
+            setup.game = controls_maxle(setup.game_maxle, lvl[lvl_name].chars["guy"], g.drinks)
+            dirtyrects = setup.game.check_action(win, setup, lvl[lvl_name].chars, g, lvl[lvl_name])
 
         else:
             # if guy.travel: pop guy from actual level and put it into room
-            run, dirtyrects = level_selector(lvl, win, setup, g)
+            run, dirtyrects, lvl_name = level_selector(win, setup, lvl, lvl_name, g)
 
         if not pause_menu.quit:
             if first_round:

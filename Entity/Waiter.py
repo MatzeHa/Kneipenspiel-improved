@@ -258,49 +258,50 @@ class Waiter(Chars.Chrctrs):
                         self.blitCount = walkDict[self.walkCount // 8]
 
                         # Kollisionsabfrage
-                        self.guyCollide = False
-                        if self.dir == 0:
-                            if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
-                                    self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
-                                self.guyCollide = True
-                        elif self.dir == 1:
-                            if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
-                                    self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
-                                self.guyCollide = True
-                        elif self.dir == 2:
-                            if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
-                                    self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
-                                self.guyCollide = True
-                        elif self.dir == 3:
-                            if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
-                                    self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
-                                self.guyCollide = True
+                        if "guy" in chars:
+                            self.guyCollide = False
+                            if self.dir == 0:
+                                if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                        self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
+                                    self.guyCollide = True
+                            elif self.dir == 1:
+                                if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                        self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
+                                    self.guyCollide = True
+                            elif self.dir == 2:
+                                if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                        self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
+                                    self.guyCollide = True
+                            elif self.dir == 3:
+                                if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                        self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
+                                    self.guyCollide = True
 
-                        # Kollision
-                        # if self.waitCount == 0: #### Achtung: kommt auch darauf an, was player macht!!!!!
-                        if self.guyCollide:
-                            # Kollide initiiert, wenn aktulle Position != alte Position
-                            #                if (self.x, self.y) != (self.x_old, self.y_old):
-                            #                   if self.waitCount == 0:
+                            # Kollision
+                            # if self.waitCount == 0: #### Achtung: kommt auch darauf an, was player macht!!!!!
+                            if self.guyCollide:
+                                # Kollide initiiert, wenn aktulle Position != alte Position
+                                #                if (self.x, self.y) != (self.x_old, self.y_old):
+                                #                   if self.waitCount == 0:
 
-                            # https://stackoverflow.com/questions/32590131/pygame-blitting-text-with-an-escape-character-or-newline
-                            self.text = random.choice(('Hau ab du Bob!', 'Ich hau dir den Drömel aus den Quallen!',
-                                                       'Zieh die Kackstelzen ein!',
-                                                       " ".join(['Hat dir eigentlich schonmal jemand mit nem',
-                                                                 'Vorschlaghammer nen Scheitel gezogen?']),
-                                                       'Dein Oberstübchen ist wohl schlecht möbliert!',
-                                                       " ".join(['Dir spitz ich den Spargel an, bis man dich fürn',
-                                                                 'Pfirsich hält.']),
-                                                       'Schwing deine Knochen aus meinem Leben!'))
-                            self.text_count = 0
-                            self.walkCount = 0
-                            self.steps.append(xy)
-                            self.x = self.x_old
-                            self.y = self.y_old
-                            self.angryness += 22
-                            self.waitCount = random.randint(50, 75)
-                            self.act = 2
-                            self.blitCount = 0
+                                # https://stackoverflow.com/questions/32590131/pygame-blitting-text-with-an-escape-character-or-newline
+                                self.text = random.choice(('Hau ab du Bob!', 'Ich hau dir den Drömel aus den Quallen!',
+                                                           'Zieh die Kackstelzen ein!',
+                                                           " ".join(['Hat dir eigentlich schonmal jemand mit nem',
+                                                                     'Vorschlaghammer nen Scheitel gezogen?']),
+                                                           'Dein Oberstübchen ist wohl schlecht möbliert!',
+                                                           " ".join(['Dir spitz ich den Spargel an, bis man dich fürn',
+                                                                     'Pfirsich hält.']),
+                                                           'Schwing deine Knochen aus meinem Leben!'))
+                                self.text_count = 0
+                                self.walkCount = 0
+                                self.steps.append(xy)
+                                self.x = self.x_old
+                                self.y = self.y_old
+                                self.angryness += 22
+                                self.waitCount = random.randint(50, 75)
+                                self.act = 2
+                                self.blitCount = 0
                     else:
                         self.act = 0
                         # self.waitCount = random.randint(15,50)
