@@ -122,5 +122,11 @@ def travel_fun(win, setup, g, lvl, old_room):
         lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
 
         return new_room
+    elif new_room == "lvl_main":
+        lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
+
+        return new_room
+
+
     else:
         return old_room

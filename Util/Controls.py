@@ -165,6 +165,10 @@ def controls_game(setup, chars, g, obstacles, interactables):
                     chars["guy"].game = "maxle"
                     chars["guy"].start_game = True
                     setup.game_maxle = GameMaxle(chars["guy"], players, g.drinks)
+
+            elif event.key == pygame.K_b:
+                chars["guy"].travel = "lvl_main"
+
     # Laufen
     if walk:
         run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables)
