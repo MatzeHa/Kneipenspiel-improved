@@ -587,18 +587,18 @@ class GameMaxle:
         if self.p_on_turn == self.nr_players:
             self.p_on_turn = 0
 
-    def check_action(self, win, setup, g, lvl):
-        if g.guy.start_game:
+    def check_action(self, win, setup, chars, g, lvl):
+        if chars["guy"].start_game:
             lvl.win_copy_change_mode = win.copy()
             dirtyrects = self.draw_init(win)
-            g.guy.start_game = False
+            chars["guy"].start_game = False
 
         elif setup.game_maxle.quit:
             dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
             win.blit(lvl.win_copy_change_mode, (0, 0))
             self.quit = False
-            g.guy.game = ""
-            g.guy.ingame = False
+            chars["guy"].game = ""
+            chars["guy"].ingame = False
         else:
             dirtyrects = setup.game_maxle.do_turn(win)
         return dirtyrects

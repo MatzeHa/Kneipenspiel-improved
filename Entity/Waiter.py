@@ -56,7 +56,7 @@ class Waiter(Chars.Chrctrs):
                 self.Tilemap.set_at((x, y), a)                                      # Weise ihn dem Image wieder zu
          '''
 
-    def calc_movement(self, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size):
+    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size):
         if self.inside:
             self.x_old = self.x
             self.y_old = self.y
@@ -259,20 +259,20 @@ class Waiter(Chars.Chrctrs):
                         # Kollisionsabfrage
                         self.guyCollide = False
                         if self.dir == 0:
-                            if self.x + self.width > g.guy.x and self.x < g.guy.x + g.guy.width and \
-                                    self.y < g.guy.y + g.guy.height and self.y + self.height > g.guy.y:
+                            if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                    self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
                                 self.guyCollide = True
                         elif self.dir == 1:
-                            if self.y + self.height > g.guy.y and self.y < g.guy.y + g.guy.height and \
-                                    self.x < g.guy.x + g.guy.width and self.x + self.width > g.guy.x:
+                            if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                    self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
                                 self.guyCollide = True
                         elif self.dir == 2:
-                            if self.x + self.width > g.guy.x and self.x < g.guy.x + g.guy.width and \
-                                    self.y < g.guy.y + g.guy.height and self.y + self.height > g.guy.y:
+                            if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                                    self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
                                 self.guyCollide = True
                         elif self.dir == 3:
-                            if self.y + self.height > g.guy.y and self.y < g.guy.y + g.guy.height and \
-                                    self.x < g.guy.x + g.guy.width and self.x + self.width > g.guy.x:
+                            if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                                    self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
                                 self.guyCollide = True
 
                         # Kollision
@@ -318,7 +318,7 @@ class Waiter(Chars.Chrctrs):
 
             # Wenn verärgert -> rausschmiss! == Ende
             if self.angryness >= 100:
-                g.guy.dead = True
+                chars["guy"].dead = True
                 self.blitCount = 0
             self.facing = self.dir
 

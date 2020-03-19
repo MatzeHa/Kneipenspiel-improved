@@ -56,9 +56,9 @@ class Raster:
 
 
 class global_var:
-    def __init__(self, waiter, drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
+    def __init__(self, drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
                  music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
-                 door_pos, chairs, halo_count, timer_clock, guy, guests, filter_halo):
+                 door_pos, chairs, halo_count, timer_clock, filter_halo):
 
         import pygame
         pygame.init()
@@ -78,11 +78,8 @@ class global_var:
         self.dialog_menue = dialog_menue
         self.inventory_active = inventory_active
         self.text_count = text_count
-        self.guy = guy
 
         # vars in lvl_main, always the same vars, but their values change
-        self.guests = guests
-        self.waiter = waiter
         self.clock = clock
         self.order_menue = order_menue
         self.obstacles = obstacles

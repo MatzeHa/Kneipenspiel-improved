@@ -49,7 +49,7 @@ class Player(Chars.Chrctrs):
         self.travel = False
         self.room = "Main"
 
-    def calc_movement(self, win, g):
+    def calc_movement(self, win, chars, g):
 
         self.x_old = self.x
         self.y_old = self.y
@@ -66,7 +66,7 @@ class Player(Chars.Chrctrs):
         # Setzen des blitCounts & walkCounts
         # wenn man sitzt
         if self.sit:
-            self.draw_sit(g.waiter[0], g.drinks)
+            self.draw_sit(chars["waiter"][0], g.drinks)
             self.blitCount = 7
         # wenn man läuft
         elif self.walking:

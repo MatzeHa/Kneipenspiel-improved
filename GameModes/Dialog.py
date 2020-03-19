@@ -110,14 +110,14 @@ class DialogMenue:
 
         return self.dirtyrects
 
-    def check_action(self, win, setup, g, lvl):
+    def check_action(self, win, setup, chars, g, lvl):
         dirtyrects = []
-        if g.guy.talk_action == 2:  # besser: if dialog_menu.active:
+        if chars["guy"].talk_action == 2:  # besser: if dialog_menu.active:
             dirtyrects = self.draw(win, lvl.sv["win_copy_change_mode"])
 
-        elif g.guy.talk_action == 3:  # besser: if dialog_menu.active:
+        elif chars["guy"].talk_action == 3:  # besser: if dialog_menu.active:
             self.active = False
-            g.guy.talk_action = 0
+            chars["guy"].talk_action = 0
             dirtyrects = pygame.Rect(0, 0, setup.win_w, setup.win_h)
             win.blit(lvl.sv["win_copy_change_mode"], (0, 0))
         return dirtyrects

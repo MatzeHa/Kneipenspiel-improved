@@ -61,7 +61,7 @@ class Guest(Chars.Chrctrs):
 
 #
 
-    def calc_movement(self, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA):
+    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA):
         if self.inside:
             self.mustblit = True
 
@@ -135,7 +135,7 @@ class Guest(Chars.Chrctrs):
             # Gast hat sich gesetzt
             if self.sit:
                 # if self.lastAction != 'sit':
-                self.draw_sit(g.waiter[0], g.drinks)
+                self.draw_sit(chars["waiter"][0], g.drinks)
                 self.blitCount = 7
             # else:
             #    self.mustblit = False
@@ -161,20 +161,20 @@ class Guest(Chars.Chrctrs):
                     self.talk_further = False
                 self.collide = False
                 if self.dir == 0:
-                    if self.x + self.width > g.guy.x and self.x < g.guy.x + g.guy.width and \
-                            self.y < g.guy.y + g.guy.height and self.y + self.height > g.guy.y:
+                    if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                            self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
                         self.collide = True
                 elif self.dir == 1:
-                    if self.y + self.height > g.guy.y and self.y < g.guy.y + g.guy.height and \
-                            self.x < g.guy.x + g.guy.width and self.x + self.width > g.guy.x:
+                    if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                            self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
                         self.collide = True
                 elif self.dir == 2:
-                    if self.x + self.width > g.guy.x and self.x < g.guy.x + g.guy.width and \
-                            self.y < g.guy.y + g.guy.height and self.y + self.height > g.guy.y:
+                    if self.x + self.width > chars["guy"].x and self.x < chars["guy"].x + chars["guy"].width and \
+                            self.y < chars["guy"].y + chars["guy"].height and self.y + self.height > chars["guy"].y:
                         self.collide = True
                 elif self.dir == 3:
-                    if self.y + self.height > g.guy.y and self.y < g.guy.y + g.guy.height and \
-                            self.x < g.guy.x + g.guy.width and self.x + self.width > g.guy.x:
+                    if self.y + self.height > chars["guy"].y and self.y < chars["guy"].y + chars["guy"].height and \
+                            self.x < chars["guy"].x + chars["guy"].width and self.x + self.width > chars["guy"].x:
                         self.collide = True
 
                     # Kollision

@@ -37,19 +37,18 @@ def game_loop(win, setup):
 
         elif g.dialog_menue.active:
             g.dialog_menue = controls_dialog(g.dialog_menue)
-            dirtyrects = g.dialog_menue.check_action(win, setup, g, lvl)
+            dirtyrects = g.dialog_menue.check_action(win, setup, lvl.chars, g, lvl)
 
-        elif g.guy.orderAction == 6:
-            g.order_menue = controls_order(g)
+        elif lvl.chars["guy"].orderAction == 6:
+            lvl.chars["guy"].order_menue = controls_order(lvl.chars, g)
             dirtyrects.append(g.order_menue.draw(win, setup, g, lvl))
 
-        elif g.guy.game == "maxle":
-            setup.game = controls_maxle(setup.game_maxle, g.guy, g.drinks)
-            dirtyrects = setup.game.check_action(win, setup, g, lvl)
+        elif lvl.chars["guy"].game == "maxle":
+            setup.game = controls_maxle(setup.game_maxle, lvl.chars["guy"], g.drinks)
+            dirtyrects = setup.game.check_action(win, setup, lvl.chars, g, lvl)
 
         else:
              # if guy.travel: pop guy from actual level and put it into room
-
             run, dirtyrects = level_selector(lvl, win, g)
 
 
