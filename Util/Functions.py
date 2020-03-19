@@ -56,40 +56,22 @@ class Raster:
 
 
 class global_var:
-    def __init__(self, drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
-                 music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
-                 door_pos, chairs, halo_count, timer_clock, filter_halo):
+    def __init__(self, drinks, raster, order_menue, dialog_menue, sound_count, inventory_active, text_count, sound1,
+                 timer_clock):
 
         import pygame
         pygame.init()
         # static for all:
         self.drinks = drinks
-        self.sound1 = sound1
-        self.order_choose_font = pygame.font.SysFont('Courier', 33, True)
-        self.order_choose_font.set_underline(True)
-
-        # static in lvl_main
         self.raster = raster
-        self.music1 = music1
-        self.kerzen_list = kerzen_list
-        self.door_pos = door_pos
-
-        # global vars...
         self.dialog_menue = dialog_menue
+        self.sound_count = sound_count  # ???
         self.inventory_active = inventory_active
         self.text_count = text_count
-
-        # vars in lvl_main, always the same vars, but their values change
-        self.clock = clock
-        self.order_menue = order_menue
-        self.obstacles = obstacles
-        self.interactables = interactables
-        self.radio = radio
-        self.chairs = chairs
-        self.sound_count = sound_count  # ???
-        self.halo_count = halo_count
-        self.filter_halo = filter_halo
+        self.sound1 = sound1
         self.timer_clock = timer_clock
+        self.order_menue = order_menue
+
 
 
 def draw_interactables(win, win_copy, inter):

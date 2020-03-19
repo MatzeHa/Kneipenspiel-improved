@@ -12,7 +12,7 @@ def game_loop(win, setup):
     clock = pygame.time.Clock()
     pause_menu = setup.pause_menu
     create_char = CreateChar(setup)
-    create_char.start_creation(win)
+#    create_char.start_creation(win)
 
     lvl = LVLMain(win, setup)
 

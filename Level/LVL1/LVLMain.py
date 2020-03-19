@@ -43,6 +43,17 @@ class LVLMain:
                       "guests": [],
                       "waiter": []}
 
+        self.lvl_vars = {"clock": Clock,
+                         "obstacles": [],
+                         "interactables": [],
+                         "music1": pygame.mixer.music,
+                         "radio": Radio,
+                         "kerzen_list": [],
+                         "door_pos": [],
+                         "chairs": [],
+                         "halo_count": 0,
+                         "filter_halo": pygame.Surface}
+
     def init_main(self, win, create_char):
         # Create Surfaces for Filters (Licht)
         filter_halo = pygame.Surface(
@@ -454,7 +465,6 @@ class LVLMain:
                        self.sv["obst_images"].img_radio[0].get_height())
         _interactables.append(_radio)
 
-
         _chairs = []
         _kerzen_list = []
         for _i in _interactables:
@@ -533,20 +543,29 @@ class LVLMain:
         self.sv["win_copy"] = win.copy()
         timer_clock = pygame.time.Clock()
 
-        g = global_var(drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
-                       music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
-                       door_pos, chairs, halo_count, timer_clock, filter_halo)
+        g = global_var(drinks, raster, order_menue, dialog_menue, sound_count, inventory_active, text_count, sound1,
+                       timer_clock)
 
         self.chars["guy"] = guy
         self.chars["waiter"] = waiter
         self.chars["guests"] = guests
+        self.lvl_vars["clock"] = clock
+        self.lvl_vars["obstacles"] = obstacles
+        self.lvl_vars["interactables"] = interactables
+        self.lvl_vars["music1"] = music1
+        self.lvl_vars["radio"] = radio
+        self.lvl_vars["kerzen_list"] = kerzen_list
+        self.lvl_vars["door_pos"] = door_pos
+        self.lvl_vars["chairs"] = chairs
+        self.lvl_vars["halo_count"] = halo_count
+        self.lvl_vars["filter_halo"] = filter_halo
 
         return win, g
 
     def draw_blits(self, win, g):
 
         _dirtyrects = []
-        g.clock.draw(win)
+        self.lvl_vars["clock"].draw(win)
         for i in self.active_IA:
             draw_interactables(win, self.sv["win_copy"], i)
 
@@ -554,8 +573,9 @@ class LVLMain:
         self.chars["guy"].draw_char(win)
         self.chars["waiter"][0].draw_char(win)
         for guest in self.chars["guests"]:
-            if guest.walk_in[0] == g.clock.h_m[0] and guest.walk_in[1] <= g.clock.h_m[1] or guest.walk_in[0] < \
-                    g.clock.h_m[0]:
+            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and \
+                    guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or \
+                    guest.walk_in[0] < self.lvl_vars["clock"].h_m[0]:
                 guest.draw_char(win)
 
         #           Zeichnen - Balken und Text
@@ -575,11 +595,11 @@ class LVLMain:
                 _dirtyrects.append(i.talk(win))
 
         # Filter für Lichteffekte
-        g.halo_count += 1
-        if g.halo_count >= 100:  # pi *30
-            halo_count = 0
-        g.filter_halo.set_alpha(round(math.sin((g.halo_count / 100) * math.pi) * 100))
-        win.blit(g.filter_halo, (0, 0))
+        self.lvl_vars["halo_count"] += 1
+        if self.lvl_vars["halo_count"] >= 100:  # pi *30
+            self.lvl_vars["halo_count"] = 0
+        self.lvl_vars["filter_halo"].set_alpha(round(math.sin((self.lvl_vars["halo_count"] / 100) * math.pi) * 100))
+        win.blit(self.lvl_vars["filter_halo"], (0, 0))
 
     def movement_calcuation(self, win, g):
         _dirtyrects = []
@@ -595,16 +615,19 @@ class LVLMain:
         _dirtyrects.append(self.chars["waiter"][0].calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                                  self.setup.win_w, self.setup.win_h,
                                                                  self.sv["wall_w"], self.sv["wall_h"],
-                                                                 g.door_pos, self.sv["cell_size"]))
+                                                                 self.lvl_vars["door_pos"], self.sv["cell_size"],
+                                                                 self.lvl_vars["clock"], self.lvl_vars["obstacles"],
+                                                                 self.lvl_vars["interactables"]))
         # Guests
         for guest in self.chars["guests"]:
-            if guest.walk_in[0] == g.clock.h_m[0] and guest.walk_in[1] <= g.clock.h_m[1] or guest.walk_in[0] < \
-                    g.clock.h_m[0]:
+            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or guest.walk_in[0] < \
+                    self.lvl_vars["clock"].h_m[0]:
                 _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                        self.setup.win_w, self.setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
-                                                       self.sv["cell_size"], self.active_IA))
-
+                                                       self.sv["cell_size"], self.active_IA,
+                                                       self.lvl_vars["clock"], self.lvl_vars["obstacles"],
+                                                       self.lvl_vars["interactables"], self.lvl_vars["door_pos"]))
 
         # CALCULATE DIRTYRECTS
         _dirtyrects.append(self.chars["guy"].calc_display())  # Display g.guy
@@ -651,8 +674,8 @@ class LVLMain:
             # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
             # wieder mit Kopie ohne bewegliche sachen überblittet werden.
             else:
-                dirtyrects.append(g.radio.del_blit(win, self.sv["win_copy"]))
-                for i in g.kerzen_list:  # Kerzen löschen
+                dirtyrects.append(self.lvl_vars["radio"].del_blit(win, self.sv["win_copy"]))
+                for i in self.lvl_vars["kerzen_list"]:  # Kerzen löschen
                     dirtyrects.append(i.repaint(win, self.sv["win_copy"]))
                 dirtyrects.append(self.chars["guy"].del_blit(win, self.sv["win_copy"]))  # g.guy
                 dirtyrects.append(self.chars["guy"].del_display(win, self.sv["win_copy"]))  # Display g.guy
@@ -682,7 +705,7 @@ class LVLMain:
         dirtyrects = []
 
         # Move-Calculations:
-        run = controls_game(self.setup, self.chars, g)
+        run = controls_game(self.setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"])
 
         # Überblitten
         dirtyrects = dirtyrects + self.del_last_blit(win, g)

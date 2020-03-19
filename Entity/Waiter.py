@@ -56,7 +56,8 @@ class Waiter(Chars.Chrctrs):
                 self.Tilemap.set_at((x, y), a)                                      # Weise ihn dem Image wieder zu
          '''
 
-    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size):
+    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size, clock,
+                      obstacles, interactables):
         if self.inside:
             self.x_old = self.x
             self.y_old = self.y
@@ -73,7 +74,7 @@ class Waiter(Chars.Chrctrs):
                 self.blitCount = 0
 
                 if self.x == coord[door_pos[0][0]] and self.y == coord[door_pos[0][1]]:
-                    for i in g.interactables:
+                    for i in interactables:
                         if i.art == 'door':
                             if i.serv_pos == (door_pos[0][0], door_pos[0][1]):
                                 if not i.opened:
@@ -83,7 +84,7 @@ class Waiter(Chars.Chrctrs):
                                     self.waitCount = 400
                                     self.inside = False
                 elif self.x == coord[door_pos[2][0]] and self.y == coord[door_pos[2][1]]:
-                    for i in g.interactables:
+                    for i in interactables:
                         if i.art == 'stairs':
                             self.waitCount = 400
                             self.inside = False
@@ -181,7 +182,7 @@ class Waiter(Chars.Chrctrs):
                             self.serv_guest = g_list[g_listxy[0].index(min(g_listxy[0]))]
                             goal = self.serv_guest.serv_pos
                             Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
-                                                    g.obstacles, g.interactables, goal, cell_size)
+                                                    obstacles, interactables, goal, cell_size)
 
                         # Summe ( aller gäste, die schon bestellt ) haben < 3 ODER
                         # Wenn Summe ( aller Getränke, die > 0 sind ) == 0 ist:!??!?!?!
@@ -196,7 +197,7 @@ class Waiter(Chars.Chrctrs):
                             self.orders_open[self.serv_guest][0] = 0
                             goal = self.serv_guest.serv_pos
                             Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
-                                                    g.obstacles, g.interactables, goal, cell_size)
+                                                    obstacles, interactables, goal, cell_size)
 
                         # soll nur zur theke gehen, wenn: maximum der bestellungen erreicht ist  oder
                         elif sum(i[0] in (6, 7, 8) for i in self.orders_open.values()) >= max_guest or \
@@ -213,14 +214,14 @@ class Waiter(Chars.Chrctrs):
                             self.serv_guest = g_list[0]
                             goal = self.serv_pos
                             Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
-                                                    g.obstacles, g.interactables, goal, cell_size)
+                                                    obstacles, interactables, goal, cell_size)
                     else:
                         self.serv_guest = None
 
                     # Ziel: Wenn nix zu tun ist soll er an der Theke rumgammeln
                     if self.orders_open == {}:
                         pos_goals = [(2, 2), (2, 3), (2, 4), (2, 5), (16, 5)]
-                        for inter in g.interactables:
+                        for inter in interactables:
                             if isinstance(inter, Door):
                                 pos_goals.append(inter.serv_pos)
                         if self.x in coord and self.y in coord:
@@ -228,7 +229,7 @@ class Waiter(Chars.Chrctrs):
                                 pos_goals.remove((coord.index(self.x), coord.index(self.y)))
                         goal = random.choice(pos_goals)
                         Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
-                                                g.obstacles, g.interactables, goal, cell_size)
+                                                obstacles, interactables, goal, cell_size)
                     self.act = 2
             if self.act == 2:
                 self.blitCount = 0
@@ -304,13 +305,13 @@ class Waiter(Chars.Chrctrs):
                         self.act = 0
                         # self.waitCount = random.randint(15,50)
                         # Erhöhung pro tick
-            if not g.clock.lastCall and g.clock.h_m[0] >= 8:
-                g.clock.lastCall = True
+            if not clock.lastCall and clock.h_m[0] >= 8:
+                clock.lastCall = True
                 self.text_count = 0
                 self.talker = self
                 self.text = 'Letzte Runde!!!'
 
-            if g.clock.h_m[0] >= 10:
+            if clock.h_m[0] >= 10:
                 self.angryness += 0.5
                 self.text_count = 0
                 self.talker = self
@@ -325,7 +326,7 @@ class Waiter(Chars.Chrctrs):
             dirtyrect = pygame.Rect(self.x, self.y, self.width, self.height)
             return dirtyrect
         else:
-            for i in g.interactables:
+            for i in interactables:
                 if i.art == "door":
                     if i.serv_pos == (door_pos[0][0], door_pos[0][1]):
                         if i.opened:

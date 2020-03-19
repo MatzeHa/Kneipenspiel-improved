@@ -61,7 +61,8 @@ class Guest(Chars.Chrctrs):
 
     #
 
-    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA):
+    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA, clock,
+                      obstacles, interactables, door_pos):
         if self.inside:
             self.mustblit = True
 
@@ -91,15 +92,15 @@ class Guest(Chars.Chrctrs):
 
             # setting goals
             # türe
-            if not self.going and g.clock.lastCall and self.x in coord and self.y in coord:
-                self.goal = (coord[g.door_pos[1][0]], coord[g.door_pos[1][1]])
+            if not self.going and clock.lastCall and self.x in coord and self.y in coord:
+                self.goal = (coord[door_pos[1][0]], coord[door_pos[1][1]])
                 self.going = True
                 self.sit = False
             # klo
             elif self.bladderTime > 0:
                 self.bladderTime -= 1
             elif self.bladderTime == 0 and self.x in coord and self.y in coord and self.toilet:
-                self.goal = (coord[g.door_pos[2][0]], coord[g.door_pos[2][1]])
+                self.goal = (coord[door_pos[2][0]], coord[door_pos[2][1]])
                 self.text = random.choice(('Ich muss mal verschwindibussen...', 'Oh, oh, das Bläschen drückt...',
                                            'Ich muss pissen!', 'Ich muss kurz das große Latrinum aufsagen gehen...',
                                            'Ich geh mal die Nougatschleuse öffnen...', 'Puh, Darmdrücken...',
@@ -114,7 +115,7 @@ class Guest(Chars.Chrctrs):
             # pfadfinden
             if self.goal != () and self.steps == []:
                 Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
-                                        g.obstacles, g.interactables, self.goal, cell_size)
+                                        obstacles, interactables, self.goal, cell_size)
                 self.goal = ()
             # Positionsabfrage
             # Gast setzt sich
@@ -125,10 +126,10 @@ class Guest(Chars.Chrctrs):
                 self.walking = False
                 self.serv_pos = self.chair.serv_pos
             # gast geht aus tür
-            elif self.x == coord[g.door_pos[1][0]] and self.y == coord[g.door_pos[1][1]] and self.steps == []:
+            elif self.x == coord[door_pos[1][0]] and self.y == coord[door_pos[1][1]] and self.steps == []:
                 self.inside = False
             # gast geht in keller
-            elif (self.x == coord[g.door_pos[2][0]] and self.y == coord[g.door_pos[2][1]]) and self.bladderTime >= 0:
+            elif (self.x == coord[door_pos[2][0]] and self.y == coord[door_pos[2][1]]) and self.bladderTime >= 0:
                 self.waitCount = random.randint(100, 500)
                 self.inside = False
 
@@ -219,8 +220,8 @@ class Guest(Chars.Chrctrs):
         else:
             self.mustblit = True
             if not self.going:
-                for i in g.interactables:
-                    if i.art == 'door' and i.serv_pos == (g.door_pos[1][0], g.door_pos[1][1]) and self.coming:
+                for i in interactables:
+                    if i.art == 'door' and i.serv_pos == (door_pos[1][0], door_pos[1][1]) and self.coming:
                         if not i.opened:
                             i.activated = True
                             if i not in active_IA:
@@ -235,20 +236,20 @@ class Guest(Chars.Chrctrs):
                             self.coming = False
 
                     elif i.art == 'stairs' and i.serv_pos == (
-                    g.door_pos[2][0], g.door_pos[2][1]) and self.bladderTime == 0:
+                    door_pos[2][0], door_pos[2][1]) and self.bladderTime == 0:
                         self.x = -100
                         self.y = -100
                         if self.waitCount > 0:
                             self.waitCount -= 1
                         if self.waitCount == 0:
-                            self.x = coord[g.door_pos[2][0]]
-                            self.y = coord[g.door_pos[2][1]]
+                            self.x = coord[door_pos[2][0]]
+                            self.y = coord[door_pos[2][1]]
                             self.inside = True
                             self.bladderTime = -1
                             self.goal = (self.chair.x, self.chair.y)
             if self.going:
-                for i in g.interactables:
-                    if i.art == 'door' and i.serv_pos == (g.door_pos[1][0], g.door_pos[1][1]):
+                for i in interactables:
+                    if i.art == 'door' and i.serv_pos == (door_pos[1][0], door_pos[1][1]):
                         if not i.opened:
                             i.active = True
                             i.activated = True

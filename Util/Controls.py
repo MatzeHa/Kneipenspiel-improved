@@ -54,7 +54,7 @@ def controls_pause(pause_menu):
     return run
 
 
-def controls_game(setup, chars, g):
+def controls_game(setup, chars, g, obstacles, interactables):
     run = True
     walk = True
     if not chars["guy"].ingame:
@@ -72,7 +72,7 @@ def controls_game(setup, chars, g):
 
                 elif event.key == pygame.K_e:
                     walk = False
-                    active_inter = dir_check(g.interactables, chars["guy"])
+                    active_inter = dir_check(interactables, chars["guy"])
                     if active_inter != 0:
                         if active_inter.art == "door":
                             active_inter.activated = True
@@ -170,7 +170,7 @@ def controls_game(setup, chars, g):
                             setup.game_maxle = GameMaxle(chars["guy"], players, g.drinks)
         # Laufen
         if walk:
-            run, game_maxle, inventory_active = controls_walking(setup, chars, g)
+            run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables)
 
             #        if game_maxle:
             #            self.game_maxle = game_maxle
@@ -218,7 +218,7 @@ def controls_dialog(dialog_menu):
                     dialog_menu.choice = 0
     return dialog_menu
 
-def controls_walking(setup, chars, g):
+def controls_walking(setup, chars, obstacles, interactables):
     game_maxle = False
     inventory_active = False
     run = True
@@ -228,22 +228,22 @@ def controls_walking(setup, chars, g):
         chars["guy"].sit = False
         chars["guy"].facing = 0
         chars["guy"].dir = 0
-        chars["guy"].walk(chars["waiter"] + chars["guests"], g.obstacles, g.interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
     elif keys[pygame.K_DOWN]:
         chars["guy"].sit = False
         chars["guy"].facing = 2
         chars["guy"].dir = 2
-        chars["guy"].walk(chars["waiter"] + chars["guests"], g.obstacles, g.interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
     if keys[pygame.K_RIGHT]:
         chars["guy"].sit = False
         chars["guy"].facing = 1
         chars["guy"].dir = 1
-        chars["guy"].walk(chars["waiter"] + chars["guests"], g.obstacles, g.interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
     elif keys[pygame.K_LEFT]:
         chars["guy"].sit = False
         chars["guy"].facing = 3
         chars["guy"].dir = 3
-        chars["guy"].walk(chars["waiter"] + chars["guests"], g.obstacles, g.interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
 
     else:
         chars["guy"].walking = False
