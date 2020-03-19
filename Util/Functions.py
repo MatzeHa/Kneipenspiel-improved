@@ -59,6 +59,7 @@ class global_var:
     def __init__(self, waiter, drinks, clock, raster, order_menue, dialog_menue, obstacles, interactables,
                  music1, sound_count, inventory_active, text_count, sound1, radio, kerzen_list,
                  door_pos, chairs, halo_count, timer_clock, guy, guests, filter_halo):
+
         import pygame
         pygame.init()
         # static for all:

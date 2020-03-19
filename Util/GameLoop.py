@@ -48,24 +48,10 @@ def game_loop(win, setup):
             dirtyrects = setup.game.check_action(win, setup, g, lvl)
 
         else:
+             # if guy.travel: pop guy from actual level and put it into room
 
             run, dirtyrects = level_selector(lvl, win, g)
 
-        '''
-        if kitchen:
-            #            if lvl_kitchen not in locals():
-            from Level.CreateKitchen import LVLKitchen
-            lvl_kitchen = LVLKitchen(win)
-            g.guy.x = lvl_kitchen.sv["coord"]["w"][7]
-            g.guy.y = lvl_kitchen.sv["coord"]["h"][0]
-            g.guy.facing = 2
-            self.g = g
-            lvl_kitchen.run_lvl(win, g, self)
-
-        win.blit(self.sv["images"].game_over, (win_w / 2 - 400, win_h / 2 - 232))
-        pygame.display.update()
-        pygame.quit()
-        '''
 
         if not pause_menu.quit:
             if first_round:

@@ -37,6 +37,7 @@ class LVLMain:
         self.win_copy_change_mode = win.copy()
         self.setup = setup
         self.g = global_var
+        self.chars = []
         self.sublevel = "Main"
         self.active_IA = []         # active Interactables
         self.travel = False
@@ -679,6 +680,7 @@ class LVLMain:
     def run_lvl(self, win, g, lvl):
 
         # TODO: HIER weitermachen! Küche ienbauen, setup.wall_size anpassen!!!
+        # TODO: guy.room abfragen!!!
         dirtyrects = []
 
         # Move-Calculations:

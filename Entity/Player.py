@@ -47,6 +47,7 @@ class Player(Chars.Chrctrs):
         self.end_game = False
         self.game = ""
         self.travel = False
+        self.room = "Main"
 
     def calc_movement(self, win, g):
 
