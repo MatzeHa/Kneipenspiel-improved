@@ -1,6 +1,7 @@
 import pygame
 import random
 import Scripts.Util.DialogScript as DialogSkript
+from Scripts.Entity.Chars import Portraits
 
 pygame.init()
 
@@ -13,19 +14,26 @@ text_mod = 0.5  # text-geschwindigkeits-modifikator
 
 
 class DialogMenue:
-    def __init__(self, win_w, win_h, char):
+    def __init__(self, setup):
+        win_w = setup.win_w
+        win_h = setup.win_h
+
+        example_pic = Portraits[0]
+        pic_w = example_pic.get_width()
+        pic_h = example_pic.get_height()
+
         self.active = False
 
         self.surf = pygame.Surface((win_w, win_h))
         self.x_t1 = win_w * 0.05  # x_t1 =x.Koordinate von Talker 1
         self.y_t1 = win_h * 0.05
-        self.w_t1 = char.portrait.get_width()
-        self.h_t1 = char.portrait.get_height()
+        self.w_t1 = pic_w
+        self.h_t1 = pic_h
 
-        self.x_t2 = win_w * 0.95 - char.portrait.get_width()  # x_t1 =x.Koordinate von Talker 2
+        self.x_t2 = win_w * 0.95 - pic_h  # x_t1 =x.Koordinate von Talker 2
         self.y_t2 = win_h * 0.05
-        self.w_t2 = char.portrait.get_width()
-        self.h_t2 = char.portrait.get_height()
+        self.w_t2 = pic_w
+        self.h_t2 = pic_h
 
         self.x_window = win_w * 0.05  # x_t1 =x.Koordinate von Dialodfenster
         self.y_window = win_h * 0.65  # x_t1 =x.Koordinate von Talker 1
@@ -38,7 +46,7 @@ class DialogMenue:
         self.surf.fill((255, 130, 0))
         self.surf.set_alpha(200)
 
-        self.chars = [char, char, None]
+        self.chars = [None, None, None]
         self.dlst = []
         self.choice = 0
         self.char_talking = 1
@@ -110,7 +118,7 @@ class DialogMenue:
 
         return self.dirtyrects
 
-    def check_action(self, win, setup, chars, g, lvl):
+    def check_action(self, win, setup, chars, lvl):
         dirtyrects = []
         if chars["guy"].talk_action == 2:  # besser: if dialog_menu.active:
             dirtyrects = self.draw(win, lvl.sv["win_copy_change_mode"])

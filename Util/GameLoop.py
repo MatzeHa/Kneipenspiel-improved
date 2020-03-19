@@ -24,10 +24,12 @@ def game_loop(win, setup):
 
     first_round = True
 
+    g = global_var(setup)
+
     while run:
         if start_game:
             start_game = False
-            win, g = lvl.init_draw(win, setup, create_char)
+            lvl.init_draw(win, setup, create_char, g)
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
         elif pause_menu.active:
@@ -36,7 +38,7 @@ def game_loop(win, setup):
 
         elif g.dialog_menue.active:
             g.dialog_menue = controls_dialog(g.dialog_menue)
-            dirtyrects = g.dialog_menue.check_action(win, setup, lvl.chars, g, lvl)
+            dirtyrects = g.dialog_menue.check_action(win, setup, lvl.chars, lvl)
 
         elif lvl.chars["guy"].orderAction == 6:
             lvl.chars["guy"].order_menue = controls_order(lvl.chars, g)

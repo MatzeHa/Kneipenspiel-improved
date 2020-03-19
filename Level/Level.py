@@ -3,7 +3,8 @@ from Scripts.Util.Functions import Raster
 
 
 class Level:
-    def __init__(self, win, setup, images, obst_images, wall_w, wall_h):
+    def __init__(self, win, setup, name, images, obst_images, wall_w, wall_h):
+        self.name = name
         self.sv = {"images": images,
                    "obst_images": obst_images,
                    "wall_w": wall_w,
@@ -13,5 +14,11 @@ class Level:
                    "max_coord": get_max_coord(setup.coord),
                    "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size)
                    }
+
         self.win_copy = win.copy()
         self.win_copy_change_mode = win.copy()
+        self.active_IA = []         # active Interactables
+        self.chars = {"guy": None,
+                      "guests": [],
+                      "waiter": []}
+        self.lvl_vars = {}

@@ -25,13 +25,7 @@ pygame.init()
 
 class LVLMain(Level):
     def __init__(self, win, setup):
-        Level.__init__(self, win, setup, LVLMainImages(), ObstacleImages(), 150, 150)
-        self.sublevel = "Main"
-        self.active_IA = []         # active Interactables
-        self.travel = False
-        self.chars = {"guy": None,
-                      "guests": [],
-                      "waiter": []}
+        Level.__init__(self, win, setup, "main", LVLMainImages(), ObstacleImages(), 150, 150)
 
         self.lvl_vars = {"clock": Clock,
                          "obstacles": [],
@@ -464,12 +458,6 @@ class LVLMain(Level):
                 _kerzen_list.append(_i)
         random.shuffle(_chairs)
 
-        # drinks: Nr. : ('Name', Preis, Alkoholgehalt. # ?Anzahl der Schlücke? #
-        # TODO: hier scheint noch ein bug zu sein,
-        # wenn man das zweite getränk bestellt(?) hat man mehr (doppelt so viele?) schlücke
-        _drinks = {0: ("", 0, 0, 0), 1: ("Bier", 3, 10, 10), 2: ("Wein", 4, 5, 5), 3: ("Schnaps", 2, 30, 1),
-                   4: ("Kaffee", 3, -3, 6)}
-
         _clock = Clock(i.increase(), 50, 500)
 
         _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], self.sv["cell_size"],
@@ -486,35 +474,27 @@ class LVLMain(Level):
                           (random.randint(0, 0), random.randint(0, 1)), False)
             _guests.append(guest)
 
-        _order_menue = OrderMenue(_drinks)
-        _dialog_menue = DialogMenue(setup.win_w, setup.win_h, _guy)
 
         _halo_count = 1
 
-        return _obstacles, _interactables, _door_pos, _radio, _drinks, _chairs, _kerzen_list, _clock, _guy, _waiter, \
-            _guests, _order_menue, _dialog_menue, _halo_count, filter_halo
+        return _obstacles, _interactables, _door_pos, _radio, _chairs, _kerzen_list, _clock, _guy, _waiter, \
+            _guests, _halo_count, filter_halo
 
-    def init_draw(self, win, setup, create_char):
+    def init_draw(self, win, setup, create_char, g):
 
         music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
-        sound1 = pygame.mixer.Sound('../Sound/Background_1.wav')
-        sound1.set_volume(0)
-        channel_bg = pygame.mixer.Channel(0)
-        channel_bg.play(sound1, -1)  # ist das richtig so???
 
-        sound_count = 0
+
 
         win.blit(self.sv["images"].bg, (0, 0))
         win.blit(self.sv["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
 
-        obstacles, interactables, door_pos, radio, drinks, chairs, kerzen_list, clock, guy, waiter, \
-            guests, order_menue, dialog_menue, halo_count, filter_halo = self.init_main(win, setup, create_char)
+        obstacles, interactables, door_pos, radio, chairs, kerzen_list, clock, guy, waiter, \
+            guests, halo_count, filter_halo = self.init_main(win, setup, create_char)
 
         for obst in obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
 
-        inventory_active = False
-        text_count = 50
         self.sv["win_copy"] = win.copy()
 
         for inter in interactables:
@@ -531,10 +511,6 @@ class LVLMain(Level):
         raster = Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["cell_size"])
         # raster.draw(win)
         self.sv["win_copy"] = win.copy()
-        timer_clock = pygame.time.Clock()
-
-        g = global_var(drinks, raster, order_menue, dialog_menue, sound_count, inventory_active, text_count, sound1,
-                       timer_clock)
 
         self.chars["guy"] = guy
         self.chars["waiter"] = waiter
@@ -549,8 +525,9 @@ class LVLMain(Level):
         self.lvl_vars["chairs"] = chairs
         self.lvl_vars["halo_count"] = halo_count
         self.lvl_vars["filter_halo"] = filter_halo
+        self.lvl_vars["raster"] = raster
 
-        return win, g
+        g.dialog_menue.chars[0] = guy
 
     def draw_blits(self, win, g):
 

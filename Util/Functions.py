@@ -56,18 +56,35 @@ class Raster:
 
 
 class global_var:
-    def __init__(self, drinks, raster, order_menue, dialog_menue, sound_count, inventory_active, text_count, sound1,
-                 timer_clock):
+    def __init__(self, setup):
 
         import pygame
+        from Scripts.GameModes.Dialog import DialogMenue
+        from Scripts.GameModes.Order import OrderMenue
         pygame.init()
+
+
+        # drinks: Nr. : ('Name', Preis, Alkoholgehalt. # ?Anzahl der Schlücke? #
+        # TODO: hier scheint noch ein bug zu sein,
+        # wenn man das zweite getränk bestellt(?) hat man mehr (doppelt so viele?) schlücke
+        drinks = {0: ("", 0, 0, 0), 1: ("Bier", 3, 10, 10), 2: ("Wein", 4, 5, 5), 3: ("Schnaps", 2, 30, 1),
+                  4: ("Kaffee", 3, -3, 6)}
+
+
+        dialog_menue = DialogMenue(setup)
+        sound1 = pygame.mixer.Sound('../Sound/Background_1.wav')
+        sound1.set_volume(0)
+        channel_bg = pygame.mixer.Channel(0)
+        channel_bg.play(sound1, -1)  # ist das richtig so???
+        timer_clock = pygame.time.Clock()
+        order_menue = OrderMenue(drinks)
+
         # static for all:
         self.drinks = drinks
-        self.raster = raster
         self.dialog_menue = dialog_menue
-        self.sound_count = sound_count  # ???
-        self.inventory_active = inventory_active
-        self.text_count = text_count
+        self.sound_count = 0  # ???
+        self.inventory_active = False
+        self.text_count = 50
         self.sound1 = sound1
         self.timer_clock = timer_clock
         self.order_menue = order_menue
