@@ -10,7 +10,7 @@ pygame.display.set_caption("Matzes Kneipenspiel - Charaktererstellung", "MK")
 
 
 class CreateChar:
-    def __init__(self, setup):
+    def __init__(self):
         cci = CharCreationImages()
 
         self.creation_active = True
@@ -31,24 +31,23 @@ class CreateChar:
                         cci.img_hands_bw]
 
         self.cursor = 0
-        self.setup = setup
         self.new_tilemap = None
 
-    def start_creation(self, win):
-        self.init_blit(win)
-        self.run(win)
+    def start_creation(self, win, setup):
+        self.init_blit(win, setup)
+        self.run(win, setup)
         self.new_tilemap = self.create_tilemap(win)
 
-    def init_blit(self, win):
-        self.draw_spectre(win)
-        self.draw_all(win)
-        self.setup.win_copy = win.copy()
+    def init_blit(self, win, setup):
+        self.draw_spectre(win, setup)
+        self.draw_all(win, setup)
+        setup.win_copy = win.copy()
 
-    def run(self, win):
+    def run(self, win, setup):
         run = True
         while run:
             change_color_ok = False
-            self.del_cursor(win)
+            self.del_cursor(win, setup)
             keys = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
@@ -65,11 +64,11 @@ class CreateChar:
                 change_color_ok = True
             if keys[pygame.K_RETURN]:
                 run = False
-            self.draw_spectre(win)
+            self.draw_spectre(win, setup)
             if change_color_ok:
                 self.change_color(self.cursor)
-            self.draw_all(win)
-            self.draw_cursor(win)
+            self.draw_all(win, setup)
+            self.draw_cursor(win, setup)
 
             self.timer_clock.tick(30)
             # print("FPS: ", self.timer_clock.get_fps())
@@ -176,30 +175,30 @@ class CreateChar:
         self.sv["tm_images"][cursor][0] = fill(img, col)
         return self.sv["tm_images"][cursor][0]
 
-    def draw_all(self, win):
+    def draw_all(self, win, setup):
         win.blit(self.sv["tm_images"][4][0],
-                 (self.setup.win_w / 2 - self.sv["img_w"] / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2))
+                 (setup.win_w / 2 - self.sv["img_w"] / 2, setup.win_h / 2 - self.sv["img_h"] / 2))
         win.blit(self.sv["tm_images"][3][0],
-                 (self.setup.win_w / 2 - self.sv["img_w"] / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2))
+                 (setup.win_w / 2 - self.sv["img_w"] / 2, setup.win_h / 2 - self.sv["img_h"] / 2))
         win.blit(self.sv["tm_images"][2][0],
-                 (self.setup.win_w / 2 - self.sv["img_w"] / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2))
+                 (setup.win_w / 2 - self.sv["img_w"] / 2, setup.win_h / 2 - self.sv["img_h"] / 2))
         win.blit(self.sv["tm_images"][1][0],
-                 (self.setup.win_w / 2 - self.sv["img_w"] / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2))
+                 (setup.win_w / 2 - self.sv["img_w"] / 2, setup.win_h / 2 - self.sv["img_h"] / 2))
         win.blit(self.sv["tm_images"][0][0],
-                 (self.setup.win_w / 2 - self.sv["img_w"] / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2))
+                 (setup.win_w / 2 - self.sv["img_w"] / 2, setup.win_h / 2 - self.sv["img_h"] / 2))
 
-    def draw_cursor(self, win):
+    def draw_cursor(self, win, setup):
         bound = self.sv["tm_images"][self.cursor][2]
-        rect = pygame.Rect(self.setup.win_w / 2 - self.sv["img_w"] / 2 + bound[0],
-                           self.setup.win_h / 2 - self.sv["img_h"] / 2 + bound[1],
+        rect = pygame.Rect(setup.win_w / 2 - self.sv["img_w"] / 2 + bound[0],
+                           setup.win_h / 2 - self.sv["img_h"] / 2 + bound[1],
                            bound[2], bound[3])
         pygame.draw.rect(win, (200, 230, 10), rect, 3)
 
-    def del_cursor(self, win):
-        rect = pygame.Rect(self.setup.win_w / 2 - self.sv["img_w"] / 2 - 2,
-                           self.setup.win_h / 2 - self.sv["img_h"] / 2 - 2,
+    def del_cursor(self, win, setup):
+        rect = pygame.Rect(setup.win_w / 2 - self.sv["img_w"] / 2 - 2,
+                           setup.win_h / 2 - self.sv["img_h"] / 2 - 2,
                            self.sv["img_w"] + 2, self.sv["img_h"] + 2)
-        win.blit(self.setup.win_copy, (rect.x, rect.y), rect)
+        win.blit(setup.win_copy, (rect.x, rect.y), rect)
 
     def cursor_up(self):
         if self.cursor > 0:
@@ -221,17 +220,17 @@ class CreateChar:
             val += 1
         self.sv["tm_images"][self.cursor][1] = val
 
-    def draw_spectre(self, win):
+    def draw_spectre(self, win, setup):
         height = 30
         length = 200
         offset = 100
-        rect = pygame.Rect(self.setup.win_w / 2 - length / 2, self.setup.win_h / 2 - self.sv["img_h"] / 2 - offset, 100,
+        rect = pygame.Rect(setup.win_w / 2 - length / 2, setup.win_h / 2 - self.sv["img_h"] / 2 - offset, 100,
                            height)
         #        pygame.draw.rect(win, (20, 20, 20), rect)
         for length in range(0, length):
             v = length / 2
             pygame.draw.rect(win, tuple(get_color(v)), (rect.x + length, rect.y, 1, 30))
-        line_x = int(self.setup.win_w / 2 - length / 2 + self.sv["tm_images"][self.cursor][1] * length / 100)
+        line_x = int(setup.win_w / 2 - length / 2 + self.sv["tm_images"][self.cursor][1] * length / 100)
 
         pygame.draw.line(win, (255, 255, 255), (line_x, rect.y), (line_x, rect.y + height - 1))
 

@@ -4,6 +4,7 @@ import Scripts.Entity.Chars as Chars
 
 pygame.init()
 
+# TODO: load sounds externally
 pygame.mixer.pre_init(frequency=25000, size=-16, channels=2)    # , buffer=4096)
 pygame.mixer.init()
 

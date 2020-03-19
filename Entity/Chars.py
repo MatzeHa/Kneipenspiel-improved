@@ -62,6 +62,7 @@ cellSize = 64
 
 class Chrctrs:
     def __init__(self, x, y, width, height, vel, inside, tilemap=None):
+        # Variables just for certain Characters
         self.orderAction = None
         self.order_timer = None
         self.drink = None
@@ -72,6 +73,8 @@ class Chrctrs:
         self.orderActive = None
         self.textcolor = None
         self.text_for = None
+
+        # Variables for all Characters
         self.art = ""
         self.x = x
         self.y = y

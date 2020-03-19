@@ -8,7 +8,6 @@ class PauseMenu:
     def __init__(self, win, setup):
         win_size = pygame.display.get_surface().get_size()
         self.win = win
-        self.setup = setup
         self.win_width, self.win_height = win_size
 
         self.active = False

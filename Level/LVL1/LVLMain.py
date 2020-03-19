@@ -2,6 +2,8 @@ import pygame
 import random
 import math
 
+from Scripts.Level.Level import Level
+
 from Scripts.Util.LoadImages import ObstacleImages, LVLMainImages
 
 from Scripts.Util.Functions import get_max_coord, Raster, global_var, draw_interactables
@@ -21,21 +23,9 @@ from Scripts.Util.Obstacles import Obstacle, Chalkboard, Kerze, KerzeWand, Radio
 pygame.init()
 
 
-class LVLMain:
+class LVLMain(Level):
     def __init__(self, win, setup):
-        self.start = True
-        self.sv = {"images": LVLMainImages(),
-                   "obst_images": ObstacleImages(),
-                   "wall_w": 150,
-                   "wall_h": 150,
-                   "cell_size": setup.cell_size,
-                   "coord": setup.coord,
-                   "max_coord": get_max_coord(setup.coord),
-                   "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size)
-                   }
-        self.win_copy = win.copy()
-        self.win_copy_change_mode = win.copy()
-        self.setup = setup
+        Level.__init__(self, win, setup, LVLMainImages(), ObstacleImages(), 150, 150)
         self.sublevel = "Main"
         self.active_IA = []         # active Interactables
         self.travel = False
@@ -54,10 +44,10 @@ class LVLMain:
                          "halo_count": 0,
                          "filter_halo": pygame.Surface}
 
-    def init_main(self, win, create_char):
+    def init_main(self, win, setup, create_char):
         # Create Surfaces for Filters (Licht)
         filter_halo = pygame.Surface(
-            (self.setup.win_w, self.setup.win_h))  # the size of your rect, ist für drunkenness filter
+            (setup.win_w, setup.win_h))  # the size of your rect, ist für drunkenness filter
         filter_halo.set_colorkey((255, 255, 255))  # wichtig für maskieren
         filter_halo.fill((255, 255, 255))
 
@@ -418,7 +408,7 @@ class LVLMain:
                       filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][7],
-                      self.setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(
@@ -427,7 +417,7 @@ class LVLMain:
                       self.sv["obst_images"].img_kerze_wand.get_height(), 0, filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][16],
-                      self.setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(KerzeWand(i.increase(), self.sv["coord"]["w"][22], self.sv["coord"]["h"][1],
@@ -435,7 +425,7 @@ class LVLMain:
                                         self.sv["obst_images"].img_kerze_wand.get_height(), 0, filter_halo))
 
         _interactables.append(
-            Chalkboard(i.increase(), self.sv["coord"]["w"][11], self.setup.win_h - self.sv["wall_h"],
+            Chalkboard(i.increase(), self.sv["coord"]["w"][11], setup.win_h - self.sv["wall_h"],
                        self.sv["obst_images"].img_chalkboard.get_width(),
                        self.sv["obst_images"].img_chalkboard.get_height(), 180))
         i = IncreaseI()
@@ -497,14 +487,14 @@ class LVLMain:
             _guests.append(guest)
 
         _order_menue = OrderMenue(_drinks)
-        _dialog_menue = DialogMenue(self.setup.win_w, self.setup.win_h, _guy)
+        _dialog_menue = DialogMenue(setup.win_w, setup.win_h, _guy)
 
         _halo_count = 1
 
         return _obstacles, _interactables, _door_pos, _radio, _drinks, _chairs, _kerzen_list, _clock, _guy, _waiter, \
             _guests, _order_menue, _dialog_menue, _halo_count, filter_halo
 
-    def init_draw(self, win, create_char):
+    def init_draw(self, win, setup, create_char):
 
         music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
         sound1 = pygame.mixer.Sound('../Sound/Background_1.wav')
@@ -518,7 +508,7 @@ class LVLMain:
         win.blit(self.sv["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
 
         obstacles, interactables, door_pos, radio, drinks, chairs, kerzen_list, clock, guy, waiter, \
-            guests, order_menue, dialog_menue, halo_count, filter_halo = self.init_main(win, create_char)
+            guests, order_menue, dialog_menue, halo_count, filter_halo = self.init_main(win, setup, create_char)
 
         for obst in obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
@@ -601,7 +591,7 @@ class LVLMain:
         self.lvl_vars["filter_halo"].set_alpha(round(math.sin((self.lvl_vars["halo_count"] / 100) * math.pi) * 100))
         win.blit(self.lvl_vars["filter_halo"], (0, 0))
 
-    def movement_calcuation(self, win, g):
+    def movement_calcuation(self, win, setup, g):
         _dirtyrects = []
 
         # all interactables with own animation
@@ -613,7 +603,7 @@ class LVLMain:
         _dirtyrects.append(self.chars["guy"].calc_movement(win, self.chars, g))
         # Waiter
         _dirtyrects.append(self.chars["waiter"][0].calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
-                                                                 self.setup.win_w, self.setup.win_h,
+                                                                 setup.win_w, setup.win_h,
                                                                  self.sv["wall_w"], self.sv["wall_h"],
                                                                  self.lvl_vars["door_pos"], self.sv["cell_size"],
                                                                  self.lvl_vars["clock"], self.lvl_vars["obstacles"],
@@ -623,7 +613,7 @@ class LVLMain:
             if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or guest.walk_in[0] < \
                     self.lvl_vars["clock"].h_m[0]:
                 _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
-                                                       self.setup.win_w, self.setup.win_h,
+                                                       setup.win_w, setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
                                                        self.sv["cell_size"], self.active_IA,
                                                        self.lvl_vars["clock"], self.lvl_vars["obstacles"],
@@ -637,7 +627,7 @@ class LVLMain:
                 _dirtyrects.append(i.calc_display())  # Display Gäste
         return _dirtyrects
 
-    def del_last_blit(self, win, g):
+    def del_last_blit(self, win, setup, g):
         dirtyrects = []
         if not self.chars["guy"].ingame:
             if self.chars["guy"].start_game:
@@ -645,7 +635,7 @@ class LVLMain:
             #                self.sv["win_copy"] = win.copy()
 #            elif g.guy.end_game:
 #                win.blit(self.sv["win_copy"], (0, 0))
-#                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
+#                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 #                g.guy.ingame = False
 #                g.guy.game = ""
 #                g.guy.end_game = False
@@ -657,7 +647,7 @@ class LVLMain:
             # wenn OrderMenue geschlossen wird, wird das Bild mit  der Kopie üüberblittet
             elif self.chars["guy"].orderAction == 7:
                 win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
+                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
                 self.chars["guy"].orderAction = 8
 
             # wenn Dialog Menue aufgemacht wird, wird eine Kopie des gesamten Bildes gespeichert
@@ -669,7 +659,7 @@ class LVLMain:
             # überblitten mit alter Kopie
             elif self.chars["guy"].talk_action == 2:
                 win.blit(self.sv["win_copy"], (0, 0))
-                dirtyrects.append(pygame.Rect(0, 0, self.setup.win_w, self.setup.win_h))
+                dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
             # Wenn Normales In-Game Window angezeigt wird, soll alles, was sich bewegen kann, ( auch halos )
             # wieder mit Kopie ohne bewegliche sachen überblittet werden.
@@ -698,20 +688,20 @@ class LVLMain:
 
         return dirtyrects
 
-    def run_lvl(self, win, g):
+    def run_lvl(self, win, setup, g):
 
         # TODO: HIER weitermachen! Küche ienbauen, setup.wall_size anpassen!!!
         # TODO: guy.room abfragen!!!
         dirtyrects = []
 
         # Move-Calculations:
-        run = controls_game(self.setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"])
+        run = controls_game(setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"])
 
         # Überblitten
-        dirtyrects = dirtyrects + self.del_last_blit(win, g)
+        dirtyrects = dirtyrects + self.del_last_blit(win, setup, g)
 
         # Berechnungen
-        dirtyrects = dirtyrects + self.movement_calcuation(win, g)
+        dirtyrects = dirtyrects + self.movement_calcuation(win, setup, g)
 
         # Blitten
         self.draw_blits(win, g)

@@ -11,8 +11,8 @@ pygame.init()
 def game_loop(win, setup):
     clock = pygame.time.Clock()
     pause_menu = setup.pause_menu
-    create_char = CreateChar(setup)
-#    create_char.start_creation(win)
+    create_char = CreateChar()
+    create_char.start_creation(win, setup)
 
     lvl = LVLMain(win, setup)
 
@@ -27,7 +27,7 @@ def game_loop(win, setup):
     while run:
         if start_game:
             start_game = False
-            win, g = lvl.init_draw(win, create_char)
+            win, g = lvl.init_draw(win, setup, create_char)
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
         elif pause_menu.active:
@@ -48,7 +48,7 @@ def game_loop(win, setup):
 
         else:
             # if guy.travel: pop guy from actual level and put it into room
-            run, dirtyrects = level_selector(lvl, win, g)
+            run, dirtyrects = level_selector(lvl, win, setup, g)
 
         if not pause_menu.quit:
             if first_round:
