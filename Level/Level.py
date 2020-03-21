@@ -25,7 +25,6 @@ class Level:
                    "floor_pos": floor_pos,
                    "wall_w": wall_w,
                    "wall_h": wall_h,
-                   "cell_size": setup.cell_size,        # TODO: soll bei setup alleine bleiben
                    "coord": coords,
                    "max_coord": get_max_coord(coords),
                    "enter_coord": enter_coord
@@ -56,7 +55,7 @@ class Level:
             _dirtyrects.append(waiter.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                     setup.win_w, setup.win_h,
                                                     self.sv["wall_w"], self.sv["wall_h"],
-                                                    self.lvl_vars["door_pos"], self.sv["cell_size"],
+                                                    self.lvl_vars["door_pos"], setup.cell_size,
                                                     self.lvl_vars["clock"], self.lvl_vars["obstacles"],
                                                     self.lvl_vars["interactables"]))
         # Guests
@@ -66,7 +65,7 @@ class Level:
                 _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                        setup.win_w, setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
-                                                       self.sv["cell_size"], self.active_IA,
+                                                       setup.cell_size, self.active_IA,
                                                        self.lvl_vars["clock"], self.lvl_vars["obstacles"],
                                                        self.lvl_vars["interactables"], self.lvl_vars["door_pos"]))
         # CALCULATE DIRTYRECTS FOR DISPLAY
@@ -202,7 +201,7 @@ class Level:
             self.active_IA.append(ret_dict["clock"])
 
         # Create Raster
-        Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["floor_pos"], self.sv["lvl_size"], self.sv["cell_size"])
+        Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["floor_pos"], self.sv["lvl_size"], setup.cell_size)
         # make Copy
         self.win_copy = win.copy()
 

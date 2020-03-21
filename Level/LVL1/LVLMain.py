@@ -25,7 +25,7 @@ class LVLMain(Level):
         lvl_size = images.bg_walls.get_size()
         ground_size = images.img_ground.get_size()
 
-        super().__init__(win, setup, "lvl_main", ObstacleImages(), lvl_size, ground_size, (12, 10))
+        super().__init__(win, setup, "lvl_main", ObstacleImages(), lvl_size, ground_size, (11, 3))
 
         # ToDo: self....
         self.lvl_vars = {"images": images,
@@ -400,23 +400,23 @@ class LVLMain(Level):
         _interactables.append(
             KerzeWand(i.increase(),
                       self.sv["coord"]["w"][7],
-                      self.sv["wall_h"] - 2 * self.sv["cell_size"],
+                      self.sv["wall_h"] - 2 * setup.cell_size,
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(),
                       0,
                       filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][7],
-                      setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      setup.win_h - self.sv["wall_w"] + setup.cell_size,
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(
-            KerzeWand(i.increase(), self.sv["coord"]["w"][16], self.sv["wall_h"] - 2 * self.sv["cell_size"],
+            KerzeWand(i.increase(), self.sv["coord"]["w"][16], self.sv["wall_h"] - 2 * setup.cell_size,
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(), 0, filter_halo))
         _interactables.append(
             KerzeWand(i.increase(), self.sv["coord"]["w"][16],
-                      setup.win_h - self.sv["wall_w"] + self.sv["cell_size"],
+                      setup.win_h - self.sv["wall_w"] + setup.cell_size,
                       self.sv["obst_images"].img_kerze_wand.get_width(),
                       self.sv["obst_images"].img_kerze_wand.get_height(), 180, filter_halo))
         _interactables.append(KerzeWand(i.increase(), self.sv["coord"]["w"][22], self.sv["coord"]["h"][1],
@@ -432,19 +432,19 @@ class LVLMain(Level):
             Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 0, self.sv["coord"], self.sv["cell_size"], "lvl_kitchen"))
+                 0, self.sv["coord"], setup.cell_size, "lvl_kitchen"))
         _interactables.append(
             Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 90, self.sv["coord"], self.sv["cell_size"], "lvl_outside"))
+                 90, self.sv["coord"], setup.cell_size, "lvl_outside"))
         _door_pos = []
 
         _interactables.append(
             Stairs(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][0],
                    self.sv["obst_images"].img_stairs.get_width(),
                    self.sv["obst_images"].img_stairs.get_height(),
-                   90, self.sv["coord"][self.sv["max_coord"]], self.sv["cell_size"]))
+                   90, self.sv["coord"][self.sv["max_coord"]], setup.cell_size))
         for _i in _interactables:
             if _i.art == 'door' or _i.art == 'stairs':
                 _door_pos.append(_i.serv_pos)
@@ -465,17 +465,17 @@ class LVLMain(Level):
 
         _clock = Clock(i.increase(), 50, 500)
 
-        _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], self.sv["cell_size"],
-                      self.sv["cell_size"], True, create_char.new_tilemap, 64 / 8)
+        _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], setup.cell_size,
+                      setup.cell_size, True, create_char.new_tilemap, 64 / 8)
         _waiter = [
-            Waiter(self.sv["coord"]["w"][2], self.sv["coord"]["h"][2], self.sv["cell_size"], self.sv["cell_size"],
+            Waiter(self.sv["coord"]["w"][2], self.sv["coord"]["h"][2], setup.cell_size, setup.cell_size,
                    _obstacles, True,
                    create_char.create_tilemap(win))]
         _guests = []
         for _i in range(0, 10):
             vel = 8
-            guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], self.sv["cell_size"],
-                          self.sv["cell_size"], vel, _chairs.pop(),
+            guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], setup.cell_size,
+                          setup.cell_size, vel, _chairs.pop(),
                           (random.randint(0, 0), random.randint(0, 20)), False)
             _guests.append(guest)
 

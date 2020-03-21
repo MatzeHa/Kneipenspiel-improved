@@ -47,10 +47,10 @@ class LVLKitchen(Level):
         _interactables = []
 
         _interactables.append(
-            Door(i.increase(), self.sv["coord"]["w"][4], self.sv["coord"]["h"][0],
+            Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][7],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 180, self.sv["coord"], self.sv["cell_size"], "schachtel_oben"))
+                 180, self.sv["coord"], setup.cell_size, "schachtel_oben"))
 
         _door_pos = []
         for _i in _interactables:
