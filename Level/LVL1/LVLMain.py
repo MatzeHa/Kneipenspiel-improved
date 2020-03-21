@@ -5,7 +5,6 @@ from Scripts.Level.Level import Level
 
 from Scripts.Util.LoadImages import ObstacleImages, LVLMainImages
 
-from Scripts.Util.Functions import Raster
 from Scripts.Util.Clock import Clock
 from Scripts.Util.Functions import IncreaseI
 
@@ -25,25 +24,23 @@ class LVLMain(Level):
         lvl_size = images.bg_walls.get_size()
         ground_size = images.img_ground.get_size()
 
-        super().__init__(win, setup, "lvl_main", ObstacleImages(), lvl_size, ground_size, (11, 3))
+        super().__init__(win, setup, "lvl_main", ObstacleImages(), lvl_size, ground_size, (3, 10))
 
-        # ToDo: self....
-        self.lvl_vars = {"images": images,
-                         "width": lvl_size[0],
-                         "height": lvl_size[1],
-                         "clock": Clock,
-                         "obstacles": [],
-                         "interactables": [],
-                         "music1": pygame.mixer.music,
-                         "radio": Radio,
-                         "kerzen_list": [],
-                         "door_pos": [],
-                         "chairs": [],
-                         "halo_count": 0,
-                         "filter_halo": pygame.Surface}
-        print()
+        self.images = images
+        self.width = lvl_size[0]
+        self.height = lvl_size[1]
+        self.clock = Clock
+        self.obstacles = []
+        self.interactables = []
+        self.music1 = pygame.mixer.music
+        self.radio = Radio
+        self.kerzen_list = []
+        self.door_pos = []
+        self.chairs = []
+        self.halo_count = 0
+        self.filter_halo = pygame.Surface
 
-    def init_main(self, win, setup, create_char=None):
+    def init_main(self, win, setup, enter_coord, create_char=None):
         # Create Surfaces for Filters (Licht)
         filter_halo = pygame.Surface(
             (setup.win_w, setup.win_h))  # the size of your rect, ist für drunkenness filter
@@ -61,9 +58,9 @@ class LVLMain(Level):
         _interactables = []
 
         _obstacles.append(
-            Obstacle(i.increase(), "Walls_add", self.lvl_vars["images"].walls,
+            Obstacle(i.increase(), "Walls_add", self.images.walls,
                      self.sv["coord"]["w"][21], self.sv["coord"]["h"][0],
-                     self.lvl_vars["images"].walls.get_width(), self.lvl_vars["images"].walls.get_height()))
+                     self.images.walls.get_width(), self.images.walls.get_height()))
         _obstacles.append(
             Obstacle(i.increase(), "Theke", self.sv["obst_images"].img_bar, self.sv["coord"]["w"][3],
                      self.sv["coord"]["h"][0],
@@ -465,14 +462,15 @@ class LVLMain(Level):
 
         _clock = Clock(i.increase(), 50, 500)
 
-        _guy = Player(self.sv["coord"]["w"][8], self.sv["coord"]["h"][4], setup.cell_size,
+        _guy = Player(self.sv["coord"]["w"][enter_coord[0]], self.sv["coord"]["h"][enter_coord[1]], setup.cell_size,
                       setup.cell_size, True, create_char.new_tilemap, 64 / 8)
+
         _waiter = [
             Waiter(self.sv["coord"]["w"][2], self.sv["coord"]["h"][2], setup.cell_size, setup.cell_size,
                    _obstacles, True,
                    create_char.create_tilemap(win))]
         _guests = []
-        for _i in range(0, 10):
+        for _i in range(0, 20):
             vel = 8
             guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], setup.cell_size,
                           setup.cell_size, vel, _chairs.pop(),
@@ -506,21 +504,17 @@ class LVLMain(Level):
         self.chars["guy"] = ret_dict["guy"]
         self.chars["waiter"] = ret_dict["waiter"]
         self.chars["guests"] = ret_dict["guests"]
-        self.lvl_vars["radio"] = ret_dict["radio"]
-        self.lvl_vars["kerzen_list"] = ret_dict["kerzen_list"]
-        self.lvl_vars["chairs"] = ret_dict["chairs"]
-        self.lvl_vars["halo_count"] = ret_dict["halo_count"]
-        self.lvl_vars["clock"] = ret_dict["clock"]
+        self.radio = ret_dict["radio"]
+        self.kerzen_list = ret_dict["kerzen_list"]
+        self.chairs = ret_dict["chairs"]
+        self.halo_count = ret_dict["halo_count"]
+        self.clock = ret_dict["clock"]
         music1 = pygame.mixer.music.load('../Sound/BlueSkies.mp3')
-        self.lvl_vars["music1"] = music1
-
-
-    def draw_blits_specials(self, win, g):
-        pass
+        self.music1 = music1
 
     def del_lvl_specials(self, win):
         dirtyrects = list()
-        dirtyrects.append(self.lvl_vars["radio"].del_blit(win, self.win_copy))
-        for i in self.lvl_vars["kerzen_list"]:  # Kerzen löschen
+        dirtyrects.append(self.radio.del_blit(win, self.win_copy))
+        for i in self.kerzen_list:  # Kerzen löschen
             dirtyrects.append(i.repaint(win, self.win_copy))
         return dirtyrects

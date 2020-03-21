@@ -105,8 +105,9 @@ class Player(Chars.Chrctrs):
         self.walking = True
         # Kollisionsabfrage
         self.collide = False
+        # Oben
         if self.dir == 0:
-            if self.y - self.vel < sv["wall_h"]:
+            if self.y - self.vel < sv["floor_pos"][1]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.x + self.width > i.x and self.x < i.x + i.width and
@@ -121,14 +122,10 @@ class Player(Chars.Chrctrs):
                             self.collide = True
                             self.walking = False
                             break
-                    elif obst.walkable:     # TODO das kann weg
-                        if obst.art == "door":
-                            if obst.x + obst.width > self.x > obst.x - self.width and \
-                                    obst.y + obst.height > self.y - self.vel > obst.y:
-                                        next_screen = True
+
 
         elif self.dir == 1:  # rechts
-            if self.x + self.width + self.vel > setup.win_w - sv["wall_w"]:
+            if self.x + self.width + self.vel > sv["floor_pos"][0] + sv["floor_pos"][2]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and
@@ -144,7 +141,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 2:  # unten
-            if self.y + self.height + self.vel > setup.win_h - sv["wall_h"]:
+            if self.y + self.height + self.vel > sv["floor_pos"][1] + sv["floor_pos"][3]:
                 self.collide = True
                 self.walking = False
 
@@ -161,7 +158,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 3:
-            if self.x + self.vel <= sv["wall_w"]:
+            if self.x + self.vel <= sv["floor_pos"][0]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and

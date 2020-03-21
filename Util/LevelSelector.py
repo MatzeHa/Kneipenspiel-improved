@@ -18,7 +18,7 @@ def level_selector(win, setup, lvl, lvl_name, g):
         else:
             lvl[_lvl].movement_calculation(win, setup, g)
 
-    return run, dirtyrects, lvl_name
+    return [run, dirtyrects, lvl_name]
 
 
 def travel_fun(win, setup, g, lvl, old_room):
@@ -30,17 +30,20 @@ def travel_fun(win, setup, g, lvl, old_room):
         if new_room == "lvl_kitchen":
             if new_room not in lvl:
                 from Scripts.Level.LVL1.LVLKitchen import LVLKitchen
-                lvl[new_room] = LVLKitchen(win, setup, lvl[old_room].lvl_vars["clock"])
+                lvl[new_room] = LVLKitchen(win, setup, lvl[old_room].clock)
                 lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
                 lvl[new_room].init_draw(win, setup, g)
-                dirtyrects = lvl[new_room].reentry(setup)
+
+                dirtyrects = lvl[new_room].reentry(setup, win)
+
             else:
                 lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
-                dirtyrects = lvl[new_room].reentry(setup)
+                dirtyrects = lvl[new_room].reentry(setup, win)
 
 
         elif new_room == "lvl_main":
             lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
+            dirtyrects = lvl[new_room].reentry(setup, win)
 
         return new_room, [dirtyrects]
 

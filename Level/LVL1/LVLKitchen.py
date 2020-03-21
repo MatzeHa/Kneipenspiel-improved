@@ -3,7 +3,7 @@ from Scripts.Level.Level import Level
 
 from Scripts.Util.LoadImages import ObstacleImages, LVLKitchenImages
 from Scripts.Util.Functions import IncreaseI
-from Scripts.Util.Obstacles import Obstacle, Door
+from Scripts.Util.Obstacles import Door
 
 
 class LVLKitchen(Level):
@@ -12,24 +12,23 @@ class LVLKitchen(Level):
         lvl_size = images.bg_walls.get_size()
         ground_size = images.img_ground.get_size()
 
-        super().__init__(win, setup, "lvl_kitchen", ObstacleImages(), lvl_size, ground_size, (10, 1))
+        super().__init__(win, setup, "lvl_kitchen", ObstacleImages(), lvl_size, ground_size, (7, 0))
 
-        self.lvl_vars = {"images": images,
-                         "width": lvl_size[0],
-                         "height": lvl_size[1],
-                         "clock": clock,
-                         "obstacles": [],
-                         "interactables": [],
-                         "music1": None,
-                         "radio": None,
-                         "kerzen_list": [],
-                         "door_pos": [],
-                         "chairs": [],
-                         "halo_count": 0,
-                         "filter_halo": None}
+        self.images = images
+        self.width = lvl_size[0]
+        self.height = lvl_size[1]
+        self.clock = clock
+        self.obstacles = []
+        self.interactables = []
+        self.music1 = pygame.mixer.music
+        self.kerzen_list = []
+        self.door_pos = []
+        self.chairs = []
+        self.halo_count = 0
+        self.filter_halo = pygame.Surface
         self.active_IA.append(clock)
 
-    def init_main(self, win, setup, create_char=0):
+    def init_main(self, win, setup, enter_coord, create_char=0):
         # self.chars
         # Create Surfaces for Filters (Licht)
         filter_halo = pygame.Surface((setup.win_w, setup.win_h))  # the size of your rect, ist für drunkenness filter
@@ -44,13 +43,13 @@ class LVLKitchen(Level):
 
         # Obstacles und Interactables werden erstellt
         _obstacles = []
-        _interactables = []
+        _interactables = list()
 
         _interactables.append(
-            Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][7],
+            Door(i.increase(), self.sv["coord"]["w"][4], self.sv["coord"]["h"][0],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 180, self.sv["coord"], setup.cell_size, "schachtel_oben"))
+                 180, self.sv["coord"], setup.cell_size, "lvl_main"))
 
         _door_pos = []
         for _i in _interactables:

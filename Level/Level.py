@@ -5,17 +5,18 @@ from Scripts.Util.Functions import get_floor_pos, get_wall_size, get_bg_pos, get
 
 from Scripts.Util.Controls import controls_game
 
+
+
 pygame.init()
 
 
 class Level:
     def __init__(self, win, setup, name, obst_images, lvl_size, ground_size, enter_coord):
+        self.clock = None
         self.name = name
-
         bg_pos = get_bg_pos(setup, lvl_size)
         wall_w, wall_h = get_wall_size(lvl_size, ground_size)
         floor_pos = get_floor_pos(bg_pos, lvl_size, wall_w, wall_h)
-
         coords = {"w": get_coords(floor_pos[0], floor_pos[2], setup.cell_size),
                   "h": get_coords(floor_pos[1], floor_pos[3], setup.cell_size)}
         # TODO: self.... , STATICVARS großs schreiben!!!
@@ -55,19 +56,19 @@ class Level:
             _dirtyrects.append(waiter.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                     setup.win_w, setup.win_h,
                                                     self.sv["wall_w"], self.sv["wall_h"],
-                                                    self.lvl_vars["door_pos"], setup.cell_size,
-                                                    self.lvl_vars["clock"], self.lvl_vars["obstacles"],
-                                                    self.lvl_vars["interactables"]))
+                                                    self.door_pos, setup.cell_size,
+                                                    self.clock, self.obstacles,
+                                                    self.interactables))
         # Guests
         for guest in self.chars["guests"]:
-            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] \
-                    or guest.walk_in[0] < self.lvl_vars["clock"].h_m[0]:
+            if guest.walk_in[0] == self.clock.h_m[0] and guest.walk_in[1] <= self.clock.h_m[1] \
+                    or guest.walk_in[0] < self.clock.h_m[0]:
                 _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                        setup.win_w, setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
                                                        setup.cell_size, self.active_IA,
-                                                       self.lvl_vars["clock"], self.lvl_vars["obstacles"],
-                                                       self.lvl_vars["interactables"], self.lvl_vars["door_pos"]))
+                                                       self.clock, self.obstacles,
+                                                       self.interactables, self.door_pos))
         # CALCULATE DIRTYRECTS FOR DISPLAY
         for waiter in self.chars["waiter"]:
             _dirtyrects.append(waiter.calc_display())  # Display Waiter
@@ -127,7 +128,7 @@ class Level:
 
     def draw_blits(self, win, g):
         _dirtyrects = []
-        self.lvl_vars["clock"].draw(win)
+        self.clock.draw(win)
         for i in self.active_IA:
             draw_interactables(win, self.win_copy, i)
 
@@ -136,9 +137,9 @@ class Level:
         for waiter in self.chars["waiter"]:
             waiter.draw_char(win)
         for guest in self.chars["guests"]:
-            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and \
-                    guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or \
-                    guest.walk_in[0] < self.lvl_vars["clock"].h_m[0]:
+            if guest.walk_in[0] == self.clock.h_m[0] and \
+                    guest.walk_in[1] <= self.clock.h_m[1] or \
+                    guest.walk_in[0] < self.clock.h_m[0]:
                 guest.draw_char(win)
 
         #           Zeichnen - Balken und Text
@@ -160,11 +161,11 @@ class Level:
                 _dirtyrects.append(i.talk(win))
 
         # Filter für Lichteffekte
-        self.lvl_vars["halo_count"] += 1
-        if self.lvl_vars["halo_count"] >= 100:  # pi *30
-            self.lvl_vars["halo_count"] = 0
-        self.lvl_vars["filter_halo"].set_alpha(round(math.sin((self.lvl_vars["halo_count"] / 100) * math.pi) * 100))
-        win.blit(self.lvl_vars["filter_halo"], (0, 0))
+        self.halo_count += 1
+        if self.halo_count >= 100:  # pi *30
+            self.halo_count = 0
+        self.filter_halo.set_alpha(round(math.sin((self.halo_count / 100) * math.pi) * 100))
+        win.blit(self.filter_halo, (0, 0))
 
         self.draw_blits_specials(win, g)
 
@@ -176,12 +177,12 @@ class Level:
 
     def init_draw(self, win, setup, g, create_char=None):
         win.fill((0, 0, 0), (0, 0, setup.win_w, setup.win_h))
-        win.blit(self.lvl_vars["images"].bg_walls, (self.sv["lvl_size"][0], self.sv["lvl_size"][1]))
-        win.blit(self.lvl_vars["images"].img_ground, (self.sv["lvl_size"][0] + self.sv["wall_w"],
-                                                      self.sv["lvl_size"][1] + self.sv["wall_h"]))
+        win.blit(self.images.bg_walls, (self.sv["lvl_size"][0], self.sv["lvl_size"][1]))
+        win.blit(self.images.img_ground, (self.sv["lvl_size"][0] + self.sv["wall_w"],
+                                          self.sv["lvl_size"][1] + self.sv["wall_h"]))
 
         # get elements from init_main
-        ret_dict = self.init_main(win, setup, create_char)
+        ret_dict = self.init_main(win, setup, self.sv["enter_coord"], create_char)
 
         # Blit Objects and make a copy of the Screen
         for obst in ret_dict["obstacles"]:
@@ -205,33 +206,37 @@ class Level:
         # make Copy
         self.win_copy = win.copy()
 
-#        self.chars["guy"].x, self.chars["guy"].y =
 
         # adding everything created to self.lvl_vars        ====> must haves!!! <====
-        self.lvl_vars["obstacles"] = ret_dict["obstacles"]
-        self.lvl_vars["interactables"] = ret_dict["interactables"]
-        self.lvl_vars["door_pos"] = ret_dict["door_pos"]
-        self.lvl_vars["filter_halo"] = ret_dict["filter_halo"]
+        self.obstacles = ret_dict["obstacles"]
+        self.interactables = ret_dict["interactables"]
+        self.door_pos = ret_dict["door_pos"]
+        self.filter_halo = ret_dict["filter_halo"]
+
 
 
         # adding level specific items
         self.init_draw_specials(win, setup, g, create_char, ret_dict)
 
 
+
     def init_draw_specials(self, win, setup, g, create_char, ret_dict):
         pass
 
-    def reentry(self, setup):
-        self.chars["guy"].x, self.chars["guy"].y = self.sv["enter_coord"]
+    def reentry(self, setup, win):
+        self.chars["guy"].x, self.chars["guy"].y = self.sv["coord"]["w"][self.sv["enter_coord"][0]], \
+                                                   self.sv["coord"]["h"][self.sv["enter_coord"][1]]
 
-        return pygame.Rect(0, 0, setup.win_w, setup.win_h)
+        win.blit(self.win_copy, (0, 0))
+        dr = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+        return dr
 
     def run_lvl(self, win, setup, g):
 
         dirtyrects = []
 
         # Controls:
-        run = controls_game(setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"], self.sv)
+        run = controls_game(setup, self.chars, g, self.obstacles, self.interactables, self.sv)
 
         # Overblit with former State
         dirtyrects = dirtyrects + self.del_last_blit(win, setup, g)
