@@ -96,7 +96,7 @@ class Player(Chars.Chrctrs):
         self.table = active_chair.nr
         self.serv_pos = active_chair.serv_pos
 
-    def walk(self, chars, obstacles, interactables, setup):
+    def walk(self, chars, obstacles, interactables, setup, sv):
         # wenn betrunken, laufe in random richtung
         r = random.random()
         if r < (self.drunkenness / 100) ** 2:
@@ -106,7 +106,7 @@ class Player(Chars.Chrctrs):
         # Kollisionsabfrage
         self.collide = False
         if self.dir == 0:
-            if self.y - self.vel < setup.wall_h:
+            if self.y - self.vel < sv["wall_h"]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.x + self.width > i.x and self.x < i.x + i.width and
@@ -128,7 +128,7 @@ class Player(Chars.Chrctrs):
                                         next_screen = True
 
         elif self.dir == 1:  # rechts
-            if self.x + self.width + self.vel > setup.win_w - setup.wall_w:
+            if self.x + self.width + self.vel > setup.win_w - sv["wall_w"]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and
@@ -144,7 +144,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 2:  # unten
-            if self.y + self.height + self.vel > setup.win_h - setup.wall_h:
+            if self.y + self.height + self.vel > setup.win_h - sv["wall_h"]:
                 self.collide = True
                 self.walking = False
 
@@ -161,7 +161,7 @@ class Player(Chars.Chrctrs):
                             self.walking = False
                             break
         elif self.dir == 3:
-            if self.x + self.vel <= setup.wall_w:
+            if self.x + self.vel <= sv["wall_w"]:
                 self.collide = True
                 self.walking = False
             elif [True for i in chars if self.y + self.height > i.y and self.y < i.y + i.height and

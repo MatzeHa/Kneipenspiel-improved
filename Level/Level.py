@@ -1,7 +1,7 @@
 import pygame
 import math
 
-from Scripts.Util.Functions import get_max_coord, draw_interactables, Raster
+from Scripts.Util.Functions import get_floor_pos, get_wall_size, get_bg_pos, get_coords, get_max_coord, draw_interactables, Raster
 
 from Scripts.Util.Controls import controls_game
 
@@ -9,20 +9,31 @@ pygame.init()
 
 
 class Level:
-    def __init__(self, win, setup, name, obst_images, wall_w, wall_h):
+    def __init__(self, win, setup, name, obst_images, lvl_size, ground_size, enter_coord):
         self.name = name
+
+        bg_pos = get_bg_pos(setup, lvl_size)
+        wall_w, wall_h = get_wall_size(lvl_size, ground_size)
+        floor_pos = get_floor_pos(bg_pos, lvl_size, wall_w, wall_h)
+
+        coords = {"w": get_coords(floor_pos[0], floor_pos[2], setup.cell_size),
+                  "h": get_coords(floor_pos[1], floor_pos[3], setup.cell_size)}
+        # TODO: self.... , STATICVARS großs schreiben!!!
+
         self.sv = {"obst_images": obst_images,
+                   "lvl_size": bg_pos,
+                   "floor_pos": floor_pos,
                    "wall_w": wall_w,
                    "wall_h": wall_h,
-                   "cell_size": setup.cell_size,
-                   "coord": setup.coord,
-                   "max_coord": get_max_coord(setup.coord),
-                   "raster": Raster(win, setup.wall_w, setup.wall_h, setup.cell_size)
+                   "cell_size": setup.cell_size,        # TODO: soll bei setup alleine bleiben
+                   "coord": coords,
+                   "max_coord": get_max_coord(coords),
+                   "enter_coord": enter_coord
                    }
 
         self.win_copy = win.copy()
         self.win_copy_change_mode = win.copy()
-        self.active_IA = []         # active Interactables
+        self.active_IA = []  # active Interactables
         self.chars = {"guests": [],
                       "waiter": []
                       }
@@ -50,8 +61,8 @@ class Level:
                                                     self.lvl_vars["interactables"]))
         # Guests
         for guest in self.chars["guests"]:
-            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] or guest.walk_in[0] < \
-                    self.lvl_vars["clock"].h_m[0]:
+            if guest.walk_in[0] == self.lvl_vars["clock"].h_m[0] and guest.walk_in[1] <= self.lvl_vars["clock"].h_m[1] \
+                    or guest.walk_in[0] < self.lvl_vars["clock"].h_m[0]:
                 _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
                                                        setup.win_w, setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
@@ -164,9 +175,11 @@ class Level:
     def init_main(self, win, setup, create_char):
         return {}
 
-    def init_draw(self, win, setup, g, create_char = None):
-        win.blit(self.lvl_vars["images"].bg, (0, 0))
-        win.blit(self.lvl_vars["images"].img_ground, (self.sv["wall_w"], self.sv["wall_h"]))
+    def init_draw(self, win, setup, g, create_char=None):
+        win.fill((0, 0, 0), (0, 0, setup.win_w, setup.win_h))
+        win.blit(self.lvl_vars["images"].bg_walls, (self.sv["lvl_size"][0], self.sv["lvl_size"][1]))
+        win.blit(self.lvl_vars["images"].img_ground, (self.sv["lvl_size"][0] + self.sv["wall_w"],
+                                                      self.sv["lvl_size"][1] + self.sv["wall_h"]))
 
         # get elements from init_main
         ret_dict = self.init_main(win, setup, create_char)
@@ -189,30 +202,37 @@ class Level:
             self.active_IA.append(ret_dict["clock"])
 
         # Create Raster
-        raster = Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["cell_size"])
-        # raster.draw(win)
+        Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["floor_pos"], self.sv["lvl_size"], self.sv["cell_size"])
         # make Copy
         self.win_copy = win.copy()
+
+#        self.chars["guy"].x, self.chars["guy"].y =
 
         # adding everything created to self.lvl_vars        ====> must haves!!! <====
         self.lvl_vars["obstacles"] = ret_dict["obstacles"]
         self.lvl_vars["interactables"] = ret_dict["interactables"]
         self.lvl_vars["door_pos"] = ret_dict["door_pos"]
         self.lvl_vars["filter_halo"] = ret_dict["filter_halo"]
-        self.lvl_vars["raster"] = raster
+
 
         # adding level specific items
         self.init_draw_specials(win, setup, g, create_char, ret_dict)
 
+
     def init_draw_specials(self, win, setup, g, create_char, ret_dict):
         pass
+
+    def reentry(self, setup):
+        self.chars["guy"].x, self.chars["guy"].y = self.sv["enter_coord"]
+
+        return pygame.Rect(0, 0, setup.win_w, setup.win_h)
 
     def run_lvl(self, win, setup, g):
 
         dirtyrects = []
 
         # Controls:
-        run = controls_game(setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"])
+        run = controls_game(setup, self.chars, g, self.lvl_vars["obstacles"], self.lvl_vars["interactables"], self.sv)
 
         # Overblit with former State
         dirtyrects = dirtyrects + self.del_last_blit(win, setup, g)
@@ -224,4 +244,3 @@ class Level:
         self.draw_blits(win, g)
 
         return run, dirtyrects
-

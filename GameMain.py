@@ -13,14 +13,11 @@ if __name__ == "__main__":
         def __init__(self, _win, _win_w, _win_h):
             self.win_w = _win_w
             self.win_h = _win_h
-            self.wall_h = 150
-            self.wall_w = 150
             self.win_size = (self.win_w, self.win_h)
             self.bgcol = (0, 0, 255)
             self.pause_menu = PauseMenu(_win, self)
             self.cell_size = 64
-            self.coord = {"w": get_coords(self.win_w, self.wall_w, self.cell_size),
-                          "h": get_coords(self.win_h, self.wall_h, self.cell_size)}
+            self.coord = {}
             self.win_copy = _win.copy()
             self.active_room = "Main"
 

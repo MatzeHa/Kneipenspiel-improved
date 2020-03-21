@@ -21,9 +21,16 @@ pygame.init()
 
 class LVLMain(Level):
     def __init__(self, win, setup):
-        super().__init__(win, setup, "lvl_main", ObstacleImages(), 150, 150)
+        images = LVLMainImages()
+        lvl_size = images.bg_walls.get_size()
+        ground_size = images.img_ground.get_size()
 
-        self.lvl_vars = {"images": LVLMainImages(),
+        super().__init__(win, setup, "lvl_main", ObstacleImages(), lvl_size, ground_size, (12, 10))
+
+        # ToDo: self....
+        self.lvl_vars = {"images": images,
+                         "width": lvl_size[0],
+                         "height": lvl_size[1],
                          "clock": Clock,
                          "obstacles": [],
                          "interactables": [],
@@ -54,8 +61,8 @@ class LVLMain(Level):
         _interactables = []
 
         _obstacles.append(
-            Obstacle(i.increase(), "Walls_add", self.lvl_vars["images"].walls, self.sv["coord"]["w"][21],
-                     self.sv["coord"]["h"][0],
+            Obstacle(i.increase(), "Walls_add", self.lvl_vars["images"].walls,
+                     self.sv["coord"]["w"][21], self.sv["coord"]["h"][0],
                      self.lvl_vars["images"].walls.get_width(), self.lvl_vars["images"].walls.get_height()))
         _obstacles.append(
             Obstacle(i.increase(), "Theke", self.sv["obst_images"].img_bar, self.sv["coord"]["w"][3],

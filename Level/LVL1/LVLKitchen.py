@@ -8,9 +8,15 @@ from Scripts.Util.Obstacles import Obstacle, Door
 
 class LVLKitchen(Level):
     def __init__(self, win, setup, clock):
-        super().__init__(win, setup, "lvl_kitchen", ObstacleImages(), 640, 110)
+        images = LVLKitchenImages()
+        lvl_size = images.bg_walls.get_size()
+        ground_size = images.img_ground.get_size()
 
-        self.lvl_vars = {"images": LVLKitchenImages(),
+        super().__init__(win, setup, "lvl_kitchen", ObstacleImages(), lvl_size, ground_size, (10, 1))
+
+        self.lvl_vars = {"images": images,
+                         "width": lvl_size[0],
+                         "height": lvl_size[1],
                          "clock": clock,
                          "obstacles": [],
                          "interactables": [],
@@ -24,7 +30,7 @@ class LVLKitchen(Level):
         self.active_IA.append(clock)
 
     def init_main(self, win, setup, create_char=0):
-
+        # self.chars
         # Create Surfaces for Filters (Licht)
         filter_halo = pygame.Surface((setup.win_w, setup.win_h))  # the size of your rect, ist für drunkenness filter
         filter_halo.set_colorkey((255, 255, 255))  # wichtig für maskieren
@@ -51,10 +57,10 @@ class LVLKitchen(Level):
             if _i.art == 'door':
                 _door_pos.append(_i.serv_pos)
 
-        _obstacles.append(
-            Obstacle(i.increase(), "Walls_add", self.lvl_vars["images"].walls,
-                     self.sv["coord"]["w"][0], self.sv["coord"]["h"][0],
-                     self.lvl_vars["images"].walls.get_width(), self.lvl_vars["images"].walls.get_height()))
+#        _obstacles.append(
+#            Obstacle(i.increase(), "Walls_add", self.lvl_vars["images"].walls,
+#                     self.sv["coord"]["w"][0], self.sv["coord"]["h"][0],
+#                     self.lvl_vars["images"].walls.get_width(), self.lvl_vars["images"].walls.get_height()))
 
         return_dict = {"obstacles": _obstacles,
                        "interactables": _interactables,

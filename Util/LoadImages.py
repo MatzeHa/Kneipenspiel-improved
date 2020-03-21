@@ -47,7 +47,7 @@ class ObstacleImages:
 
 class LVLMainImages:
     def __init__(self):
-        self.bg = pygame.image.load('../Graph/GUI/walls_big.png').convert()
+        self.bg_walls = pygame.image.load('../Graph/GUI/walls_big.png').convert()
         self.img_ground = pygame.image.load('../Graph/GUI/floor_big.png').convert()
         self.walls = pygame.image.load('../Graph/GUI/walls_add1.png')
         self.inventory_pic = pygame.image.load('../Graph/GUI/inventory.png').convert()
@@ -56,9 +56,8 @@ class LVLMainImages:
 
 class LVLKitchenImages:
     def __init__(self):
-        self.bg = pygame.image.load('../Graph/GUI/kitchen_walls.png').convert()
+        self.bg_walls = pygame.image.load('../Graph/GUI/kitchen_walls.png').convert()
         self.img_ground = pygame.image.load("../Graph/GUI/kitchen_floor.png").convert()
-        self.walls = pygame.image.load('../Graph/GUI/kitchen_walls.png').convert()
 
 class CharCreationImages:
     def __init__(self):

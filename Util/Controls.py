@@ -54,7 +54,7 @@ def controls_pause(pause_menu):
     return run
 
 
-def controls_game(setup, chars, g, obstacles, interactables):
+def controls_game(setup, chars, g, obstacles, interactables, sv):
     run = True
     walk = True
     for event in pygame.event.get():
@@ -171,7 +171,7 @@ def controls_game(setup, chars, g, obstacles, interactables):
 
     # Laufen
     if walk:
-        run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables)
+        run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables, sv)
 
         #        if game_maxle:
         #            self.game_maxle = game_maxle
@@ -220,7 +220,7 @@ def controls_dialog(dialog_menu):
                     dialog_menu.choice = 0
     return dialog_menu
 
-def controls_walking(setup, chars, obstacles, interactables):
+def controls_walking(setup, chars, obstacles, interactables, sv):
     game_maxle = False
     inventory_active = False
     run = True
@@ -230,22 +230,22 @@ def controls_walking(setup, chars, obstacles, interactables):
         chars["guy"].sit = False
         chars["guy"].facing = 0
         chars["guy"].dir = 0
-        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup, sv)
     elif keys[pygame.K_DOWN]:
         chars["guy"].sit = False
         chars["guy"].facing = 2
         chars["guy"].dir = 2
-        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup, sv)
     if keys[pygame.K_RIGHT]:
         chars["guy"].sit = False
         chars["guy"].facing = 1
         chars["guy"].dir = 1
-        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup, sv)
     elif keys[pygame.K_LEFT]:
         chars["guy"].sit = False
         chars["guy"].facing = 3
         chars["guy"].dir = 3
-        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup)
+        chars["guy"].walk(chars["waiter"] + chars["guests"], obstacles, interactables, setup, sv)
 
     else:
         chars["guy"].walking = False

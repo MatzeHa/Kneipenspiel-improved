@@ -8,14 +8,12 @@ class IncreaseI:
         return self.i
 
 
-def get_coords(win_w, wall_w, _cell_size):
+def get_coords(x, w, _cell_size):
     cell_size = _cell_size
     coord = []
-#    if wall_h > wall_w:
-#    win_w = win_h
-#    wall_w = wall_h
-    for crd in range(0, 1 + int((win_w - (wall_w*2)) / cell_size)):  # +1 weil tür an wand
-        coord.append(wall_w + crd * cell_size)
+
+    for crd in range(0, 1 + int(w / cell_size)):  # +1 weil tür an wand
+        coord.append(x + crd * cell_size)
     return coord
 
 
@@ -27,32 +25,57 @@ def get_max_coord(coord):
     return max_coord
 
 
-class Raster:
-    def __init__(self, win, wall_w, wall_h, cell_size):
-        self.win_w, self.win_h = win.get_size()
+def get_bg_pos(setup, size):
+    win_w, win_h = setup.win_w, setup.win_h
+    lvl_w, lvl_h = size
+    x_pos = (win_w - lvl_w) / 2
+    y_pos = (win_h - lvl_h) / 2
+    return x_pos, y_pos, win_w, win_h
 
-        self.space_h = (self.win_w - 2 * wall_w - 1) // cell_size
-        self.space_v = (self.win_h - 2 * wall_h - 1) // cell_size
-        self.wall_w = wall_w
-        self.wall_h = wall_h
 
-    def draw(self, win):
-        import pygame
-        font = pygame.font.SysFont('Courier', 30, True)
+def get_wall_size(lvl_size, ground_pos):
+    lvl_w, lvl_h = lvl_size
+    ground_w, ground_h = ground_pos
+    w = (lvl_w - ground_w) / 2
+    h = (lvl_h - ground_h) / 2
 
-        # quadrate:
-        for i in range(0, self.space_h + 1):
-            for j in range(0, self.space_v + 1):
-                text = font.render(str(j) + "," + str(i), 1, (0, 0, 0))
-                win.blit(text, (self.wall_w + i * 64, self.wall_h + j * 64))
-        # senkrecht:
-        for i in range(0, self.space_h + 1):
-            pygame.draw.line(win, (0, 0, 0), (self.wall_w + i * 64, self.wall_h),
-                             (self.wall_w + i * 64, self.win_h - self.wall_h))
-        # waagrecht:
-        for i in range(0, self.space_v + 1):
-            pygame.draw.line(win, (0, 0, 0), (self.wall_w, self.wall_h + i * 64),
-                             (self.win_w - self.wall_w, self.wall_h + i * 64))
+    return w, h
+
+
+def get_floor_pos(bg_pos, lvl_size, wall_w, wall_h):
+    x = int(bg_pos[0] + wall_w)
+    y = int(bg_pos[1] + wall_h)
+    w = int(lvl_size[0] - 2*wall_w)
+    h = int(lvl_size[1] - 2*wall_h)
+    size = (x, y, w, h)
+    return size
+
+
+def Raster(win, wall_w, wall_h, floor_size, lvl_size, cell_size):
+    import pygame
+
+    win_x, win_y, win_w, win_h = floor_size
+
+    space_h = int((win_w - 1) // cell_size)
+    space_v = int((win_h - 1) // cell_size)
+    wall_w = lvl_size[0] + wall_w
+    wall_h = lvl_size[1] + wall_h
+
+    font = pygame.font.SysFont('Courier', 30, True)
+
+    # text:
+    for i in range(0, space_h + 1):
+        for j in range(0, space_v + 1):
+            text = font.render(str(j) + "," + str(i), 1, (0, 0, 0))
+            win.blit(text, (wall_w + i * 64, wall_h + j * 64))
+    # senkrecht:
+    for i in range(0, space_h + 1):
+        pygame.draw.line(win, (0, 0, 0), (wall_w + i * 64, wall_h),
+                         (wall_w + i * 64, win_h - wall_h))
+    # waagrecht:
+    for i in range(0, space_v + 1):
+        pygame.draw.line(win, (0, 0, 0), (wall_w, wall_h + i * 64),
+                         (win_w - wall_w, wall_h + i * 64))
 
 
 class global_var:
@@ -109,24 +132,3 @@ def show_dirtyrects(win, dirtyrects):
     rel = a / win_a
     print("Dirtyrects: " + str(int(rel * 10000)/100))
 
-
-def travel_fun(win, setup, g, lvl, old_room):
-    new_room = False
-    if lvl[old_room].chars["guy"].travel:
-        new_room = lvl[old_room].chars["guy"].travel
-        lvl[old_room].chars["guy"].travel = False
-    if new_room == "lvl_kitchen":
-        from Scripts.Level.LVL1.LVLKitchen import LVLKitchen
-        lvl[new_room] = LVLKitchen(win, setup, lvl[old_room].lvl_vars["clock"])
-        lvl[new_room].init_draw(win, setup, g)
-        lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
-
-        return new_room
-    elif new_room == "lvl_main":
-        lvl[new_room].chars["guy"] = lvl[old_room].chars.pop("guy")
-
-        return new_room
-
-
-    else:
-        return old_room
