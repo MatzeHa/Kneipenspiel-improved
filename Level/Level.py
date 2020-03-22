@@ -5,6 +5,7 @@ from Scripts.Util.Functions import get_floor_pos, get_wall_size, get_bg_pos, get
 
 from Scripts.Util.Controls import controls_game
 
+from Scripts.Util.Obstacles import Door
 
 
 pygame.init()
@@ -145,7 +146,7 @@ class Level:
         #           Zeichnen - Balken und Text
         self.chars["guy"].draw_display(win, self.chars["guy"].drunkenness)  # Display guy
         for waiter in self.chars["waiter"]:
-            waiter.draw_display(win, waiter.angryness)  # Display guy
+            waiter.draw_display(win, waiter.angryness)  # Display waiter
         for i in self.chars["guests"]:
             if i.inside:
                 _dirtyrects.append(i.draw_display(win, i.drunkenness))  # Display Gäste
@@ -223,20 +224,25 @@ class Level:
     def init_draw_specials(self, win, setup, g, create_char, ret_dict):
         pass
 
-    def reentry(self, setup, win):
-        self.chars["guy"].x, self.chars["guy"].y = self.sv["coord"]["w"][self.sv["enter_coord"][0]], \
-                                                   self.sv["coord"]["h"][self.sv["enter_coord"][1]]
-
+    def reentry(self, setup, win, old_room):
+        for door in filter(lambda x: isinstance(x, Door), self.interactables):
+            if door.goto == old_room:
+                self.set_char_position(self.chars["guy"], door)
         win.blit(self.win_copy, (0, 0))
         dr = pygame.Rect(0, 0, setup.win_w, setup.win_h)
         return dr
 
-    def run_lvl(self, win, setup, g):
+    def set_char_position(self, char, door):
+        char.x, char.y = self.sv["coord"]["w"][door.serv_pos[0]], self.sv["coord"]["h"][door.serv_pos[1]]
+
+    def run_lvl(self, win, setup, g, changed):
 
         dirtyrects = []
+        run = True
 
         # Controls:
-        run = controls_game(setup, self.chars, g, self.obstacles, self.interactables, self.sv)
+        if not changed:
+            run = controls_game(setup, self.chars, g, self.obstacles, self.interactables, self.sv)
 
         # Overblit with former State
         dirtyrects = dirtyrects + self.del_last_blit(win, setup, g)

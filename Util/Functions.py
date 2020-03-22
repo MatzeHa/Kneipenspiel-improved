@@ -11,7 +11,6 @@ class IncreaseI:
 def get_coords(x, w, _cell_size):
     cell_size = _cell_size
     coord = []
-
     for crd in range(0, 1 + int(w / cell_size)):  # +1 weil tür an wand
         coord.append(x + crd * cell_size)
     return coord

@@ -17,6 +17,11 @@ from Scripts.Util.Obstacles import Obstacle, Chalkboard, Kerze, KerzeWand, Radio
 
 pygame.init()
 
+NR_GUESTS = 10
+GUESTS_TIME_IN_EARLIEST = (1, 0)
+GUESTS_TIME_IN_LATEST = (1, 1)
+
+
 
 class LVLMain(Level):
     def __init__(self, win, setup):
@@ -424,24 +429,25 @@ class LVLMain(Level):
             Chalkboard(i.increase(), self.sv["coord"]["w"][11], setup.win_h - self.sv["wall_h"],
                        self.sv["obst_images"].img_chalkboard.get_width(),
                        self.sv["obst_images"].img_chalkboard.get_height(), 180))
+
         i = IncreaseI()
         _interactables.append(
             Door(i.increase(), self.sv["coord"]["w"][0], self.sv["coord"]["h"][12],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 0, self.sv["coord"], setup.cell_size, "lvl_kitchen"))
+                 0, self.sv["coord"], setup.cell_size, "lvl_kitchen", "lvl_main"))
         _interactables.append(
             Door(i.increase(), self.sv["coord"]["w"][25], self.sv["coord"]["h"][3],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 90, self.sv["coord"], setup.cell_size, "lvl_outside"))
-        _door_pos = []
+                 90, self.sv["coord"], setup.cell_size, "lvl_outside", "lvl_main"))
 
         _interactables.append(
             Stairs(i.increase(), self.sv["coord"]["w"][13], self.sv["coord"]["h"][0],
                    self.sv["obst_images"].img_stairs.get_width(),
                    self.sv["obst_images"].img_stairs.get_height(),
                    90, self.sv["coord"][self.sv["max_coord"]], setup.cell_size))
+        _door_pos = []
         for _i in _interactables:
             if _i.art == 'door' or _i.art == 'stairs':
                 _door_pos.append(_i.serv_pos)
@@ -470,11 +476,12 @@ class LVLMain(Level):
                    _obstacles, True,
                    create_char.create_tilemap(win))]
         _guests = []
-        for _i in range(0, 20):
+        for _i in range(0, NR_GUESTS):
             vel = 8
             guest = Guest(self.sv["coord"]["w"][24], self.sv["coord"]["h"][6], setup.cell_size,
                           setup.cell_size, vel, _chairs.pop(),
-                          (random.randint(0, 0), random.randint(0, 20)), False)
+                          (random.randint(GUESTS_TIME_IN_EARLIEST[0], GUESTS_TIME_IN_LATEST[0]),
+                           random.randint(GUESTS_TIME_IN_EARLIEST[1], GUESTS_TIME_IN_LATEST[1])), False)
             _guests.append(guest)
 
         _halo_count = 1

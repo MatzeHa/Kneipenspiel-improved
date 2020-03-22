@@ -283,9 +283,13 @@ class Chrctrs:
 
     def drink_a_sip(self, alc):
         self.sipCount = 0
-        self.drunkenness += alc
         self.sips -= 1
-        if self.drunkenness > 100:
-            self.drunkenness = 100
-        if self.drunkenness < 0:
-            self.drunkenness = 0
+        self.drunkenness = self.calc_unit(self.drunkenness, alc)
+
+    def calc_unit(self, unit, increase):
+        new_unit = unit + increase
+        if new_unit >= 100:
+            new_unit = 100
+        elif new_unit < 0:
+            new_unit = 0
+        return new_unit

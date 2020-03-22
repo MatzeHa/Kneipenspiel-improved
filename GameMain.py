@@ -20,7 +20,7 @@ if __name__ == "__main__":
             self.coord = {}
             self.win_copy = _win.copy()
             self.active_room = "Main"
-
+            self.travel_counter = 50
         def update_bg(self, _win):  # unnötige Funktion???
             self.bgcol = setup.pause_menu.options["bgcol"]
             _win.fill(self.bgcol)

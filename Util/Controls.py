@@ -74,9 +74,9 @@ def controls_game(setup, chars, g, obstacles, interactables, sv):
                 active_inter = dir_check(interactables, chars["guy"])
                 if active_inter != 0:
                     if active_inter.art == "door":
-                        active_inter.activated = True
+                        active_inter.activated = True if not active_inter.opened else False
                         chars["guy"].travel = active_inter.goto
-
+                        setup.travel_counter = 0
 
                     elif active_inter.art == "chair":
                         if not chars["guy"].sit and not active_inter.active:
@@ -145,14 +145,15 @@ def controls_game(setup, chars, g, obstacles, interactables, sv):
 
             elif event.key == pygame.K_o:
                 walk = False
-                if chars["guy"] not in chars["waiter"][0].orders_open.keys():
-                    if chars["guy"].sit:
-                        chars["waiter"][0].orders_open.update({chars["guy"]: [0, 0, 0]})
-                        chars["guy"].orderActive = True
-                        chars["guy"].orderAction = 0
-                    else:
-                        chars["guy"].text = 'Ich sollte mich besser erstmal setzen.'
-                        chars["guy"].text_count = -1
+                for waiter in chars["waiter"]:
+                    if chars["guy"] not in waiter.orders_open.keys():
+                        if chars["guy"].sit:
+                            waiter.orders_open.update({chars["guy"]: [0, 0, 0]})
+                            chars["guy"].orderActive = True
+                            chars["guy"].orderAction = 0
+                        else:
+                            chars["guy"].text = 'Ich sollte mich besser erstmal setzen.'
+                            chars["guy"].text_count = -1
 
             elif event.key == pygame.K_m:
                 walk = False
@@ -168,7 +169,7 @@ def controls_game(setup, chars, g, obstacles, interactables, sv):
 
             elif event.key == pygame.K_b:
                 chars["guy"].travel = "lvl_main"
-
+                chars["guy"].door_id = "kitchen"
     # Laufen
     if walk:
         run, game_maxle, inventory_active = controls_walking(setup, chars, obstacles, interactables, sv)
@@ -194,7 +195,8 @@ def controls_order(chars, g):
                     if g.order_menue.choice > 0:
                         g.order_menue.choice -= 1
                 elif event.key == pygame.K_e:
-                    chars["waiter"][0].orders_open[chars["guy"]][1] = g.order_menue.choice + 1
+                    for waiter in chars["waiter"]:
+                        waiter.orders_open[chars["guy"]][1] = g.order_menue.choice + 1
                     chars["guy"].orderAction = 7
     return g
 

@@ -160,10 +160,11 @@ class Chair:
 
 
 class Door:
-    def __init__(self, _id, x, y, width, height, rot, coord, cell_size, goto):
+    def __init__(self, _id, x, y, width, height, rot, coord, cell_size, goto, goto_door):
         self.id = _id
-        self.goto = goto
         self.art = "door"
+        self.goto = goto
+        self.goto_door = goto_door
         self.x = x
         self.y = y
         self.height = height
@@ -175,13 +176,13 @@ class Door:
         self.opened = False
 
         if self.rot == 0:
-            self.serv_pos = (coord["w"].index(self.x + (2*cell_size)), coord["h"].index(self.y - (1*cell_size)))
-        elif self.rot == 90:
+            self.serv_pos = (coord["w"].index(self.x + (3*cell_size)), coord["h"].index(self.y - (1*cell_size)))
+        elif self.rot == 90:        # Wahrscheinlich fehler....
             self.serv_pos = (coord["w"].index(self.x - (1*cell_size)), coord["h"].index(self.y + (3*cell_size)))
         elif self.rot == 180:
-            self.serv_pos = (coord["w"].index(self.x + (4*cell_size)), coord["h"].index(self.y + (1*cell_size)))
+            self.serv_pos = (coord["w"].index(self.x + (3*cell_size)), coord["h"].index(self.y + (0*cell_size)))
             self.y = y - height
-        elif self.rot == 270:
+        elif self.rot == 270:        # Wahrscheinlich fehler...
             self.serv_pos = (coord["w"].index(self.x + (1*cell_size)), coord["h"].index(self.y - (3*cell_size)))
             self.x = x - width
         if OI.rotDict[self.rot] == 1 or OI.rotDict[self.rot] == 3:

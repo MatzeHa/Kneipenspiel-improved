@@ -60,13 +60,13 @@ class Player(Chars.Chrctrs):
         # Pro tick: weniger betrunken und walkCount wird zurückgesetzt
         if self.walkCount >= 96:
             self.walkCount = 0
-        if self.drunkenness >= 0.02:
-            self.drunkenness -= 0.02
+        self.drunkenness = self.calc_unit(self.drunkenness, -0.02) # TODO sollten das nicht alle haben?
 
         # Setzen des blitCounts & walkCounts
         # wenn man sitzt
         if self.sit:
-            self.draw_sit(chars["waiter"][0], g.drinks)
+            for waiter in chars["waiter"]:
+                self.draw_sit(waiter, g.drinks)
             self.blitCount = 7
         # wenn man läuft
         elif self.walking:

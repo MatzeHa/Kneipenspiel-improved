@@ -79,12 +79,11 @@ class Guest(Chars.Chrctrs):
                 if self.siptime > 0:
                     self.siptime -= 1
                 if self.siptime == 0:
-                    self.sipCount = 0
                     self.siptime = random.randint(100, 400)
-                    self.sips -= 1
-                    self.drunkenness = self.drunkenness + g.drinks[self.drink][2]
-                    if self.drunkenness > 100:
-                        self.drunkenness = 100
+                    print(self.drunkenness)
+                    print(g.drinks[self.drink][2])
+                    self.drink_a_sip(g.drinks[self.drink][2])
+
                     # randomisieren
                     if self.bladderTime < 0:
                         self.bladderTime = random.randint(200, 1000)
@@ -136,7 +135,8 @@ class Guest(Chars.Chrctrs):
             # Gast hat sich gesetzt
             if self.sit:
                 # if self.lastAction != 'sit':
-                self.draw_sit(chars["waiter"][0], g.drinks)
+                for waiter in chars["waiter"]:
+                    self.draw_sit(waiter, g.drinks)
                 self.blitCount = 7
             # else:
             #    self.mustblit = False

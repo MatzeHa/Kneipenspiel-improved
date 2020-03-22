@@ -49,7 +49,7 @@ class LVLKitchen(Level):
             Door(i.increase(), self.sv["coord"]["w"][4], self.sv["coord"]["h"][0],
                  self.sv["obst_images"].img_door[0].get_width(),
                  self.sv["obst_images"].img_door[0].get_height(),
-                 180, self.sv["coord"], setup.cell_size, "lvl_main"))
+                 180, self.sv["coord"], setup.cell_size, "lvl_main", "lvl_kitchen"))
 
         _door_pos = []
         for _i in _interactables:
