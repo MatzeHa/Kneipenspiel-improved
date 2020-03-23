@@ -61,7 +61,7 @@ cellSize = 64
 
 
 class Chrctrs:
-    def __init__(self, x, y, width, height, vel, inside, tilemap=None):
+    def __init__(self, x, y, width, height, vel, inside, location, tilemap=None):
         # Variables just for certain Characters
 
 
@@ -86,6 +86,8 @@ class Chrctrs:
         self.blitCount = 0
         self.walkCount = 0
         self.name = random.choice(name_list)
+        self.travel = False
+        self.location = location
         if not tilemap:
             self.Tilemap = Tilemap
         else:

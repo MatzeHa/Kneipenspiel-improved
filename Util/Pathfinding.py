@@ -1,15 +1,14 @@
-
-def pathfinding(char, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, obstacles, interactables,
+def pathfinding(char, coords, win_sizex, win_sizey, wall_sizex, wall_sizey, obstacles, interactables,
                 pos_goals, cell_size):
     # Wenn Ober kein Ziel hat, läuft er zu zufälligem Ziel
     if char.goal == ():
-        char.goal = (coord[pos_goals[0]], coord[pos_goals[1]])
+        char.goal = (coords["w"][pos_goals[0]], coords["h"][pos_goals[1]])
 
     # erstelle dictionary, in der die Wegkosten gespeichert werden
     costs = {}
     invest = []
-    for i in coord[slice(0, int((win_sizex - wall_sizex *2) / cell_size))]:
-        for j in coord[slice(0, int((win_sizey - wall_sizey *2) / cell_size))]:
+    for i in coords["w"][slice(0, int((win_sizex - wall_sizex * 2) / cell_size))]:
+        for j in coords["h"][slice(0, int((win_sizey - wall_sizey * 2) / cell_size))]:
             # Die Wegkosten aller Felder werden auf -10 gesetzt
             costs.update({(i, j): -10})
     # Liste mit Startwert
@@ -30,9 +29,9 @@ def pathfinding(char, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, obsta
                         wall_sizey <= _s[1] + i[1] * cell_size < win_sizey - wall_sizey:
                     # ob das Feld bereits geprüft wurde
                     if costs[(_s[0] + i[0] * cell_size, _s[1] + i[1] * cell_size)] == -10:
-                        if not (_s[0] + i[0] * cell_size, _s[1] + i[1 ] *cell_size) in invest:
+                        if not (_s[0] + i[0] * cell_size, _s[1] + i[1] * cell_size) in invest:
                             # hänge Tupel mit coords der Zelle an die Liste an
-                            invest.append((_s[0] + i[0 ] *cell_size, _s[1] + i[1] * cell_size))
+                            invest.append((_s[0] + i[0] * cell_size, _s[1] + i[1] * cell_size))
         s = []
         # Wenn Obstacle auf Feld: Kosten = -1
         for i in invest:

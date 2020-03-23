@@ -174,6 +174,7 @@ class Door:
         self.openCount = 0
         self.activated = False
         self.opened = False
+        self.wait_open = 5
 
         if self.rot == 0:
             self.serv_pos = (coord["w"].index(self.x + (3*cell_size)), coord["h"].index(self.y - (1*cell_size)))
@@ -198,12 +199,17 @@ class Door:
                 else:
                     self.opened = True
                     self.activated = False
-            elif self.opened:
+
+        elif self.opened:
+
+            if self.wait_open > 0:
+                self.wait_open -= 1
+            else:
                 if self.openCount > 0:
                     self.openCount -= 1
                 else:
+                    self.wait_open = 5
                     self.opened = False
-                    self.activated = False
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
     def draw_int(self, win, win_copy):

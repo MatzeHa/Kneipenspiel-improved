@@ -10,14 +10,10 @@ walkDict = {0: 0, 1: 1, 2: 2,
             6: 0, 7: 4, 8: 5,
             9: 6, 10: 5, 11: 4}
 
-max_guest = 6
-POS_GOALS = [(2, 2)]
-# POS_GOALS = [(2, 2), (2, 3), (2, 4), (2, 5), (16, 5)]
-
 
 class Waiter(Chars.Chrctrs):
-    def __init__(self, x, y, width, height, obstacles, inside, Tilemap):
-        super().__init__(x, y, width, height, 64 / 4, inside, Tilemap)
+    def __init__(self, x, y, width, height, obstacles, inside, location, POS_GOALS, MAX_ORDERS, Tilemap):
+        super().__init__(x, y, width, height, 64 / 4, inside, location, Tilemap)
 
         # from pack_Kneipenspiel import cell_size
         self.art = 'waiter'
@@ -44,8 +40,9 @@ class Waiter(Chars.Chrctrs):
         self.tablett = ''
         self.chair = False
         self.talker = self
-        self.travel = False
 
+        self.POS_GOALS = POS_GOALS
+        self.MAX_ORDERS = MAX_ORDERS         # TODO: Does not compute
         for i in obstacles:
             if i.art == 'Theke':
                 self.serv_pos = i.serv_pos
@@ -60,8 +57,7 @@ class Waiter(Chars.Chrctrs):
                 self.Tilemap.set_at((x, y), a)                                      # Weise ihn dem Image wieder zu
          '''
 
-    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, door_pos, cell_size, clock,
-                      obstacles, interactables):
+    def calc_movement(self, chars, setup, floor_pos, coords, cell_size, clock, obstacles, interactables, pos_goals):
 
         self.x_old = self.x
         self.y_old = self.y
@@ -76,28 +72,27 @@ class Waiter(Chars.Chrctrs):
 
             self.walkCount = 0
             self.blitCount = 0
+            wait_for_travel = False
+            for door in filter(lambda x: isinstance(x, Door), interactables):
+                if self.x == coords["w"][door.serv_pos[0]] and self.y == coords["h"][door.serv_pos[1]]:
+                    if not door.opened:
+                        door.activated = True
+                        wait_for_travel = True
+                    else:
+                        self.travel = door.goto
 
-            if self.x == coord[door_pos[0][0]] and self.y == coord[door_pos[0][1]]:
-                for i in interactables:
-                    if i.art == 'door':
-                        if i.serv_pos == (door_pos[0][0], door_pos[0][1]):
-                            if not i.opened:
-                                i.activated = True
-                            else:
-                                self.travel = i.goto            # TODO: HIer weitermachen!!!
+#            elif self.x == coord[door_pos[2][0]] and self.y == coord[door_pos[2][1]]:
+#                for i in interactables:
+#                    if i.art == 'stairs':
+#                        self.waitCount = 400
+#                        self.inside = False
 
-            elif self.x == coord[door_pos[2][0]] and self.y == coord[door_pos[2][1]]:
-                for i in interactables:
-                    if i.art == 'stairs':
-                        self.waitCount = 400
-                        self.inside = False
-
-            # das muss noch umgebaut werden, weil sonst immer wartet der waiter
-            else:  # ...oder prüfen ob ein gast im self.serve_guest ist...
+                # das muss noch umgebaut werden, weil sonst immer wartet der waiter
+            if not wait_for_travel:
                 if self.serv_guest:
                     # wenn man auf dem Bedienfeld steht
-                    if self.x == coord[self.serv_guest.serv_pos[0]] and \
-                            self.y == coord[self.serv_guest.serv_pos[1]]:
+                    if self.x == coords["w"][self.serv_guest.serv_pos[0]] and \
+                            self.y == coords["h"][self.serv_guest.serv_pos[1]]:
                         if self.orders_open[self.serv_guest][0] == 0:
                             self.orders_open[self.serv_guest][0] = 1
 
@@ -135,7 +130,7 @@ class Waiter(Chars.Chrctrs):
                             self.act = 1
 
                     # Wenn man am Thekenplatz steht
-                    elif self.x == coord[self.serv_pos[0]] and self.y == coord[self.serv_pos[1]]:
+                    elif self.x == coords["w"][self.serv_pos[0]] and self.y == coords["h"][self.serv_pos[1]]:
                         if self.orders_open[self.serv_guest][0] == 6:
                             if self.text_count == 51:
                                 self.text = "Ich mixe, mixe, mixe"
@@ -184,12 +179,11 @@ class Waiter(Chars.Chrctrs):
                                      for i in g_list]]
                         self.serv_guest = g_list[g_listxy[0].index(min(g_listxy[0]))]
                         goal = self.serv_guest.serv_pos
-                        Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
+                        Pathfinding.pathfinding(self, coords, setup.win_w, setup.win_h, floor_pos[0], floor_pos[1],
                                                 obstacles, interactables, goal, cell_size)
-
                     # Summe ( aller gäste, die schon bestellt ) haben < 3 ODER
                     # Wenn Summe ( aller Getränke, die > 0 sind ) == 0 ist:!??!?!?!
-                    elif sum(i[0] > 0 for i in self.orders_open.values()) < max_guest and \
+                    elif sum(i[0] > 0 for i in self.orders_open.values()) < self.MAX_ORDERS and \
                             sum(i[0] > 0 for i in self.orders_open.values()) != len(self.orders_open.keys()):
                         g_list = []
                         for i in self.orders_open.keys():
@@ -199,11 +193,10 @@ class Waiter(Chars.Chrctrs):
                         self.serv_guest = g_list[g_listxy[0].index(min(g_listxy[0]))]
                         self.orders_open[self.serv_guest][0] = 0
                         goal = self.serv_guest.serv_pos
-                        Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
+                        Pathfinding.pathfinding(self, coords, setup.win_w, setup.win_h, floor_pos[0], floor_pos[1],
                                                 obstacles, interactables, goal, cell_size)
-
                     # soll nur zur theke gehen, wenn: maximum der bestellungen erreicht ist  oder
-                    elif sum(i[0] in (6, 7, 8) for i in self.orders_open.values()) >= max_guest or \
+                    elif sum(i[0] in (6, 7, 8) for i in self.orders_open.values()) >= self.MAX_ORDERS or \
                             sum(i[0] == (6, 7, 8) for i in
                                 self.orders_open.values()) == sum(i[2] != 0 for i in self.orders_open.values()):
                         g_list = []
@@ -216,22 +209,22 @@ class Waiter(Chars.Chrctrs):
                                     g_list.append(i)
                         self.serv_guest = g_list[0]
                         goal = self.serv_pos
-                        Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
+                        Pathfinding.pathfinding(self, coords, setup.win_w, setup.win_h, floor_pos[0], floor_pos[1],
                                                 obstacles, interactables, goal, cell_size)
-                else:
-                    self.serv_guest = None
+                    else:
+                        self.serv_guest = None
 
                 # Ziel: Wenn nix zu tun ist soll er an der Theke rumgammeln
                 if self.orders_open == {}:
-                    pos_goals = POS_GOALS
+                    _pos_goals = pos_goals
                     for inter in interactables:
                         if isinstance(inter, Door):
-                            pos_goals.append(inter.serv_pos)
-                    if self.x in coord and self.y in coord:
-                        if (coord.index(self.x), coord.index(self.y)) in pos_goals:
-                            pos_goals.remove((coord.index(self.x), coord.index(self.y)))
-                    goal = random.choice(pos_goals)
-                    Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
+                            _pos_goals.append(inter.serv_pos)
+                    if self.x in coords["w"] and self.y in coords["h"]:
+                        if (coords["w"].index(self.x), coords["h"].index(self.y)) in _pos_goals:
+                            _pos_goals.remove((coords["w"].index(self.x), coords["h"].index(self.y)))
+                    goal = random.choice(_pos_goals)
+                    Pathfinding.pathfinding(self, coords, setup.win_w, setup.win_h, floor_pos[0], floor_pos[1],
                                             obstacles, interactables, goal, cell_size)
                 self.act = 2
         if self.act == 2:

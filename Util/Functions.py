@@ -81,7 +81,7 @@ class global_var:
     def __init__(self, setup):
 
         import pygame
-        from Scripts.GameModes.Dialog import DialogMenue
+        from Scripts.GameModes.Dialog   import DialogMenue
         from Scripts.GameModes.Order import OrderMenue
         pygame.init()
 

@@ -2,10 +2,8 @@ import os
 
 import pygame
 from Scripts.GameModes.PauseMenu import PauseMenu
-from Scripts.GameModes.Dialog import DialogMenue
-from Scripts.Util.Functions import get_coords
 from Scripts.Util.GameLoop import game_loop
-
+from Scripts.Util.Obstacles import Door
 pygame.init()
 
 if __name__ == "__main__":
@@ -20,7 +18,8 @@ if __name__ == "__main__":
             self.coord = {}
             self.win_copy = _win.copy()
             self.active_room = "Main"
-            self.travel_counter = 50
+            self.travel_door = Door
+
         def update_bg(self, _win):  # unnötige Funktion???
             self.bgcol = setup.pause_menu.options["bgcol"]
             _win.fill(self.bgcol)

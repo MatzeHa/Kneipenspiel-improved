@@ -21,8 +21,8 @@ order_timer = 200
 
 
 class Guest(Chars.Chrctrs):
-    def __init__(self, x, y, width, height, vel, chair, walk_in, inside):
-        super().__init__(-100, 100, width, height, vel, inside)
+    def __init__(self, x, y, width, height, vel, chair, walk_in, inside, location):
+        super().__init__(-100, 100, width, height, vel, inside, location)
         self.art = 'guest'  # zurzeit: spieler, guest, waiter...
         self.x_old = x  # alte Position x
         self.y_old = y  # alte Position y
@@ -61,7 +61,7 @@ class Guest(Chars.Chrctrs):
 
     #
 
-    def calc_movement(self, chars, g, coord, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA, clock,
+    def calc_movement(self, chars, g, coords, win_sizex, win_sizey, wall_sizex, wall_sizey, cell_size, active_IA, clock,
                       obstacles, interactables, door_pos):
         if self.inside:
             self.mustblit = True
@@ -69,7 +69,7 @@ class Guest(Chars.Chrctrs):
             self.x_old = self.x  # x von letztem frame wird gepeichert>
             self.y_old = self.y  # Y von letztem frame wird gepeichert>
 
-            # Pro tick: walkCount wird zurückgesetzt ### und weniger betrunken
+            # Pro tick: walkCount wird erhöht ### und weniger betrunken
             self.walkCount += 1  # walkCount wird für die Animation benutzt
             if self.walkCount >= 96:
                 self.walkCount = 0
@@ -79,11 +79,8 @@ class Guest(Chars.Chrctrs):
                 if self.siptime > 0:
                     self.siptime -= 1
                 if self.siptime == 0:
-                    self.siptime = random.randint(100, 400)
-                    print(self.drunkenness)
-                    print(g.drinks[self.drink][2])
+                    self.siptime = random.randint(500, 1000)
                     self.drink_a_sip(g.drinks[self.drink][2])
-
                     # randomisieren
                     if self.bladderTime < 0:
                         self.bladderTime = random.randint(200, 1000)
@@ -91,15 +88,15 @@ class Guest(Chars.Chrctrs):
 
             # setting goals
             # türe
-            if not self.going and clock.lastCall and self.x in coord and self.y in coord:
-                self.goal = (coord[door_pos[1][0]], coord[door_pos[1][1]])
+            if not self.going and clock.lastCall and self.x in coords["w"] and self.y in coords["h"]:
+                self.goal = (coords["w"][door_pos[1][0]], coords["h"][door_pos[1][1]])
                 self.going = True
                 self.sit = False
             # klo
             elif self.bladderTime > 0:
                 self.bladderTime -= 1
-            elif self.bladderTime == 0 and self.x in coord and self.y in coord and self.toilet:
-                self.goal = (coord[door_pos[2][0]], coord[door_pos[2][1]])
+            elif self.bladderTime == 0 and self.x in coords["w"] and self.y in coords["h"] and self.toilet:
+                self.goal = (coords["w"][door_pos[2][0]], coords["h"][door_pos[2][1]])
                 self.text = random.choice(('Ich muss mal verschwindibussen...', 'Oh, oh, das Bläschen drückt...',
                                            'Ich muss pissen!', 'Ich muss kurz das große Latrinum aufsagen gehen...',
                                            'Ich geh mal die Nougatschleuse öffnen...', 'Puh, Darmdrücken...',
@@ -113,7 +110,7 @@ class Guest(Chars.Chrctrs):
 
             # pfadfinden
             if self.goal != () and self.steps == []:
-                Pathfinding.pathfinding(self, coord, win_sizex, win_sizey, wall_sizex, wall_sizey,
+                Pathfinding.pathfinding(self, coords, win_sizex, win_sizey, wall_sizex, wall_sizey,
                                         obstacles, interactables, self.goal, cell_size)
                 self.goal = ()
             # Positionsabfrage
@@ -125,10 +122,10 @@ class Guest(Chars.Chrctrs):
                 self.walking = False
                 self.serv_pos = self.chair.serv_pos
             # gast geht aus tür
-            elif self.x == coord[door_pos[1][0]] and self.y == coord[door_pos[1][1]] and self.steps == []:
+            elif self.x == coords["w"][door_pos[1][0]] and self.y == coords["h"][door_pos[1][1]] and self.steps == []:
                 self.inside = False
             # gast geht in keller
-            elif (self.x == coord[door_pos[2][0]] and self.y == coord[door_pos[2][1]]) and self.bladderTime >= 0:
+            elif (self.x == coords["w"][door_pos[2][0]] and self.y == coords["h"][door_pos[2][1]]) and self.bladderTime >= 0:
                 self.waitCount = random.randint(100, 500)
                 self.inside = False
 
@@ -231,7 +228,7 @@ class Guest(Chars.Chrctrs):
                             self.inside = True
                             self.x = self.x_old
                             self.y = self.y_old
-                            i.activated = True
+                            # i.activated = False
                             if i not in active_IA:
                                 active_IA.append(i)
                             self.coming = False
@@ -243,8 +240,8 @@ class Guest(Chars.Chrctrs):
                         if self.waitCount > 0:
                             self.waitCount -= 1
                         if self.waitCount == 0:
-                            self.x = coord[door_pos[2][0]]
-                            self.y = coord[door_pos[2][1]]
+                            self.x = coords["w"][door_pos[2][0]]
+                            self.y = coords["h"][door_pos[2][1]]
                             self.inside = True
                             self.bladderTime = -1
                             self.goal = (self.chair.x, self.chair.y)

@@ -33,7 +33,9 @@ def game_loop(win, setup):
     while run:
         if start_game:
             start_game = False
-            lvl[lvl_name].init_draw(win, setup, g, create_char)
+            lvl[lvl_name].init_main(win, setup, create_char)
+            lvl[lvl_name].init_draw(win, setup, g)
+
             del create_char
             dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
 
@@ -54,15 +56,14 @@ def game_loop(win, setup):
             dirtyrects = setup.game.check_action(win, setup, lvl[lvl_name].chars, g, lvl[lvl_name])
 
         else:
-            # if guy.travel: pop guy from actual level and put it into room
-            run, dirtyrects, lvl_name = level_selector(win, setup, lvl, lvl_name, g)
+            run, dirtyrects, lvl_name = level_selector(win, setup, g, lvl, lvl_name)
 
         if not pause_menu.quit:
             if first_round:
                 first_round = False
             else:
                 pass
-                # show_dirtyrects(win, dirtyrects)
+                show_dirtyrects(win, dirtyrects)
 
             clock.tick(30)
             pygame.display.update(dirtyrects)
@@ -70,3 +71,4 @@ def game_loop(win, setup):
         else:
             run = False
             pygame.quit()
+

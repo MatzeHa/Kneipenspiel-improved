@@ -18,8 +18,8 @@ rotDict = {0: 0, 90: 3, 180: 2, 270: 1}
 
 
 class Player(Chars.Chrctrs):
-    def __init__(self, x, y, width, height, inside, tilemap, vel=16):
-        super().__init__(x, y, width, height, vel, inside, tilemap)
+    def __init__(self, x, y, width, height, inside, location, tilemap, vel=16):
+        super().__init__(x, y, width, height, vel, inside, location, tilemap)
         # Variablen aus Überklasse Chars
         self.art = 'player'
         self.x_old = x
@@ -46,7 +46,6 @@ class Player(Chars.Chrctrs):
         self.start_game = False
         self.end_game = False
         self.game = ""
-        self.travel = False
         self.room = "lvl_main"
 
     def calc_movement(self, win, chars, g):

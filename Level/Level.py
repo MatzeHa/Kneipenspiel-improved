@@ -12,7 +12,7 @@ pygame.init()
 
 
 class Level:
-    def __init__(self, win, setup, name, obst_images, lvl_size, ground_size, enter_coord):
+    def __init__(self, win, setup, name, obst_images, lvl_size, ground_size):
         self.clock = None
         self.name = name
         bg_pos = get_bg_pos(setup, lvl_size)
@@ -27,9 +27,8 @@ class Level:
                    "floor_pos": floor_pos,
                    "wall_w": wall_w,
                    "wall_h": wall_h,
-                   "coord": coords,
-                   "max_coord": get_max_coord(coords),
-                   "enter_coord": enter_coord
+                   "coords": coords,
+                   "max_coord": get_max_coord(coords)
                    }
 
         self.win_copy = win.copy()
@@ -39,6 +38,7 @@ class Level:
                       "waiter": []
                       }
         self.lvl_vars = {}
+        self.loaded = False
 
     def movement_calculation(self, win, setup, g):
         print(self.name + "MOVEMENT CALCULATION")
@@ -54,17 +54,17 @@ class Level:
             _dirtyrects.append(self.chars["guy"].calc_movement(win, self.chars, g))
         # Waiter
         for waiter in self.chars["waiter"]:
-            _dirtyrects.append(waiter.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
-                                                    setup.win_w, setup.win_h,
-                                                    self.sv["wall_w"], self.sv["wall_h"],
-                                                    self.door_pos, setup.cell_size,
+            _dirtyrects.append(waiter.calc_movement(self.chars, setup, self.sv["floor_pos"],
+                                                    self.sv["coords"],
+                                                    setup.cell_size,
                                                     self.clock, self.obstacles,
-                                                    self.interactables))
+                                                    self.interactables, self.pos_goals))
         # Guests
         for guest in self.chars["guests"]:
             if guest.walk_in[0] == self.clock.h_m[0] and guest.walk_in[1] <= self.clock.h_m[1] \
                     or guest.walk_in[0] < self.clock.h_m[0]:
-                _dirtyrects.append(guest.calc_movement(self.chars, g, self.sv["coord"][self.sv["max_coord"]],
+                _dirtyrects.append(guest.calc_movement(self.chars, g,
+                                                       self.sv["coords"],
                                                        setup.win_w, setup.win_h,
                                                        self.sv["wall_w"], self.sv["wall_h"],
                                                        setup.cell_size, self.active_IA,
@@ -104,6 +104,7 @@ class Level:
                 win.blit(self.win_copy, (0, 0))
                 dirtyrects.append(pygame.Rect(0, 0, setup.win_w, setup.win_h))
             else:
+                # TODO: das in eine Funktion:
                 dirtyrects.append(self.chars["guy"].del_blit(win, self.win_copy))  # guy
                 dirtyrects.append(self.chars["guy"].del_display(win, self.win_copy))  # Display guy
                 if self.chars["guy"].text_count < 51:  # Textzeile wieder überblitten
@@ -176,31 +177,30 @@ class Level:
     def init_main(self, win, setup, create_char):
         return {}
 
-    def init_draw(self, win, setup, g, create_char=None):
+    def init_draw(self, win, setup, g):
         win.fill((0, 0, 0), (0, 0, setup.win_w, setup.win_h))
         win.blit(self.images.bg_walls, (self.sv["lvl_size"][0], self.sv["lvl_size"][1]))
         win.blit(self.images.img_ground, (self.sv["lvl_size"][0] + self.sv["wall_w"],
                                           self.sv["lvl_size"][1] + self.sv["wall_h"]))
 
         # get elements from init_main
-        ret_dict = self.init_main(win, setup, self.sv["enter_coord"], create_char)
+        # ret_dict = self.init_main(win, setup, self.sv["enter_coord"], create_char)
 
         # Blit Objects and make a copy of the Screen
-        for obst in ret_dict["obstacles"]:
+        for obst in self.obstacles:
             win.blit(obst.pic, (obst.x, obst.y))
         self.win_copy = win.copy()
 
         # Blit Interactables and Clock
-        for inter in ret_dict["interactables"]:
+        for inter in self.interactables:
             if inter.art == 'door' or inter.art == "radio":
                 inter.draw_int(win, self.win_copy)
                 self.active_IA.append(inter)
             else:
                 inter.draw(win)
-        if "clock" in ret_dict:
-            ret_dict["clock"].calc()
-            ret_dict["clock"].draw(win)
-            self.active_IA.append(ret_dict["clock"])
+        self.clock.calc()
+        self.clock.draw(win)
+        self.active_IA.append(self.clock)
 
         # Create Raster
         Raster(win, self.sv["wall_w"], self.sv["wall_h"], self.sv["floor_pos"], self.sv["lvl_size"], setup.cell_size)
@@ -208,40 +208,43 @@ class Level:
         self.win_copy = win.copy()
 
 
-        # adding everything created to self.lvl_vars        ====> must haves!!! <====
-        self.obstacles = ret_dict["obstacles"]
-        self.interactables = ret_dict["interactables"]
-        self.door_pos = ret_dict["door_pos"]
-        self.filter_halo = ret_dict["filter_halo"]
 
 
 
         # adding level specific items
-        self.init_draw_specials(win, setup, g, create_char, ret_dict)
+        self.init_draw_specials(win, setup, g)
 
+        self.loaded = True
 
-
-    def init_draw_specials(self, win, setup, g, create_char, ret_dict):
+    def init_draw_specials(self, win, setup, g):
         pass
 
-    def reentry(self, setup, win, old_room):
+    def set_char_position(self, char, old_room):
         for door in filter(lambda x: isinstance(x, Door), self.interactables):
             if door.goto == old_room:
-                self.set_char_position(self.chars["guy"], door)
+                char.x, char.y = self.sv["coords"]["w"][door.serv_pos[0]], self.sv["coords"]["h"][door.serv_pos[1]]
+
+    def del_travel_char(self, win, char):
+        dirtyrect = []
+        for door in filter(lambda x: isinstance(x, Door), self.interactables):
+            if door.goto == char.travel:
+                del_pos = (self.sv["coords"]["w"][door.serv_pos[0]], self.sv["coords"]["h"][door.serv_pos[1]], 64, 64)        #   64 = cellsize!!!
+                win.blit(self.win_copy, del_pos, del_pos)
+                dirtyrect = [del_pos]
+        return dirtyrect
+
+    def reentry(self, setup, win):
         win.blit(self.win_copy, (0, 0))
-        dr = pygame.Rect(0, 0, setup.win_w, setup.win_h)
+        dr = [pygame.Rect(0, 0, setup.win_w, setup.win_h)]
         return dr
 
-    def set_char_position(self, char, door):
-        char.x, char.y = self.sv["coord"]["w"][door.serv_pos[0]], self.sv["coord"]["h"][door.serv_pos[1]]
 
-    def run_lvl(self, win, setup, g, changed):
+    def run_lvl(self, win, setup, g, travelling):
 
         dirtyrects = []
         run = True
-
         # Controls:
-        if not changed:
+        if not travelling:
             run = controls_game(setup, self.chars, g, self.obstacles, self.interactables, self.sv)
 
         # Overblit with former State

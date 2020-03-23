@@ -60,6 +60,8 @@ def controls_game(setup, chars, g, obstacles, interactables, sv):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit_game()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            print(pygame.mouse.get_pos())
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 quit_game()
@@ -76,7 +78,7 @@ def controls_game(setup, chars, g, obstacles, interactables, sv):
                     if active_inter.art == "door":
                         active_inter.activated = True if not active_inter.opened else False
                         chars["guy"].travel = active_inter.goto
-                        setup.travel_counter = 0
+                        setup.travel_door = active_inter
 
                     elif active_inter.art == "chair":
                         if not chars["guy"].sit and not active_inter.active:
